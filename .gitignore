@@ -173,5 +173,8 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# Remove DS_Store
+# Local Ignore
 .DS_Store
+.vscode/settings.json
+symbology-style.db
+user-history.db
