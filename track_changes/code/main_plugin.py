@@ -1,6 +1,6 @@
 from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtGui import QIcon
-from .setup_dialog import SetupDialog
+from .setup_dialog import FeatureLogger
 import os
 
 class TrackChangesPlugin:
@@ -30,7 +30,7 @@ class TrackChangesPlugin:
     def run(self):
         """Open the UI dialog."""
         if self.dialog is None:
-            self.dialog = SetupDialog()
+            self.dialog = FeatureLogger()
         self.dialog.show()
 
     def get_icon_path(self):
