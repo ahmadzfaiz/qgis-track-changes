@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/track_changes">
+        <file>icon.png</file>
+    </qresource>
+</RCC>
