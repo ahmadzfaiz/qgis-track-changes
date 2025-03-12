@@ -14,11 +14,20 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SetupTrackingChanges(object):
     def setupUi(self, SetupTrackingChanges):
         SetupTrackingChanges.setObjectName("SetupTrackingChanges")
-        SetupTrackingChanges.resize(506, 281)
+        SetupTrackingChanges.resize(451, 310)
         self.gridLayout = QtWidgets.QGridLayout(SetupTrackingChanges)
         self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+        self.label = QtWidgets.QLabel(SetupTrackingChanges)
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
+        self.mQgsLogFile = gui.QgsFileWidget(SetupTrackingChanges)
+        self.mQgsLogFile.setObjectName("mQgsLogFile")
+        self.verticalLayout.addWidget(self.mQgsLogFile)
+        self.label_2 = QtWidgets.QLabel(SetupTrackingChanges)
+        self.label_2.setObjectName("label_2")
+        self.verticalLayout.addWidget(self.label_2)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.cbVectorLayers = QtWidgets.QComboBox(SetupTrackingChanges)
@@ -58,5 +67,8 @@ class Ui_SetupTrackingChanges(object):
     def retranslateUi(self, SetupTrackingChanges):
         _translate = QtCore.QCoreApplication.translate
         SetupTrackingChanges.setWindowTitle(_translate("SetupTrackingChanges", "Setup Tracking Changes"))
+        self.label.setText(_translate("SetupTrackingChanges", "Log file destination"))
+        self.label_2.setText(_translate("SetupTrackingChanges", "Start/stop tracking changes"))
         self.pbActivate.setText(_translate("SetupTrackingChanges", "Activate"))
         self.pbDeactivate.setText(_translate("SetupTrackingChanges", "Deactivate"))
+from qgis import gui
