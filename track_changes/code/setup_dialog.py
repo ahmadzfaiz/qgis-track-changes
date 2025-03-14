@@ -15,6 +15,21 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
 
     10 = start editing
     11 = stop editing
+
+    20 = features selection
+    21 = feature add
+    22 = feature delete
+    23 = feature geometry change
+    24 = feature add committed (reserved, no feature yet)
+    25 = feature delete committed (reserver, no feature yet)
+    26 = features geometry change committed
+
+    30 = attribute add
+    31 = attribute delete
+    32 = attribute value change
+    33 = attribute add committed
+    34 = attribute delete committed
+    35 = attribute values change committed
     """
     def __init__(self):
         super().__init__()
@@ -103,6 +118,10 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
             ):
                 self.ui.pbActivate.setEnabled(True)
 
+            # Add field after file is selected
+            self.fields = [field.name() for field in self.layer.fields()]
+            self.committed_fields = [field.name() for field in self.layer.fields()]
+
     def activate_signals(self):
         """Safely connect logger signals"""
         if self.connected:
@@ -120,6 +139,13 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
             self.layer.featureDeleted.connect(self.log_feature_deleted)
             self.layer.geometryChanged.connect(self.log_geometry_changed)
             self.layer.committedGeometriesChanges.connect(self.log_commited_geometries_changes)
+            # 3
+            self.layer.attributeAdded.connect(self.log_attribute_added)
+            self.layer.attributeDeleted.connect(self.log_attribute_deleted)
+            self.layer.attributeValueChanged.connect(self.log_attribute_value_changed)
+            self.layer.committedAttributesAdded.connect(self.log_committed_attributes_added)
+            self.layer.committedAttributesDeleted.connect(self.log_committed_attributes_deleted)
+            self.layer.committedAttributeValuesChanges.connect(self.log_committed_attribute_values_changes)
             self.connected = True
             # Activate deactivate
             self.ui.pbActivate.setEnabled(False)
@@ -140,6 +166,13 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
             self.layer.featureDeleted.disconnect(self.log_feature_deleted)
             self.layer.geometryChanged.disconnect(self.log_geometry_changed)
             self.layer.committedGeometriesChanges.disconnect(self.log_commited_geometries_changes)
+            # 3
+            self.layer.attributeAdded.disconnect(self.log_attribute_added)
+            self.layer.attributeDeleted.disconnect(self.log_attribute_deleted)
+            self.layer.attributeValueChanged.disconnect(self.log_attribute_value_changed)
+            self.layer.committedAttributesAdded.disconnect(self.log_committed_attributes_added)
+            self.layer.committedAttributesDeleted.disconnect(self.log_committed_attributes_deleted)
+            self.layer.committedAttributeValuesChanges.disconnect(self.log_committed_attribute_values_changes)
         except TypeError:
             pass
         self.connected = False
@@ -185,3 +218,40 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
         self.logger.info(f"26 | Geometries changes by {self.author} is committed. Layer ID: {lid}")
         for fid, geometry in geometries.items():
             self.logger.info(f"26 | Committed changed geometry. Layer ID: {self.layer.id()}. Feature ID: {fid}. New geometry: {geometry.asWkt()}")
+
+    def log_attribute_added(self, fid):
+        field_name = self.layer.fields()[fid].name()
+        self.fields.insert(fid, field_name)
+        self.logger.info(f"30 | {self.author} added attribute. Layer ID: {self.layer.id()}. Field name: {field_name}")
+        
+    def log_attribute_deleted(self, fid):
+        field_name = self.fields[fid]
+        self.fields.pop(fid)
+        self.logger.info(f"31 | {self.author} deleted attribute. Layer ID: {self.layer.id()}. Field name: {field_name}")
+        
+    def log_attribute_value_changed(self, fid, index, value):
+        field_name = self.fields[index]
+        self.logger.info(f"32 | {self.author} changed attribute. Layer ID: {self.layer.id()}. Feature ID: {fid}. Field name: {field_name}. Field content: {value}")
+        
+    def log_committed_attributes_added(self, lid, attributes):
+        self.logger.info(f"33 | Attributes added by {self.author} is committed. Layer ID: {lid}")
+        for attribute in attributes:
+            att_name = attribute.name()
+            att_index = self.layer.fields().indexFromName(att_name)
+            att_type = attribute.displayType()
+            self.logger.info(f"33 | Committed added attribute. Layer ID: {lid}. New field: {att_name}. Field type: {att_type}")
+            self.committed_fields.insert(att_index, att_name)
+            
+    def log_committed_attributes_deleted(self, lid, attributes):
+        self.logger.info(f"34 | Attributes deleted by {self.author} is committed. Layer ID: {lid}")
+        for attribute in attributes:
+            att_name = self.committed_fields[attribute]
+            self.logger.info(f"33 | Committed added attribute. Layer ID: {lid}. Remove field: {att_name}")
+            self.committed_fields.pop(attribute)
+    
+    def log_committed_attribute_values_changes(self, lid, attributes):
+        self.logger.info(f"35 | Attributes changes by {self.author} is committed. Layer ID: {lid}")
+        for fid, values in attributes.items():
+            for cid, value in values.items():
+                field_name = self.fields[cid]
+                self.logger.info(f"35 | Committed changed attribute. Layer ID: {self.layer.id()}. Feature ID: {fid}. Field name: {field_name}. Field content: {value}")
