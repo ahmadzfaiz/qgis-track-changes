@@ -64,10 +64,16 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
         # Connect button click events
         self.ui.pbActivate.clicked.connect(self.activate_signals)
         self.ui.pbDeactivate.clicked.connect(self.deactivate_signals)
+        self.ui.pbRefreshLayers.clicked.connect(self.populate_vector_layers)
 
     def logger_setup(self):
         if self.logger.hasHandlers():
-            self.logger.handlers.clear()
+            for handler in self.logger.handlers:
+                if isinstance(handler, logging.FileHandler):
+                    handler.close()
+            self.logger.handlers.clear() 
+        
+        # Set up new file handler
         file_handler = logging.FileHandler(self.log_file, mode="a")
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
         file_handler.setFormatter(formatter)
@@ -119,8 +125,11 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
                 self.ui.pbActivate.setEnabled(True)
 
             # Add field after file is selected
-            self.fields = [field.name() for field in self.layer.fields()]
-            self.committed_fields = [field.name() for field in self.layer.fields()]
+            try:
+                self.fields = [field.name() for field in self.layer.fields()]
+                self.committed_fields = [field.name() for field in self.layer.fields()]
+            except:
+                pass
 
     def activate_signals(self):
         """Safely connect logger signals"""

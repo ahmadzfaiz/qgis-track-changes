@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>451</width>
-    <height>310</height>
+    <width>471</width>
+    <height>318</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QPushButton" name="pbActivate">
          <property name="text">
@@ -53,6 +53,13 @@
         <widget class="QPushButton" name="pbDeactivate">
          <property name="text">
           <string>Deactivate</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pbRefreshLayers">
+         <property name="text">
+          <string>Refresh Layers</string>
          </property>
         </widget>
        </item>
@@ -85,7 +92,7 @@
       </spacer>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
