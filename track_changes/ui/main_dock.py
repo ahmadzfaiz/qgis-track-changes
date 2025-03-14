@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'track_changes/ui/main_dialog.ui'
+# Form implementation generated from reading ui file 'track_changes/ui/main_dock.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -14,35 +14,37 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SetupTrackingChanges(object):
     def setupUi(self, SetupTrackingChanges):
         SetupTrackingChanges.setObjectName("SetupTrackingChanges")
-        SetupTrackingChanges.resize(471, 318)
-        self.gridLayout = QtWidgets.QGridLayout(SetupTrackingChanges)
+        SetupTrackingChanges.resize(498, 404)
+        self.dockWidgetContents = QtWidgets.QWidget()
+        self.dockWidgetContents.setObjectName("dockWidgetContents")
+        self.gridLayout = QtWidgets.QGridLayout(self.dockWidgetContents)
         self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        self.label = QtWidgets.QLabel(SetupTrackingChanges)
+        self.label = QtWidgets.QLabel(self.dockWidgetContents)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.mQgsLogFile = gui.QgsFileWidget(SetupTrackingChanges)
+        self.mQgsLogFile = gui.QgsFileWidget(self.dockWidgetContents)
         self.mQgsLogFile.setObjectName("mQgsLogFile")
         self.verticalLayout.addWidget(self.mQgsLogFile)
-        self.label_2 = QtWidgets.QLabel(SetupTrackingChanges)
+        self.label_2 = QtWidgets.QLabel(self.dockWidgetContents)
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.cbVectorLayers = QtWidgets.QComboBox(SetupTrackingChanges)
+        self.cbVectorLayers = QtWidgets.QComboBox(self.dockWidgetContents)
         self.cbVectorLayers.setObjectName("cbVectorLayers")
         self.horizontalLayout_3.addWidget(self.cbVectorLayers)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.pbActivate = QtWidgets.QPushButton(SetupTrackingChanges)
+        self.pbActivate = QtWidgets.QPushButton(self.dockWidgetContents)
         self.pbActivate.setObjectName("pbActivate")
         self.horizontalLayout.addWidget(self.pbActivate)
-        self.pbDeactivate = QtWidgets.QPushButton(SetupTrackingChanges)
+        self.pbDeactivate = QtWidgets.QPushButton(self.dockWidgetContents)
         self.pbDeactivate.setObjectName("pbDeactivate")
         self.horizontalLayout.addWidget(self.pbDeactivate)
-        self.pbRefreshLayers = QtWidgets.QPushButton(SetupTrackingChanges)
+        self.pbRefreshLayers = QtWidgets.QPushButton(self.dockWidgetContents)
         self.pbRefreshLayers.setObjectName("pbRefreshLayers")
         self.horizontalLayout.addWidget(self.pbRefreshLayers)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -52,24 +54,16 @@ class Ui_SetupTrackingChanges(object):
         self.verticalLayout.addItem(spacerItem1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem2)
-        self.buttonBox = QtWidgets.QDialogButtonBox(SetupTrackingChanges)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
-        self.horizontalLayout_2.addWidget(self.buttonBox)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
+        SetupTrackingChanges.setWidget(self.dockWidgetContents)
 
         self.retranslateUi(SetupTrackingChanges)
-        self.buttonBox.accepted.connect(SetupTrackingChanges.accept)
-        self.buttonBox.rejected.connect(SetupTrackingChanges.reject)
         QtCore.QMetaObject.connectSlotsByName(SetupTrackingChanges)
 
     def retranslateUi(self, SetupTrackingChanges):
         _translate = QtCore.QCoreApplication.translate
-        SetupTrackingChanges.setWindowTitle(_translate("SetupTrackingChanges", "Setup Tracking Changes"))
+        SetupTrackingChanges.setWindowTitle(_translate("SetupTrackingChanges", "Setup tracking changes"))
         self.label.setText(_translate("SetupTrackingChanges", "Log file destination"))
         self.label_2.setText(_translate("SetupTrackingChanges", "Start/stop tracking changes"))
         self.pbActivate.setText(_translate("SetupTrackingChanges", "Activate"))

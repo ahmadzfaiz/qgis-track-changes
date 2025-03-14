@@ -1,13 +1,12 @@
-import os
 import logging
-from PyQt5.QtWidgets import QDialog, QFileDialog
-from qgis.gui import QgsFileWidget
+from PyQt5.QtWidgets import QDockWidget
 from qgis.core import QgsMessageLog, Qgis, QgsProject
+from qgis.gui import QgsFileWidget
 
-from ..ui.main_dialog import Ui_SetupTrackingChanges
+from ..ui.main_dock import Ui_SetupTrackingChanges
 
 
-class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
+class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
     """
     Log codes
     00 = activate layer track change
@@ -33,11 +32,9 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
     """
     def __init__(self):
         super().__init__()
-        # UI setup
+        # Setup UI
         self.ui = Ui_SetupTrackingChanges()
         self.ui.setupUi(self)
-        self.ui.mQgsLogFile.setStorageMode(QgsFileWidget.SaveFile)
-        self.ui.mQgsLogFile.fileChanged.connect(self.on_file_selected)
 
         # Logger info setup
         self.logger = logging.getLogger(__name__)
@@ -52,14 +49,18 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
         self.layer = None
         self.layer_name = None
 
+        # Setup log file to be saved
+        self.ui.mQgsLogFile.setStorageMode(QgsFileWidget.SaveFile)
+        self.ui.mQgsLogFile.fileChanged.connect(self.on_file_selected)
+
         # Populate the combo box with vector layers
         self.populate_vector_layers()
         self.ui.cbVectorLayers.currentIndexChanged.connect(self.on_layer_selected)
 
         # Initially disable buttons
+        self.ui.cbVectorLayers.setEnabled(False)
         self.ui.pbActivate.setEnabled(False)
         self.ui.pbDeactivate.setEnabled(False)
-        self.ui.cbVectorLayers.setEnabled(False)
 
         # Connect button click events
         self.ui.pbActivate.clicked.connect(self.activate_signals)

@@ -1,6 +1,7 @@
+from PyQt5.QtCore import Qt
 from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtGui import QIcon
-from .setup_dialog import FeatureLogger
+from .setup_widget import FeatureLogger
 import os
 
 class TrackChangesPlugin:
@@ -31,7 +32,11 @@ class TrackChangesPlugin:
         """Open the UI dialog."""
         if self.dialog is None:
             self.dialog = FeatureLogger()
-        self.dialog.show()
+            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dialog)
+            return
+
+        # Toggle visibility
+        self.dialog.setVisible(not self.dialog.isVisible())
 
     def get_icon_path(self):
         """Return the absolute path to the plugin icon."""
