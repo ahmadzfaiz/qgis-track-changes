@@ -62,6 +62,10 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.ui.pbActivate.setEnabled(False)
         self.ui.pbDeactivate.setEnabled(False)
 
+        # Active layer label
+        self.ui.labelActive.setText("No active layer")
+        self.ui.labelActive.setWordWrap(True) 
+
         # Connect button click events
         self.ui.pbActivate.clicked.connect(self.activate_signals)
         self.ui.pbDeactivate.clicked.connect(self.deactivate_signals)
@@ -109,9 +113,10 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
     def on_layer_selected(self, index):
         """ Selecting layer to track the change """
-        if index >= 0:
-            self.layer_name = self.ui.cbVectorLayers.currentText()
+        if index >= 1:
+            select_layer = True
             self.layer = self.ui.cbVectorLayers.itemData(index)
+            self.layer_name = self.ui.cbVectorLayers.currentText()
             
             QgsMessageLog.logMessage(
                 f"Selected Layer: {self.layer_name}",
@@ -119,10 +124,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 level=Qgis.Info
             )
             
-            if (
-                not self.ui.pbActivate.isEnabled() 
-                and not self.ui.pbDeactivate.isEnabled()
-            ):
+            if select_layer:
                 self.ui.pbActivate.setEnabled(True)
 
             # Add field after file is selected
@@ -134,6 +136,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
     def activate_signals(self):
         """Safely connect logger signals"""
+        self.ui.labelActive.setText(self.layer.name())
         if self.connected:
             return
         
@@ -164,6 +167,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
     def deactivate_signals(self):
         """Safely disconnect logger signal"""
+        self.ui.labelActive.setText("No active layer")
         # Track logging code 01
         self.logger.info(f"01 | {self.author} deactivated the track changes of layer \"{self.layer.id()}\" using QGIS version {self.app_version}")
         try:
