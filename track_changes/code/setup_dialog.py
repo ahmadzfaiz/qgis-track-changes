@@ -114,6 +114,12 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
             # 1
             self.layer.editingStarted.connect(self.log_editing_started)
             self.layer.editingStopped.connect(self.log_editing_stopped)
+            # 2
+            self.layer.selectionChanged.connect(self.log_selection_changed)
+            self.layer.featureAdded.connect(self.log_feature_added)
+            self.layer.featureDeleted.connect(self.log_feature_deleted)
+            self.layer.geometryChanged.connect(self.log_geometry_changed)
+            self.layer.committedGeometriesChanges.connect(self.log_commited_geometries_changes)
             self.connected = True
             # Activate deactivate
             self.ui.pbActivate.setEnabled(False)
@@ -128,6 +134,12 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
             # 1
             self.layer.editingStarted.disconnect(self.log_editing_started)
             self.layer.editingStopped.disconnect(self.log_editing_stopped)
+            # 2
+            self.layer.selectionChanged.disconnect(self.log_selection_changed)
+            self.layer.featureAdded.disconnect(self.log_feature_added)
+            self.layer.featureDeleted.disconnect(self.log_feature_deleted)
+            self.layer.geometryChanged.disconnect(self.log_geometry_changed)
+            self.layer.committedGeometriesChanges.disconnect(self.log_commited_geometries_changes)
         except TypeError:
             pass
         self.connected = False
@@ -141,4 +153,35 @@ class FeatureLogger(QDialog, Ui_SetupTrackingChanges):
 
     def log_editing_stopped(self):
         self.logger.info(f"11 | {self.author} stopped editing of layer \"{self.layer.id()}\"")
+
+    def log_selection_changed(self):
+        for feature in self.layer.selectedFeatures():
+            fid = feature.id()
+            feature = self.layer.getFeature(fid)
+            properties = {}
+            attributes = feature.attributes()
+            for idx, field in enumerate(self.layer.fields()):
+                properties[field.name()] = attributes[idx]
+            properties["geometry"] = feature.geometry().asWkt()
+            self.logger.info(f"20 | {self.author} selecting feature. Layer ID: {self.layer.id()}. Feature ID: {fid}. Properties: {properties}")
+
+    def log_feature_added(self, fid):
+        feature = self.layer.getFeature(fid)
+        properties = {}
+        attributes = feature.attributes()
+        for idx, field in enumerate(self.layer.fields()):
+            properties[field.name()] = attributes[idx]
+        properties["geometry"] = feature.geometry().asWkt()
+        self.logger.info(f"21 | {self.author} added feature. Layer ID: {self.layer.id()}. Feature ID: {fid}. Properties: {properties}")
         
+    def log_feature_deleted(self, fid):
+        self.logger.info(f"22 | {self.author} deleted feature. Layer ID: {self.layer.id()}. Feature ID: {fid}")
+
+    def log_geometry_changed(self, fid, geometry):
+        new_geometry = geometry.asWkt()
+        self.logger.info(f"23 | {self.author} changed geometry. Layer ID: {self.layer.id()}. Feature ID: {fid}. New geometry: {new_geometry}")
+        
+    def log_commited_geometries_changes(self, lid, geometries):
+        self.logger.info(f"26 | Geometries changes by {self.author} is committed. Layer ID: {lid}")
+        for fid, geometry in geometries.items():
+            self.logger.info(f"26 | Committed changed geometry. Layer ID: {self.layer.id()}. Feature ID: {fid}. New geometry: {geometry.asWkt()}")
