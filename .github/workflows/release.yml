@@ -1,7 +1,13 @@
+name: Release
+
 on:
   push:
-    branches:
-      - docs/write-read-me-in-details
+    branches-ignore:
+      - main
+
+permissions:
+  contents: write
+  issues: write
 
 jobs:
   release:
