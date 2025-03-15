@@ -34,9 +34,11 @@ jobs:
           # If commit is NOT from a merge PR, revert the push
           if [[ ! "$COMMIT_MSG" =~ "Merge pull request" ]]; then
             echo "❌ Direct push detected! Reverting last commit..."
-      
-            git revert -n HEAD 
-            git commit -m "chore: Undo direct push to main"
+
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+            git revert --no-edit HEAD
             git push origin main
       
             echo "✅ Last commit has been reverted."
