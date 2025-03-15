@@ -20,24 +20,25 @@ jobs:
         run: | 
           echo "GitHub Actor: ${{ github.actor }}"
 
-      - name: Check if push is direct
+      - name: Prevent Direct Push & Revert Changes
         run: |
           # Allow semantic-release-bot
           if [ "${{ github.actor }}" == "semantic-release-bot" ]; then
             echo "✅ Push from semantic-release-bot, skipping check."
             exit 0
           fi
-
+      
           # Get commit message of the latest push
           COMMIT_MSG=$(git log --format=%B -n 1 ${{ github.sha }})
-
+      
           # If commit is NOT from a merge PR, revert the push
           if [[ ! "$COMMIT_MSG" =~ "Merge pull request" ]]; then
             echo "❌ Direct push detected! Reverting last commit..."
-            
-            git reset --hard HEAD~1
-            git push origin main --force
-
-            echo "✅ Last commit has been undone."
+      
+            git revert -n HEAD 
+            git commit -m "chore: Undo direct push to main"
+            git push origin main
+      
+            echo "✅ Last commit has been reverted."
             exit 1
           fi
