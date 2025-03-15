@@ -14,7 +14,13 @@
 - Prevent semantic versioning action in main
   ([`8761e3a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8761e3aaaad39899486cab26f4f75ee82d24db6d))
 
+- **release**: Fix pyproject.toml to allow stable release in main
+  ([`ee941e3`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ee941e397944f02e433b4d47791d815bc129da61))
+
 ### Chores
+
+- Update changelog
+  ([`5f4eb15`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5f4eb1546a92584524fe931c92e6d3af58ce24f2))
 
 - Update changelog
   ([`4a6bafb`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/4a6bafbe004bb573c669833489a30c3e0b1fed7d))
