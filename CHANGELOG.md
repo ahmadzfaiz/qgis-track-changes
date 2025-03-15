@@ -20,6 +20,9 @@
 - Dynamic in yaml
   ([`96ec237`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/96ec2375bd655bcafda42db73ca747188d6b121e))
 
+- Dynamic toml
+  ([`ba8736e`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ba8736e5987b5044dc1eaae82cbbfc31409e4a65))
+
 - Hei
   ([`6e32ca6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6e32ca62aa16ecf4be3756396675201c7b887a8e))
 
@@ -51,6 +54,9 @@
   ([`5b903db`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5b903db50753bc013be8d3126a546472c8c0d963))
 
 ### Chores
+
+- Update changelog
+  ([`8a826a7`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8a826a7517dc9b4d8600bba3934eb54865e531e8))
 
 - Update changelog
   ([`bf96b57`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bf96b573aac6d80dfe2832100eec506513969c18))
