@@ -29,10 +29,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-semantic-release
 
+      - name: Set Semantic Release Branch
+        run: echo "SEMANTIC_RELEASE_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+      
       - name: Generate Changelog
-        run: |
-          export SEMANTIC_RELEASE_BRANCH="docs/write-read-me-in-details"
-          semantic-release changelog
+        run: semantic-release changelog
+        env:
+          SEMANTIC_RELEASE_BRANCH: ${{ env.SEMANTIC_RELEASE_BRANCH }}
 
       - name: Commit and Push Changelog
         env:
