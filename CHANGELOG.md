@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## Unreleased
+## v0.3.0 (2025-03-15)
 
 ### Bug Fixes
 
@@ -17,7 +17,13 @@
 - **release**: Fix pyproject.toml to allow stable release in main
   ([`ee941e3`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ee941e397944f02e433b4d47791d815bc129da61))
 
+- **release**: Only allow Semantic Release Bot to commit
+  ([`c685689`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/c6856894ae1de92ddac335d9094f9cc9894efcbb))
+
 ### Chores
+
+- Update changelog
+  ([`d088eb0`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/d088eb00c5d64443c73ea4455ee75b9b0b7d5ede))
 
 - Update changelog
   ([`371639f`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/371639f3737537708303ae04d2e320c999d86364))
