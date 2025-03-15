@@ -26,7 +26,7 @@ jobs:
           pip install python-semantic-release
 
       - name: Generate Changelog
-        run: semantic-release changelog --branch ${{ github.ref_name }}
+        run: semantic-release changelog
 
       - name: Commit and Push Changelog
         run: |
