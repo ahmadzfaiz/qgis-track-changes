@@ -3,12 +3,12 @@ commit_parser = "conventional"
 version_source = "commit"
 changelog_file = "CHANGELOG.md"
 
-# Configuration for main branch
+# Configuration for main branch (stable releases)
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = false
 
-# Configuration for all other branches
-[tool.semantic_release.branches.default]
-match = ".*"
-prerelease = true 
+# Configuration for all other branches (prereleases)
+[tool.semantic_release.branches."(?!main$).*"]
+match = "(?!main$).*"
+prerelease = true
