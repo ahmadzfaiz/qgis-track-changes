@@ -1,9 +1,8 @@
 [tool.semantic_release]
 commit_parser = "conventional"
 version_source = "commit"
-branch = "docs/write-read-me-in-details"
 changelog_file = "CHANGELOG.md"
 
-[tool.semantic_release.branches."docs/write-read-me-in-details"]
-match = "docs/write-read-me-in-details"
+[tool.semantic_release.branches."(?!main$).*"]
+match = "(?!main$).*"
 prerelease = true
