@@ -16,19 +16,27 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Debug Actor Name
+        run: | 
+          echo "GitHub Actor: ${{ github.actor }}"
+
       - name: Check if push is direct
         run: |
-          # Get the commit message of the latest push
-          COMMIT_MSG=$(git log --format=%B -n 1 ${{ github.sha }})
-
           # Allow semantic-release-bot
           if [ "${{ github.actor }}" == "semantic-release-bot" ]; then
             echo "✅ Push from semantic-release-bot, skipping check."
             exit 0
           fi
 
-          # If not from semantic-release-bot and not a merge, block the push
+          # Get commit message of the latest push
+          COMMIT_MSG=$(git log --format=%B -n 1 ${{ github.sha }})
+
+          # If commit is NOT from a merge PR, revert the push
           if [[ ! "$COMMIT_MSG" =~ "Merge pull request" ]]; then
-            echo "❌ Direct push to main is not allowed! Please use a pull request."
-            exit 1
-          fi
+            echo "❌ Direct push detected! Reverting last commit..."
+            
+            git reset --hard HEAD~1
+            git push origin main --force
+
+            echo "✅ Last commit has been undone."
+            exit 1  # Fail the job to indicate the push was reverted
