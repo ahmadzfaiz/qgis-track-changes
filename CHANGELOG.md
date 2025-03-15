@@ -17,6 +17,9 @@
 ### Chores
 
 - Update changelog
+  ([`5f4eb15`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5f4eb1546a92584524fe931c92e6d3af58ce24f2))
+
+- Update changelog
   ([`4a6bafb`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/4a6bafbe004bb573c669833489a30c3e0b1fed7d))
 
 ### Continuous Integration
