@@ -1,5 +1,4 @@
 [tool.semantic_release]
 version_source = "commit"
-branch = "^(?!main$).*$"
 changelog_file = "CHANGELOG.md"
 commit_parser = "conventional"
