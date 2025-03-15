@@ -39,4 +39,5 @@ jobs:
             git push origin main --force
 
             echo "✅ Last commit has been undone."
-            exit 1  # Fail the job to indicate the push was reverted
+            exit 1
+          fi
