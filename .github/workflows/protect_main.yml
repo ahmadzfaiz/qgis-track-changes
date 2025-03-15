@@ -11,18 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository (required for git log)
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Check if push is direct (not from a merge or GitHub Actions)
+      - name: Check if push is direct
         run: |
           # Get the commit message of the latest push
           COMMIT_MSG=$(git log --format=%B -n 1 ${{ github.sha }})
 
-          # If not a bot and not a merge, block the push
-          if [ "${{ github.actor }}" != "github-actions[bot]" ] && [[ ! "$COMMIT_MSG" =~ "Merge pull request" ]]; then
+          # Allow semantic-release-bot
+          if [ "${{ github.actor }}" == "semantic-release-bot" ]; then
+            echo "✅ Push from semantic-release-bot, skipping check."
+            exit 0
+          fi
+
+          # If not from semantic-release-bot and not a merge, block the push
+          if [[ ! "$COMMIT_MSG" =~ "Merge pull request" ]]; then
             echo "❌ Direct push to main is not allowed! Please use a pull request."
             exit 1
           fi

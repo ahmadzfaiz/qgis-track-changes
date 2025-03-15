@@ -28,21 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-semantic-release
 
-      - name: Generate Changelog
-        run: semantic-release changelog
-
-      - name: Commit and Push Changelog
+      - name: Run Semantic Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          if git diff --exit-code CHANGELOG.md >/dev/null; then
-            echo "No changes in changelog, skipping commit."
-            exit 0
-          fi
-
-          git add CHANGELOG.md
-          git commit -m "chore: update changelog"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release version
