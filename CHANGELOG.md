@@ -53,7 +53,13 @@
 - This should works
   ([`5b903db`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5b903db50753bc013be8d3126a546472c8c0d963))
 
+- X
+  ([`558d74a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/558d74a44f9e30c7af8315393f75ffc08e503cf3))
+
 ### Chores
+
+- Update changelog
+  ([`b58faa2`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b58faa29184b391eed974fe112144086566be9bd))
 
 - Update changelog
   ([`8a826a7`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8a826a7517dc9b4d8600bba3934eb54865e531e8))
