@@ -1,9 +1,8 @@
 {
   "branches": [
-    "main",
     {
-      "name": "changelog",
-      "prerelease": false
+      "name": "/^(?!main$).*$/",
+      "prerelease": true
     }
   ],
   "version_variable": "track_changes/__init__.py:__version__",
