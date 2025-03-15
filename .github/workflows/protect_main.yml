@@ -1,14 +1,26 @@
 name: Prevent Direct Push to Main
-on: push
+
+on:
+  push:
+    branches: ["main"]
+
 jobs:
   prevent-direct-push:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check if push is direct
+      - name: Checkout repository (required for git log)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if push is direct (not from a merge or GitHub Actions)
         run: |
-          if [ "${{ github.event_name }}" = "push" ] && 
-             [ "${{ github.ref }}" = "refs/heads/main" ] && 
-             [ -z "${{ github.event.pusher.name }}" ]; then
-            echo "❌ Direct push to main is not allowed!"
+          # Get the commit message of the latest push
+          COMMIT_MSG=$(git log --format=%B -n 1 ${{ github.sha }})
+
+          # If not a bot and not a merge, block the push
+          if [ "${{ github.actor }}" != "github-actions[bot]" ] && [[ ! "$COMMIT_MSG" =~ "Merge pull request" ]]; then
+            echo "❌ Direct push to main is not allowed! Please use a pull request."
             exit 1
           fi
