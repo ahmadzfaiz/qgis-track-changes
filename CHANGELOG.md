@@ -14,7 +14,15 @@
 - Prevent semantic versioning action in main
   ([`8761e3a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8761e3aaaad39899486cab26f4f75ee82d24db6d))
 
+### Chores
+
+- Update changelog
+  ([`4a6bafb`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/4a6bafbe004bb573c669833489a30c3e0b1fed7d))
+
 ### Continuous Integration
+
+- **release**: Add workflow dispatch
+  ([`5841b41`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5841b4115e5a12eab0055a30ad9516284e761c42))
 
 - **release**: Generate changelog on commit
   ([#6](https://github.com/ahmadzfaiz/qgis-track-changes/pull/6),
