@@ -2,8 +2,6 @@ name: Release
 
 on:
   push:
-    branches-ignore:
-      - main
 
 permissions:
   contents: write
@@ -29,13 +27,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-semantic-release
 
-      - name: Set Semantic Release Branch
-        run: echo "SEMANTIC_RELEASE_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-      
       - name: Generate Changelog
         run: semantic-release changelog
-        env:
-          SEMANTIC_RELEASE_BRANCH: ${{ env.SEMANTIC_RELEASE_BRANCH }}
 
       - name: Commit and Push Changelog
         env:
@@ -51,6 +44,4 @@ jobs:
 
           git add CHANGELOG.md
           git commit -m "chore: update changelog"
-
-          # Use GitHub token for authentication
           git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:${{ github.ref_name }}
