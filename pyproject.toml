@@ -1,5 +1,5 @@
-[tool.semantic_release]
+[tool.semantic_release.branches."*"]
 version_source = "commit"
-branch = "!main"
+branch = "^(?!main$).*$"
 changelog_file = "CHANGELOG.md"
-commit_parser = "angular"
+commit_parser = "conventional"
