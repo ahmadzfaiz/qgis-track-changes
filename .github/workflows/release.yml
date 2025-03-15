@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    branches:
-      - '**'
+    branches-ignore:
+      - main
 
 permissions:
   contents: write
@@ -11,7 +11,6 @@ permissions:
 
 jobs:
   release:
-    if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
