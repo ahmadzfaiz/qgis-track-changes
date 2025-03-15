@@ -1,0 +1,12 @@
+name: Prevent Direct Push to Main
+on: push
+jobs:
+  prevent-direct-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if push is direct
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "❌ Direct push to main is not allowed!"
+            exit 1
+          fi
