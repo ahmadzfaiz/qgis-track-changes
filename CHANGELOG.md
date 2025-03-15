@@ -20,6 +20,12 @@
 ### Chores
 
 - Update changelog
+  ([`371639f`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/371639f3737537708303ae04d2e320c999d86364))
+
+- Update changelog
+  ([`7703487`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7703487ab1514353a9c1bc76234a7efe632f5c8b))
+
+- Update changelog
   ([`5f4eb15`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5f4eb1546a92584524fe931c92e6d3af58ce24f2))
 
 - Update changelog
