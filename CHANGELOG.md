@@ -17,6 +17,9 @@
 - Direct push is blocked but merge PR is allowed
   ([`a3100f4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a3100f47eb528337ddc4271d39cb8098c27982df))
 
+- Dynamic in yaml
+  ([`96ec237`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/96ec2375bd655bcafda42db73ca747188d6b121e))
+
 - Hei
   ([`6e32ca6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6e32ca62aa16ecf4be3756396675201c7b887a8e))
 
@@ -46,6 +49,11 @@
 
 - This should works
   ([`5b903db`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5b903db50753bc013be8d3126a546472c8c0d963))
+
+### Chores
+
+- Update changelog
+  ([`bf96b57`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bf96b573aac6d80dfe2832100eec506513969c18))
 
 ### Continuous Integration
 
