@@ -1,6 +1,34 @@
 # CHANGELOG
 
 
+## Unreleased
+
+### Bug Fixes
+
+- Direct push is blocked but merge PR is allowed
+  ([`a3100f4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a3100f47eb528337ddc4271d39cb8098c27982df))
+
+- Only trigger changelog version in working branch
+  ([`b1f8310`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b1f831009d047400a90634a75dc2881c96440fc3))
+
+- Prevent semantic versioning action in main
+  ([`8761e3a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8761e3aaaad39899486cab26f4f75ee82d24db6d))
+
+### Continuous Integration
+
+- **release**: Generate changelog on commit
+  ([#6](https://github.com/ahmadzfaiz/qgis-track-changes/pull/6),
+  [`70357cc`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/70357cc8caecd0b08093a138d30e07b6879a3ccc))
+
+### Features
+
+- Changelogs only written in changelog branch
+  ([`83949be`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/83949bee0de49359eb595d8bd4000964f144258a))
+
+- Prevent direct push into main
+  ([`468ae2f`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/468ae2f352f4b358e78a71034f10ec022374f4bc))
+
+
 ## v0.2.0 (2025-03-15)
 
 ### Features
