@@ -1,7 +1,12 @@
 # CHANGELOG
 
 
-## v0.3.1-rc.2 (2025-03-16)
+## v0.3.2-rc.1 (2025-03-16)
+
+### Bug Fixes
+
+- **release**: Fix the CI/CD about rc tag version is not changed after release
+  ([`0860aa9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0860aa942b0dfc88f10a41451b3b1059e42a95d8))
 
 ### Continuous Integration
 
@@ -11,9 +16,6 @@
 
 
 ## v0.3.1 (2025-03-16)
-
-
-## v0.3.1-rc.1 (2025-03-16)
 
 ### Bug Fixes
 
