@@ -1,6 +1,64 @@
 # CHANGELOG
 
 
+## v0.3.1-rc.1 (2025-03-16)
+
+### Bug Fixes
+
+- **logger**: Fix mistype message from "added" to "deleted"
+  ([#18](https://github.com/ahmadzfaiz/qgis-track-changes/pull/18),
+  [`9d3e6e8`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/9d3e6e88bba88b98627bf2297d44317800ae28b9))
+
+### Chores
+
+- Github action bot will revert the changes if it pushes directly to main
+  ([`662ab11`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/662ab1154ddb9df81b12312f6f1d2af990c5217b))
+
+- Remove hello.txt
+  ([`60b35ff`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/60b35ffc8101d4cd864dc274552ced4fe8be88e4))
+
+- Test push directly to main
+  ([`6b421a7`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6b421a7fe91a361233582450de05b7083fefa113))
+
+- Test upload hello.txt directly to main
+  ([`7908e47`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7908e47d7bac0168e6d536ac418d85f7316a97a2))
+
+- Update permission to write and commit revert
+  ([`d7c5ef5`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/d7c5ef59457f225b15b8bd813c289780e7bc09dd))
+
+- **makefile**: Create makefile command to prevent direct push to main
+  ([#6](https://github.com/ahmadzfaiz/qgis-track-changes/pull/6),
+  [`fb7abf4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/fb7abf42ee799b477c79235dc60ba8a8c62c3d48))
+
+- **test**: Test upload directly to main
+  ([`cb37082`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/cb37082b50bdf70200d19ceafa995cd8684eae72))
+
+### Continuous Integration
+
+- **release**: Fix unclosed ci/cd for release
+  ([`5bbcabc`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5bbcabc044e2d9d43147754dde20375f90a59a28))
+
+- **release**: Revert direct commit to main
+  ([`ba59bd0`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ba59bd0aed795b7fc7ea53006df9128d2088f0ed))
+
+- **release**: Revert the change if push directly to main
+  ([`1f0bd31`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/1f0bd3142347309fe78ee1b5bcdbcc47f7c89080))
+
+### Documentation
+
+- **readme**: Add section of tracking changes code and contributor guides
+  ([#5](https://github.com/ahmadzfaiz/qgis-track-changes/pull/5),
+  [`b9d971d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b9d971db879044ed6f169f7ec68c455f8d202876))
+
+- **readthedocs**: Add read the docs configuration
+  ([#15](https://github.com/ahmadzfaiz/qgis-track-changes/pull/15),
+  [`05e99e3`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/05e99e39f1f159cafb78f3da0b5dd808fa3cdf71))
+
+- **readthedocs**: Define readthedocs configuration
+  ([#15](https://github.com/ahmadzfaiz/qgis-track-changes/pull/15),
+  [`bfccdaf`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bfccdaf8700fc7c4f8b67973ec5267d1bdf92d5b))
+
+
 ## v0.3.0 (2025-03-15)
 
 ### Bug Fixes

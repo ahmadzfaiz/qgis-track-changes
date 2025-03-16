@@ -7,29 +7,7 @@ from ..ui.main_dock import Ui_SetupTrackingChanges
 
 
 class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
-    """
-    Log codes
-    00 = activate layer track change
-    01 = deactivate layer track change
-
-    10 = start editing
-    11 = stop editing
-
-    20 = features selection
-    21 = feature add
-    22 = feature delete
-    23 = feature geometry change
-    24 = feature add committed (reserved, no feature yet)
-    25 = feature delete committed (reserver, no feature yet)
-    26 = features geometry change committed
-
-    30 = attribute add
-    31 = attribute delete
-    32 = attribute value change
-    33 = attribute add committed
-    34 = attribute delete committed
-    35 = attribute values change committed
-    """
+    """Feature to log vector data changes"""
     def __init__(self):
         super().__init__()
         # Setup UI
@@ -260,7 +238,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.logger.info(f"34 | Attributes deleted by {self.author} is committed. Layer ID: {lid}")
         for attribute in attributes:
             att_name = self.committed_fields[attribute]
-            self.logger.info(f"33 | Committed added attribute. Layer ID: {lid}. Remove field: {att_name}")
+            self.logger.info(f"33 | Committed deleted attribute. Layer ID: {lid}. Remove field: {att_name}")
             self.committed_fields.pop(attribute)
     
     def log_committed_attribute_values_changes(self, lid, attributes):
