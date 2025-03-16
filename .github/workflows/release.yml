@@ -53,8 +53,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          CURRENT_VERSION=$(git describe --tags --abbrev=0)
-          RC_TAGS=$(git tag | grep "${CURRENT_VERSION}-rc" || true)
+          LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
+          RC_TAGS=$(git tag | grep "${LATEST_TAG}-rc" || true)
 
           if [ -n "$RC_TAGS" ]; then
             echo "Deleting old release candidate tags: $RC_TAGS"
