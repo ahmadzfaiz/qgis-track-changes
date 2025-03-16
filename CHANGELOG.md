@@ -10,6 +10,9 @@
 
 ### Continuous Integration
 
+- **release**: Change the removal version into latest one
+  ([`fc530c6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/fc530c6244e3cac8d2c424daedf327033e247a03))
+
 - **release**: Fix release versioning by migrating release candidate tag to release tag
   ([#20](https://github.com/ahmadzfaiz/qgis-track-changes/pull/20),
   [`243f160`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/243f1605f98e80e90b21d29965650075cae49508))
