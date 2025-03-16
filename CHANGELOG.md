@@ -16,9 +16,15 @@
 - **release**: Change the removal version into latest one
   ([`fc530c6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/fc530c6244e3cac8d2c424daedf327033e247a03))
 
+- **release**: Cleaner ci/cd to manage release and changelog
+  ([`b48db28`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b48db28ca49504ce19da1bee25baadb84715afa4))
+
 - **release**: Fix release versioning by migrating release candidate tag to release tag
   ([#20](https://github.com/ahmadzfaiz/qgis-track-changes/pull/20),
   [`243f160`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/243f1605f98e80e90b21d29965650075cae49508))
+
+- **release**: Properly update rc tags into final release tag
+  ([`bfd556c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bfd556c80f4a10a266445237583cbd5f9b6e43b9))
 
 
 ## v0.3.1 (2025-03-16)

@@ -28,39 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-semantic-release
 
-      - name: Determine Release Type
-        id: release_type
-        run: |
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-          echo "Running on branch: $BRANCH_NAME"
-          
-          if [ "$BRANCH_NAME" == "main" ]; then
-            echo "IS_MAIN=true" >> $GITHUB_ENV
-          else
-            echo "IS_MAIN=false" >> $GITHUB_ENV
-          fi
-
       - name: Run Semantic Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release version
-
-      - name: Remove old release candidate tags
-        if: env.IS_MAIN == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          LATEST_VERSION=$(git tag --sort=-creatordate | head -n 1)  
-          RC_TAGS=$(git tag --list "${LATEST_VERSION%-rc.*}-rc.*")  
-
-          if [ -n "$RC_TAGS" ]; then  
-            echo "Deleting old RC tags: $RC_TAGS"  
-            for TAG in $RC_TAGS; do  
-              git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git --delete $TAG || true  
-            done  
-          else  
-            echo "No old RC tags found."  
-          fi  
