@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.3.1-rc.2 (2025-03-16)
+
+### Continuous Integration
+
+- **release**: Fix release versioning by migrating release candidate tag to release tag
+  ([#20](https://github.com/ahmadzfaiz/qgis-track-changes/pull/20),
+  [`243f160`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/243f1605f98e80e90b21d29965650075cae49508))
+
+
 ## v0.3.1 (2025-03-16)
 
 
