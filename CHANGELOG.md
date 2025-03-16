@@ -1,12 +1,20 @@
 # CHANGELOG
 
 
-## v0.3.2 (2025-03-16)
+## v0.4.0-rc.1 (2025-03-16)
 
-### Bug Fixes
+### Continuous Integration
 
-- **release**: Fix the CI/CD about rc tag version is not changed after release
-  ([`0860aa9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0860aa942b0dfc88f10a41451b3b1059e42a95d8))
+- **release**: Make publish when merge into main
+  ([`ac7aec1`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ac7aec171afed308d95bc4e92f0c0dd19e3aff58))
+
+### Features
+
+- **about**: Create about dialog
+  ([`a010dbe`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a010dbed64e676af3423fa199d5d23255a8ef811))
+
+
+## v0.3.2-rc.1 (2025-03-16)
 
 ### Continuous Integration
 
@@ -16,12 +24,22 @@
 - **release**: Cleaner ci/cd to manage release and changelog
   ([`b48db28`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b48db28ca49504ce19da1bee25baadb84715afa4))
 
+- **release**: Properly update rc tags into final release tag
+  ([`bfd556c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bfd556c80f4a10a266445237583cbd5f9b6e43b9))
+
+
+## v0.3.2 (2025-03-16)
+
+### Bug Fixes
+
+- **release**: Fix the CI/CD about rc tag version is not changed after release
+  ([`0860aa9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0860aa942b0dfc88f10a41451b3b1059e42a95d8))
+
+### Continuous Integration
+
 - **release**: Fix release versioning by migrating release candidate tag to release tag
   ([#20](https://github.com/ahmadzfaiz/qgis-track-changes/pull/20),
   [`243f160`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/243f1605f98e80e90b21d29965650075cae49508))
-
-- **release**: Properly update rc tags into final release tag
-  ([`bfd556c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bfd556c80f4a10a266445237583cbd5f9b6e43b9))
 
 
 ## v0.3.1 (2025-03-16)
