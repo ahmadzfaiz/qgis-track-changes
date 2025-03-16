@@ -53,13 +53,14 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
-          RC_TAGS=$(git tag | grep "${LATEST_TAG}-rc" || true)
+          LATEST_VERSION=$(git tag --sort=-creatordate | head -n 1)  
+          RC_TAGS=$(git tag --list "${LATEST_VERSION%-rc.*}-rc.*")  
 
-          if [ -n "$RC_TAGS" ]; then
-            echo "Deleting old release candidate tags: $RC_TAGS"
-            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git --delete $RC_TAGS || true
-          else
-            echo "No old RC tags found."
-          fi
-
+          if [ -n "$RC_TAGS" ]; then  
+            echo "Deleting old RC tags: $RC_TAGS"  
+            for TAG in $RC_TAGS; do  
+              git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git --delete $TAG || true  
+            done  
+          else  
+            echo "No old RC tags found."  
+          fi  
