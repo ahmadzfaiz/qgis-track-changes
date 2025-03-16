@@ -2,13 +2,13 @@
 name=QGIS Track Changes
 email=zaenun.faiz@gmail.com
 author=Ahmad Zaenun Faiz
-qgisMinimumVersion=3.0
-description=A plugin to track every change of data
-version=0.1
+qgisMinimumVersion=3.40
+description=A plugin to track every change of vector data
+version=0.4.0
 tracker=https://github.com/ahmadzfaiz/qgis-track-changes/issues
 repository=https://github.com/ahmadzfaiz/qgis-track-changes
 tags=vector,tracking,changes
-homepage=https://github.com/ahmadzfaiz/qgis-track-changes
+homepage=https://qgis-track-changes.readthedocs.io/en/latest/
 icon=icon.png
 experimental=True
 deprecated=False
