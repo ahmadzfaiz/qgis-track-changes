@@ -3,9 +3,6 @@
 
 ## v0.3.2 (2025-03-16)
 
-
-## v0.3.2-rc.1 (2025-03-16)
-
 ### Bug Fixes
 
 - **release**: Fix the CI/CD about rc tag version is not changed after release

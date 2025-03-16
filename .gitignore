@@ -178,3 +178,4 @@ cython_debug/
 .vscode/settings.json
 symbology-style.db
 user-history.db
+qgis-venv
