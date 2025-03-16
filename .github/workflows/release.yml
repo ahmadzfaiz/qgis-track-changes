@@ -28,7 +28,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-semantic-release
 
-      - name: Run Semantic Release
+      - name: Run Semantic Release Version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release version
+
+      - name: Run Semantic Release Publish
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release publish
