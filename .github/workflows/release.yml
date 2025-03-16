@@ -7,6 +7,7 @@ on:
 permissions:
   contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   release:
@@ -28,7 +29,50 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-semantic-release
 
-      - name: Run Semantic Release
+      - name: Determine Release Type
+        id: release_type
+        run: |
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          echo "Running on branch: $BRANCH_NAME"
+          
+          if [ "$BRANCH_NAME" == "main" ]; then
+            echo "IS_MAIN=true" >> $GITHUB_ENV
+          else
+            echo "IS_MAIN=false" >> $GITHUB_ENV
+          fi
+
+      - name: Run Semantic Release (Pre-release for feature branches)
+        if: env.IS_MAIN == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release version --prerelease
+
+      - name: Run Semantic Release (Stable Release for `main`)
+        if: env.IS_MAIN == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release version
+
+      - name: Auto-merge `rc` into `main` (if applicable)
+        if: env.IS_MAIN == 'true'
+        run: |
+          RC_BRANCH=$(git branch -r --list 'origin/*-rc.*' | tail -n 1 | sed 's|origin/||')
+          if [ -n "$RC_BRANCH" ]; then
+            echo "Merging $RC_BRANCH into main..."
+            git checkout main
+            git pull origin main
+            git merge --no-ff $RC_BRANCH -m "chore: merge $RC_BRANCH into main"
+            git push origin main
+          else
+            echo "No rc branch found, continuing..."
+          fi
+
+      - name: Delete old `rc` tags after stable release
+        if: env.IS_MAIN == 'true'
+        run: |
+          RC_TAGS=$(git tag --list '*-rc.*')
+          for tag in $RC_TAGS; do
+            echo "Deleting prerelease tag: $tag"
+            git tag -d $tag
+            git push origin --delete $tag || true
+          done
