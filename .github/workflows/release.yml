@@ -7,7 +7,6 @@ on:
 permissions:
   contents: write
   issues: write
-  pull-requests: write
 
 jobs:
   release:
@@ -41,38 +40,26 @@ jobs:
             echo "IS_MAIN=false" >> $GITHUB_ENV
           fi
 
-      - name: Run Semantic Release (Pre-release for feature branches)
-        if: env.IS_MAIN == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release version --prerelease
-
-      - name: Run Semantic Release (Stable Release for `main`)
-        if: env.IS_MAIN == 'true'
+      - name: Run Semantic Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release version
 
-      - name: Auto-merge `rc` into `main` (if applicable)
+      - name: Remove old release candidate tags
         if: env.IS_MAIN == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RC_BRANCH=$(git branch -r --list 'origin/*-rc.*' | tail -n 1 | sed 's|origin/||')
-          if [ -n "$RC_BRANCH" ]; then
-            echo "Merging $RC_BRANCH into main..."
-            git checkout main
-            git pull origin main
-            git merge --no-ff $RC_BRANCH -m "chore: merge $RC_BRANCH into main"
-            git push origin main
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          CURRENT_VERSION=$(git describe --tags --abbrev=0)
+          RC_TAGS=$(git tag | grep "${CURRENT_VERSION}-rc" || true)
+
+          if [ -n "$RC_TAGS" ]; then
+            echo "Deleting old release candidate tags: $RC_TAGS"
+            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git --delete $RC_TAGS || true
           else
-            echo "No rc branch found, continuing..."
+            echo "No old RC tags found."
           fi
 
-      - name: Delete old `rc` tags after stable release
-        if: env.IS_MAIN == 'true'
-        run: |
-          RC_TAGS=$(git tag --list '*-rc.*')
-          for tag in $RC_TAGS; do
-            echo "Deleting prerelease tag: $tag"
-            git tag -d $tag
-            git push origin --delete $tag || true
-          done
