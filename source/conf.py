@@ -13,7 +13,10 @@ author = 'Ahmad Zaenun Faiz'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = [
+  "sphinx.ext.autodoc",  # Enables autodoc for API documentation
+  "sphinx.ext.napoleon"  # Optional: Supports Google-style docstrings
+]
 
 templates_path = ['_templates']
 exclude_patterns = []
