@@ -5,10 +5,7 @@ This section documents the core API of QGIS Track Changes.
 
 Tracker Class
 -------------
-.. autoclass:: qgis_track_changes.Tracker
-   :members:
-   :undoc-members:
-   :show-inheritance:
+
 
 Main Functions
 --------------

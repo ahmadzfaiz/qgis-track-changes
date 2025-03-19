@@ -16,21 +16,18 @@ Installation Steps
    .. image:: _static/images/installation1.png
       :width: 400
       :alt: Open manage and install plugin
-   \ 
 
 2. Since this plugin still experimental, allow experimental
    
    .. image:: _static/images/installation2.png
       :width: 800
       :alt: Enable show experimental plugin
-   \ 
 
 3. Click "Install Experimental Plugin" button
 
    .. image:: _static/images/installation3.png
       :width: 800
       :alt: Install the plugin
-   \ 
 
 Next Steps
 ----------
