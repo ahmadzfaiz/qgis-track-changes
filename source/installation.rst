@@ -5,28 +5,29 @@ Follow these steps to install QGIS Track Changes.
 
 Prerequisites
 -------------
-Ensure you have the following installed:
-- Python 3.7+
-- QGIS
-- GDAL
-- Virtual environment (recommended)
+This plugin works on:
+   - *Minimum requirement*: QGIS 3.22+ 
+   - *Recommendation*: use QGIS 3.40+
 
 Installation Steps
 ------------------
-1. **Clone the repository**  
-   ```bash
-   git clone https://github.com/your-username/qgis-track-changes.git
-   cd qgis-track-changes
-   ```
+1. Open Plugin Installation Menu
 
-2. **Set up a virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # macOS/Linux
-   venv\Scripts\activate  # Windows
-   ```
+   .. image:: _static/images/installation1.png
+      :width: 400
+      :alt: Open manage and install plugin
+   \ 
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+2. Since this plugin still experimental, allow experimental
+   
+   .. image:: _static/images/installation2.png
+      :width: 800
+      :alt: Enable show experimental plugin
+   \ 
+
+3. Click "Install Experimental Plugin" button
+
+   .. image:: _static/images/installation3.png
+      :width: 800
+      :alt: Install the plugin
+   \ 

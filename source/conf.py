@@ -14,8 +14,8 @@ author = 'Ahmad Zaenun Faiz'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-  "sphinx.ext.autodoc",  # Enables autodoc for API documentation
-  "sphinx.ext.napoleon"  # Optional: Supports Google-style docstrings
+  "sphinx.ext.autodoc",
+  "sphinx.ext.napoleon"
 ]
 
 templates_path = ['_templates']
