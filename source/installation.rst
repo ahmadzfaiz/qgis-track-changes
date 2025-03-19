@@ -31,3 +31,8 @@ Installation Steps
       :width: 800
       :alt: Install the plugin
    \ 
+
+Next Steps
+----------
+- Learn how to use it: :doc:`usage`
+- Check the API reference: :doc:`api`
