@@ -32,8 +32,10 @@ class TrackChangesPlugin:
     def unload(self):
         """Remove the menu action and toolbar button."""
         self.iface.removePluginMenu("&Track Changes", self.action)
+        self.iface.removePluginMenu("&Track Changes", self.about_action)
         self.iface.removeToolBarIcon(self.action)
         self.action = None
+        self.about_action = None
 
     def run(self):
         """Open the UI dialog."""
