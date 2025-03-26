@@ -1,7 +1,52 @@
 # CHANGELOG
 
 
+## v0.4.1-rc.1 (2025-03-26)
+
+### Bug Fixes
+
+- **about**: Remove duplicate sub-menu About on reinstalling
+  ([#31](https://github.com/ahmadzfaiz/qgis-track-changes/pull/31),
+  [`eafd0c6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/eafd0c65bf2cc223c633ac16d4bda414e24ea194))
+
+### Build System
+
+- **plugin**: Create build function to ship zipfile into QGIS Plugin Web
+  ([`80eedf8`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/80eedf87d1ae1ef7b0c2a8d0f0b4de6652510c06))
+
+### Documentation
+
+- **api**: Add api documentation ([#29](https://github.com/ahmadzfaiz/qgis-track-changes/pull/29),
+  [`e9c9e2f`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/e9c9e2f97beff8708430f8d426a5e9b5b8019100))
+
+- **contributing**: Reserve contributing page for future
+  ([#29](https://github.com/ahmadzfaiz/qgis-track-changes/pull/29),
+  [`d15f80a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/d15f80a8be92cba99a5f75943af8ed60199d81ad))
+
+- **faq**: Add proper faq about the plugin
+  ([#29](https://github.com/ahmadzfaiz/qgis-track-changes/pull/29),
+  [`06ddbb2`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/06ddbb2268bc12f0f27cc7a90d00bcaacac58e0a))
+
+- **installation**: Add next step in installation
+  ([#29](https://github.com/ahmadzfaiz/qgis-track-changes/pull/29),
+  [`72ad69a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/72ad69a8a52e64c145d48586fc5fbd050fbc50b2))
+
+- **installation**: Add proper installation of the plugin
+  ([#29](https://github.com/ahmadzfaiz/qgis-track-changes/pull/29),
+  [`2fd9239`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/2fd923963dd62345c415ef1b91f4fe11148538a4))
+
+- **template**: Create template docs
+  ([#29](https://github.com/ahmadzfaiz/qgis-track-changes/pull/29),
+  [`a1f1e8b`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a1f1e8b963c28f1c9cd9d429d6ff1cbe0e4902d1))
+
+- **usage**: Add usage instruction ([#29](https://github.com/ahmadzfaiz/qgis-track-changes/pull/29),
+  [`1b1199d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/1b1199d2e4ef8303d2eca1c0e3d0b222c8493c3b))
+
+
 ## v0.4.0 (2025-03-16)
+
+
+## v0.4.0-rc.1 (2025-03-16)
 
 ### Continuous Integration
 
@@ -14,12 +59,7 @@
   ([`a010dbe`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a010dbed64e676af3423fa199d5d23255a8ef811))
 
 
-## v0.3.2 (2025-03-16)
-
-### Bug Fixes
-
-- **release**: Fix the CI/CD about rc tag version is not changed after release
-  ([`0860aa9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0860aa942b0dfc88f10a41451b3b1059e42a95d8))
+## v0.3.2-rc.1 (2025-03-16)
 
 ### Continuous Integration
 
@@ -31,6 +71,16 @@
 
 - **release**: Properly update rc tags into final release tag
   ([`bfd556c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bfd556c80f4a10a266445237583cbd5f9b6e43b9))
+
+
+## v0.3.2 (2025-03-16)
+
+### Bug Fixes
+
+- **release**: Fix the CI/CD about rc tag version is not changed after release
+  ([`0860aa9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0860aa942b0dfc88f10a41451b3b1059e42a95d8))
+
+### Continuous Integration
 
 - **release**: Fix release versioning by migrating release candidate tag to release tag
   ([#20](https://github.com/ahmadzfaiz/qgis-track-changes/pull/20),
