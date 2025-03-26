@@ -32,5 +32,7 @@ def zip_qgis_plugin(plugin_folder, output_zip):
 
     print(f"✔ QGIS plugin '{output_zip}' has been successfully created!")
 
-plugin_name = "track_changes"
-zip_qgis_plugin(plugin_name, f"{plugin_name}.zip")
+
+if __name__ == "__main__":
+    plugin_name = "track_changes"
+    zip_qgis_plugin(plugin_name, f"{plugin_name}.zip")
