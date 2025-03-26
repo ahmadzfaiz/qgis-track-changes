@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.4.3 (2025-03-26)
+
+### Chores
+
+- Update metadata.txt with new version
+  ([`d0964af`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/d0964af5225659ea8661923104fe5b62e46e3548))
+
+
 ## v0.4.3-rc.1 (2025-03-26)
 
 ### Bug Fixes
