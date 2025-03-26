@@ -1,6 +1,11 @@
 [tool.semantic_release]
 commit_parser = "conventional"
+version_scheme = "semver"
 version_source = "commit"
+version_variables = [
+  "track_changes/__init__.py:__version__",
+  "track_changes/metadata.txt:version"
+]
 changelog_file = "CHANGELOG.md"
 
 # Configuration for main branch (stable releases)
