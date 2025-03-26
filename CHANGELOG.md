@@ -1,9 +1,5 @@
 # CHANGELOG
 
-
-## v0.4.1 (2025-03-26)
-
-
 ## v0.4.1-rc.1 (2025-03-26)
 
 ### Bug Fixes
@@ -16,6 +12,23 @@
 
 - **plugin**: Create build function to ship zipfile into QGIS Plugin Web
   ([`80eedf8`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/80eedf87d1ae1ef7b0c2a8d0f0b4de6652510c06))
+
+### Continuous Integration
+
+- **release**: Change noop with dry-run
+  ([`f61a0a0`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/f61a0a00c6b1684c23df9737732bfe1f3827f666))
+
+- **release**: Fix release by merging rc
+  ([`bd5c184`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bd5c184cefe60db3edba8920055e101377d0ce75))
+
+- **release**: Go back to version
+  ([`9995694`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/999569468884d48c9361cc2a701d3960b2124d6d))
+
+- **release**: Release version in debug and noop mode
+  ([`08d61c0`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/08d61c0311d17ae1224fce67b21cd8e3fce2d422))
+
+- **release**: Remove version and make it more generic
+  ([`d155ba1`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/d155ba149d1a81019d02762f69def240ffe20c9d))
 
 ### Documentation
 
@@ -48,23 +61,24 @@
 
 ## v0.4.0 (2025-03-16)
 
-
-## v0.4.0-rc.1 (2025-03-16)
-
 ### Continuous Integration
+
+- **release**: Change the removal version into latest one
+  ([`fc530c6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/fc530c6244e3cac8d2c424daedf327033e247a03))
+
+- **release**: Cleaner ci/cd to manage release and changelog
+  ([`b48db28`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b48db28ca49504ce19da1bee25baadb84715afa4))
 
 - **release**: Make publish when merge into main
   ([`ac7aec1`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ac7aec171afed308d95bc4e92f0c0dd19e3aff58))
+
+- **release**: Properly update rc tags into final release tag
+  ([`bfd556c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bfd556c80f4a10a266445237583cbd5f9b6e43b9))
 
 ### Features
 
 - **about**: Create about dialog
   ([`a010dbe`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a010dbed64e676af3423fa199d5d23255a8ef811))
-
-
-## v0.3.2-rc.1 (2025-03-16)
-
-### Continuous Integration
 
 - **release**: Change the removal version into latest one
   ([`fc530c6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/fc530c6244e3cac8d2c424daedf327033e247a03))
