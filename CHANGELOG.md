@@ -1,7 +1,31 @@
 # CHANGELOG
 
 
+## v0.4.3-rc.1 (2025-03-26)
+
+### Bug Fixes
+
+- **version**: Bump a version release to match with current software version
+  ([`9b7ca22`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/9b7ca226212b90ab34c83b03cc5b30176a37f4a9))
+
+### Chores
+
+- **metadata**: Bump metadata versioning into __init__.py and metadata.txt
+  ([`e889a13`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/e889a135937ff06c452250ac3203be353e6d7f1b))
+
+- **package**: Rename main.py to package.py for better readibility
+  ([`8e7b884`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8e7b884e35f29a2f30f3b7837058018907efac08))
+
+### Continuous Integration
+
+- **release**: Update metadata.txt for commit
+  ([`03bc86c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/03bc86c172fa9cbe47c2006c81828c05a392639e))
+
+
 ## v0.4.2 (2025-03-26)
+
+
+## v0.4.2-rc.1 (2025-03-26)
 
 ### Bug Fixes
 
