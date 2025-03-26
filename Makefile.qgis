@@ -13,3 +13,6 @@ setup-hooks:
 	echo '#!/bin/bash\n\nbranch=$$(git rev-parse --abbrev-ref HEAD)\nif [ "$$branch" == "main" ]; then\n    echo "⛔ Direct push to 'main' is not allowed! Use a Pull Request instead."\n    exit 1\nfi' > .git/hooks/pre-push
 	chmod +x .git/hooks/pre-push
 	@echo "✅ Pre-push hook installed successfully!"
+
+packaging:
+	python -m package
