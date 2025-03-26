@@ -31,7 +31,7 @@ jobs:
       - name: Run Semantic Release Version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release version --noop --debug
+        run: semantic-release version --debug --dry-run
 
       - name: Run Semantic Release Publish
         if: github.ref == 'refs/heads/main'
