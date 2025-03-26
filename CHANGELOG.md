@@ -1,22 +1,25 @@
 # CHANGELOG
 
 
-## v0.4.2-rc.2 (2025-03-26)
+## v0.4.2-rc.1 (2025-03-26)
 
 ### Bug Fixes
 
 - Bump to new minor
   ([`3a488f4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/3a488f4d8fd2a4672f5fe43fc0dedc65a6d935a9))
 
+### Chores
+
+- Remove rc tags
+  ([`420f953`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/420f953098eb5d1624e6080a4bb7b3921609962d))
+
 ### Continuous Integration
 
 - Fix version
   ([`24ab258`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/24ab2589c87a37ec61115d62a430a51f876b110c))
 
-
-## v0.4.2-rc.1 (2025-03-26)
-
-### Continuous Integration
+- **release**: Remove version
+  ([`545fd8a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/545fd8a9d1bb947424fdd68530cd894bb6b5d36b))
 
 - **release**: Remove version
   ([`84cae98`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/84cae980d4a98c4a8d310cf6505e0f578dca9694))
