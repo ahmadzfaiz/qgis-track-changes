@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'track_changes/ui/main_dock.ui'
+# Form implementation generated from reading ui file 'track_changes/ui/default_logger.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
