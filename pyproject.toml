@@ -12,7 +12,7 @@ changelog_file = "CHANGELOG.md"
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = false
-merge_prerelease = false
+merge_prerelease = true
 
 # Configuration for all other branches (prereleases)
 [tool.semantic_release.branches."(?!main$).*"]

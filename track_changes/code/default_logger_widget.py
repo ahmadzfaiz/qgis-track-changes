@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QDockWidget
 from qgis.core import QgsMessageLog, Qgis, QgsProject
 from qgis.gui import QgsFileWidget
 
-from ..ui.main_dock import Ui_SetupTrackingChanges
+from ..ui.default_logger import Ui_SetupTrackingChanges
 
 
 class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
