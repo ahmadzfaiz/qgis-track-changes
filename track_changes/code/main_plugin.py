@@ -8,26 +8,34 @@ from .about_widget import AboutWidget
 class TrackChangesPlugin:
     def __init__(self, iface):
         self.iface = iface
+        self.toolbar = iface.addToolBar("Track Changes")
+        self.about_action = None
         self.default_log_action = None
         self.default_log_dialog = None
-        self.about_action = None
+        self.gpkg_log_action = None
+        self.gpkg_log_dialog = None
 
     def initGui(self):
         """Create the menu action and toolbar button."""
-        # Setup Tracking Action
-        self.default_log_action = QAction(QIcon(self.get_icon_path("../icon.png")), "Setup tracking", self.iface.mainWindow())
-        self.default_log_action.triggered.connect(self.run)
-        
         # About Action
-        self.about_action = QAction(QIcon(self.get_icon_path("../ui/info.png")), "About", self.iface.mainWindow())
+        self.about_action = QAction(QIcon(self.get_icon_path("../icon.png")), "About", self.iface.mainWindow())
         self.about_action.triggered.connect(self.about)
 
+        # Setup Tracking Action
+        self.default_log_action = QAction(QIcon(self.get_icon_path("../ui/icon/default.png")), "Default tracking", self.iface.mainWindow())
+        self.default_log_action.triggered.connect(self.run_default)
+        self.gpkg_log_action = QAction(QIcon(self.get_icon_path("../ui/icon/gpkg.png")), "GeoPackage tracking", self.iface.mainWindow())
+        # self.default_log_action.triggered.connect(self.run)
+
         # Add to QGIS menu
-        self.iface.addPluginToMenu("Track Changes", self.default_log_action)
         self.iface.addPluginToMenu("Track Changes", self.about_action)
+        self.iface.addPluginToMenu("Track Changes", self.default_log_action)
+        self.iface.addPluginToMenu("Track Changes", self.gpkg_log_action)
 
         # Add toolbar button
-        self.iface.addToolBarIcon(self.default_log_action)
+        self.toolbar.addAction(self.about_action)
+        self.toolbar.addAction(self.default_log_action)
+        self.toolbar.addAction(self.gpkg_log_action)
 
 
     def unload(self):
@@ -35,10 +43,11 @@ class TrackChangesPlugin:
         self.iface.removePluginMenu("&Track Changes", self.default_log_action)
         self.iface.removePluginMenu("&Track Changes", self.about_action)
         self.iface.removeToolBarIcon(self.default_log_action)
+        self.iface.removeToolBarIcon(self.gpkg_log_action)
         self.default_log_action = None
         self.about_action = None
 
-    def run(self):
+    def run_default(self):
         """Open the UI dialog."""
         if self.default_log_dialog is None:
             self.default_log_dialog = FeatureLogger()
