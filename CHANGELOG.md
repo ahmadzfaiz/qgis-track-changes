@@ -1,6 +1,9 @@
 # CHANGELOG
 
 
+## v0.5.0-rc.2 (2025-03-30)
+
+
 ## v0.5.0-rc.1 (2025-03-28)
 
 ### Chores
@@ -17,6 +20,10 @@
 - **gpkg_log**: Add new icon and widget for gpkg logger
   ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
   [`7b9dd20`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7b9dd206aa06f516622438df3869d746d1c5a06d))
+
+- **main_ui**: Create toggle button to trigger dialog for gpkg
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`8e0265d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8e0265d9daa6ef0b7e0b946930c57412b683ba3f))
 
 
 ## v0.4.3-rc.1 (2025-03-26)
