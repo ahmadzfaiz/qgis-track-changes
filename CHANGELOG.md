@@ -1,7 +1,16 @@
 # CHANGELOG
 
 
+## v0.5.0-rc.3 (2025-03-31)
+
+
 ## v0.5.0-rc.2 (2025-03-30)
+
+### Features
+
+- **gpkg_logger**: Add functionality to list gpkg layers
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`7308d52`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7308d52effd873b68e8be0878cd0ec5612eaa646))
 
 
 ## v0.5.0-rc.1 (2025-03-28)
