@@ -62,7 +62,7 @@ class TrackChangesPlugin:
     def run_gpkg(self):
         """Open the GeoPackage loggerUI dialog."""
         if self.gpkg_log_dialog is None:
-            self.gpkg_log_dialog = GpkgFeatureLogger()
+            self.gpkg_log_dialog = GpkgFeatureLogger(self.iface)
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.gpkg_log_dialog)
             return
         
