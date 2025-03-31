@@ -24,7 +24,7 @@ class Ui_SetupTrackingChanges(object):
         self.label = QtWidgets.QLabel(self.dockWidgetContents)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.mQgsLogFile = gui.QgsFileWidget(self.dockWidgetContents)
+        self.mQgsLogFile = QgsFileWidget(self.dockWidgetContents)
         self.mQgsLogFile.setObjectName("mQgsLogFile")
         self.verticalLayout.addWidget(self.mQgsLogFile)
         self.label_2 = QtWidgets.QLabel(self.dockWidgetContents)
@@ -74,7 +74,7 @@ class Ui_SetupTrackingChanges(object):
 
     def retranslateUi(self, SetupTrackingChanges):
         _translate = QtCore.QCoreApplication.translate
-        SetupTrackingChanges.setWindowTitle(_translate("SetupTrackingChanges", "Setup tracking changes"))
+        SetupTrackingChanges.setWindowTitle(_translate("SetupTrackingChanges", "Default tracking changes"))
         self.label.setText(_translate("SetupTrackingChanges", "Log file destination"))
         self.label_2.setText(_translate("SetupTrackingChanges", "Start/stop tracking changes"))
         self.pbActivate.setText(_translate("SetupTrackingChanges", "Activate"))
@@ -82,4 +82,4 @@ class Ui_SetupTrackingChanges(object):
         self.pbRefreshLayers.setText(_translate("SetupTrackingChanges", "Refresh Layers"))
         self.label_3.setText(_translate("SetupTrackingChanges", "Active Layer:"))
         self.labelActive.setText(_translate("SetupTrackingChanges", "None"))
-from qgis import gui
+from qgsfilewidget import QgsFileWidget
