@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.5.0-rc.5 (2025-04-01)
+
+### Features
+
+- **gpkg_logger**: Save a proper start/stop editig log
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`b558daa`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b558daa10ffc251d983d40968a62630e45c27fdb))
+
+
 ## v0.5.0-rc.4 (2025-03-31)
 
 
