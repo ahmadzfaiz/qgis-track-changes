@@ -1,9 +1,9 @@
+import json
 import uuid
 import sqlite3
 from datetime import datetime
 from PyQt5.QtWidgets import QDockWidget
 from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsProviderRegistry, QgsVectorLayer
-from qgis.gui import QgsFileWidget
 
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
 
@@ -69,7 +69,6 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 self.layers_table.append(table_name)
         
         self.populate_list_layers()
-        print(self.layers_table)
     
     def on_file_selected(self, file_path):
         if file_path:
@@ -97,35 +96,34 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
         # If no change active layer
         self.active_layer = self.iface.activeLayer()
+        self.active_layer_name = self.active_layer.source().split("layername=")[-1].split("|")[0]
         self.connect_actions()
         # If new layer is selected
         self.layer_selection = self.iface.layerTreeView().selectionModel()
         self.layer_selection.selectionChanged.connect(self.on_selected_layer)
 
     def connect_actions(self):
+        # Actions 1*
         self.active_layer.editingStarted.connect(self.log_editing_started)
         self.active_layer.editingStopped.connect(self.log_editing_stopped)
+        # Actions 2*
+        self.active_layer.selectionChanged.connect(self.log_selection_changed)
+        self.active_layer.featureAdded.connect(self.log_feature_added)
+        self.active_layer.featureDeleted.connect(self.log_feature_deleted)
+        self.active_layer.geometryChanged.connect(self.log_geometry_changed)
+        self.active_layer.committedGeometriesChanges.connect(self.log_commited_geometries_changes)
 
     def disconnect_actions(self, layer):
+        # Actions 1*
         layer.editingStarted.disconnect(self.log_editing_started)
         layer.editingStopped.disconnect(self.log_editing_stopped)
+        # Actions 2*
+        layer.selectionChanged.disconnect(self.log_selection_changed)
+        layer.featureAdded.disconnect(self.log_feature_added)
+        layer.featureDeleted.disconnect(self.log_feature_deleted)
+        layer.geometryChanged.disconnect(self.log_geometry_changed)
+        layer.committedGeometriesChanges.disconnect(self.log_commited_geometries_changes)
 
-    def on_selected_layer(self, selected, deselected):
-        """Triggered when clicking a layer in the Layers Panel"""
-        try:
-            self.disconnect_actions(self.active_layer)
-        except:
-            print("No layer need to be disconnected")
-        selected_layers = self.iface.layerTreeView().selectedLayers()
-        for layer in selected_layers:
-            if (
-                isinstance(layer, QgsVectorLayer)
-                and self.gpkg_path in layer.source()
-            ):
-                print("ACTIVE", layer)
-                self.active_layer = layer
-                self.connect_actions()
-    
     def deactivate(self):
         self.ui.pbActivate.setEnabled(True)
         self.ui.pbDeactivate.setEnabled(False)
@@ -144,8 +142,24 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             if self.gpkg_path in layer.source():
                 try:
                     self.disconnect_actions(layer)
-                except:
-                    print("Already disconnected")
+                except Exception:
+                    pass
+
+    def on_selected_layer(self, selected, deselected):
+        """Triggered when clicking a layer in the Layers Panel"""
+        try:
+            self.disconnect_actions(self.active_layer)
+        except Exception:
+            pass
+        selected_layers = self.iface.layerTreeView().selectedLayers()
+        for layer in selected_layers:
+            if (
+                isinstance(layer, QgsVectorLayer)
+                and self.gpkg_path in layer.source()
+            ):
+                self.active_layer = layer
+                self.active_layer_name = self.active_layer.source().split("layername=")[-1].split("|")[0]
+                self.connect_actions()
 
     def create_changelog(self):
         self.gpkg_cursor.execute("""
@@ -160,34 +174,51 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 layer_name TEXT,
                 feature_id INTEGER,
                 message TEXT,
-                data TEXT,
+                data JSON,
                 qgis_trackchanges_version TEXT
             )
         """)
         self.gpkg_conn.commit()
 
     def log_editing_started(self):
-        self.gpkg_cursor.execute("""
-            SELECT 
-                data_version, 
-                data_version_id 
-            FROM gpkg_changelog 
-            ORDER BY id DESC 
-            LIMIT 1;
-        """)
-        latest_record = self.gpkg_cursor.fetchone()
-        if latest_record is not None:
-            self.logging_data(
-                latest_record[0], latest_record[1], 
-                10, None, "start editing", None
-            )
-        else:
-            self.logging_data(
-                "0.0.0", uuid.uuid4().hex, 10, 
-                None, "start editing", None
-            )
+        self.logging_data(10, None, "start editing", None)
 
     def log_editing_stopped(self):
+        self.logging_data(11, None, "stop editing", None)
+
+    def log_selection_changed(self):
+        for feature in self.active_layer.selectedFeatures():
+            fid = feature.id()
+            feature = self.active_layer.getFeature(fid)
+            properties = {}
+            attributes = feature.attributes()
+            for idx, field in enumerate(self.active_layer.fields()):
+                properties[field.name()] = attributes[idx]
+            properties["geometry"] = feature.geometry().asWkt()
+            self.logging_data(20, fid, "selecting feature", json.dumps(properties))
+
+    def log_feature_added(self, fid):
+        feature = self.active_layer.getFeature(fid)
+        properties = {}
+        attributes = feature.attributes()
+        for idx, field in enumerate(self.active_layer.fields()):
+            properties[field.name()] = attributes[idx]
+        properties["geometry"] = feature.geometry().asWkt()
+        self.logging_data(21, fid, "add feature", json.dumps(properties))
+
+    def log_feature_deleted(self, fid):
+        self.logging_data(22, fid, "delete feature", None)
+
+    def log_geometry_changed(self, fid, geometry):
+        properties = {"new_geometry": geometry.asWkt()}
+        self.logging_data(23, fid, "geometry change", json.dumps(properties))
+    
+    def log_commited_geometries_changes(self, lid, geometries):
+        geoms = [{"fid": fid, "geometry": geom.asWkt()} 
+                 for fid, geom in geometries.items()]
+        self.logging_data(26, None, "commit geometry change", json.dumps(geoms))
+
+    def logging_data(self, change_code, feature_id, message, data):
         self.gpkg_cursor.execute("""
             SELECT 
                 data_version, 
@@ -198,25 +229,12 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         """)
         latest_record = self.gpkg_cursor.fetchone()
         if latest_record is not None:
-            self.logging_data(
-                latest_record[0], latest_record[1], 11, 
-                None, "stop editing", None
-            )
+            data_version = latest_record[0] 
+            data_version_id = latest_record[1]
         else:
-            self.logging_data(
-                "0.0.0", uuid.uuid4().hex, 11, 
-                None, "stop editing", None
-            )
+            data_version = "0.0.0" 
+            data_version_id = uuid.uuid4().hex
 
-    def logging_data(
-            self, 
-            data_version,
-            data_version_id,
-            change_code,
-            feature_id,
-            message,
-            data
-        ):
         self.gpkg_cursor.execute("""
             INSERT INTO gpkg_changelog (
                 data_version, 
@@ -238,7 +256,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 change_code,
                 self.author,
                 self.app_version,
-                self.active_layer.name(), 
+                self.active_layer_name,
                 feature_id,
                 message,
                 data,
