@@ -1,3 +1,4 @@
+import uuid
 import sqlite3
 from datetime import datetime
 from PyQt5.QtWidgets import QDockWidget
@@ -117,7 +118,10 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             print("No layer need to be disconnected")
         selected_layers = self.iface.layerTreeView().selectedLayers()
         for layer in selected_layers:
-            if isinstance(layer, QgsVectorLayer):
+            if (
+                isinstance(layer, QgsVectorLayer)
+                and self.gpkg_path in layer.source()
+            ):
                 print("ACTIVE", layer)
                 self.active_layer = layer
                 self.connect_actions()
@@ -163,26 +167,46 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.gpkg_conn.commit()
 
     def log_editing_started(self):
-        print("START EDITING", self.active_layer)
-        self.logging_data(
-            data_version="0.0.0",
-            data_version_id="abc",
-            change_code=10,
-            feature_id=None,
-            message="Start editing",
-            data=None
-        )
+        self.gpkg_cursor.execute("""
+            SELECT 
+                data_version, 
+                data_version_id 
+            FROM gpkg_changelog 
+            ORDER BY id DESC 
+            LIMIT 1;
+        """)
+        latest_record = self.gpkg_cursor.fetchone()
+        if latest_record is not None:
+            self.logging_data(
+                latest_record[0], latest_record[1], 
+                10, None, "start editing", None
+            )
+        else:
+            self.logging_data(
+                "0.0.0", uuid.uuid4().hex, 10, 
+                None, "start editing", None
+            )
 
     def log_editing_stopped(self):
-        print("STOP EDITING", self.active_layer)
-        self.logging_data(
-            data_version="0.0.0",
-            data_version_id="abc",
-            change_code=11,
-            feature_id=None,
-            message="Stop editing",
-            data=None
-        )
+        self.gpkg_cursor.execute("""
+            SELECT 
+                data_version, 
+                data_version_id 
+            FROM gpkg_changelog 
+            ORDER BY id DESC 
+            LIMIT 1;
+        """)
+        latest_record = self.gpkg_cursor.fetchone()
+        if latest_record is not None:
+            self.logging_data(
+                latest_record[0], latest_record[1], 11, 
+                None, "stop editing", None
+            )
+        else:
+            self.logging_data(
+                "0.0.0", uuid.uuid4().hex, 11, 
+                None, "stop editing", None
+            )
 
     def logging_data(
             self, 
