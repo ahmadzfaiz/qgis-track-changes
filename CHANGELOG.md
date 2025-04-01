@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.5.0-rc.6 (2025-04-01)
+
+### Features
+
+- **gpkg_logger**: Add feature-related data changes
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`0779cb9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0779cb967236fe3e51b3236c0af548e4d878c1ec))
+
+
 ## v0.5.0-rc.5 (2025-04-01)
 
 ### Features

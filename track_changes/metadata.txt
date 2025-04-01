@@ -4,7 +4,7 @@ qgisMinimumVersion=3.0
 supportsQt6=True
 description=A plugin to track every change of vector data
 about=This tool still in development!
-version=0.5.0-rc.5
+version=0.5.0-rc.6
 
 # Optional items:
 
