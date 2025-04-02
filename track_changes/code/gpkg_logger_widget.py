@@ -4,7 +4,6 @@ import sqlite3
 from datetime import datetime
 from PyQt5.QtWidgets import QDockWidget
 from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsProviderRegistry, QgsVectorLayer
-
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
 
 def get_plugin_version():
@@ -32,6 +31,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         # Map Layer
         self.layers = []
         self.layers_table = []
+        self.layer_table_fields = {}
         self.ui.pbRefreshLayers.clicked.connect(self.refresh_maplayers)
 
         # Setup GPKG file for storing changelog
@@ -62,21 +62,30 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         """Retrieve the GeoPackage path from the active layer."""
         self.layers = []
         self.layers_table = []
+        self.layer_table_fields = {}
         for layer in QgsProject.instance().mapLayers().values():
             if self.gpkg_path in layer.source():
                 table_name = layer.source().split("layername=")[-1].split("|")[0]
                 self.layers.append(layer)
                 self.layers_table.append(table_name)
+
+                # Ad-hoc layer field names
+                self.layer_table_fields[table_name] = [
+                    {"name": field.name(), "type": field.displayType()} 
+                    for field in layer.fields()
+                ]
         
         self.populate_list_layers()
     
     def on_file_selected(self, file_path):
         if file_path:
             self.gpkg_path = file_path
-            self.ui.pbActivate.setEnabled(True)
             self.ui.pbRefreshLayers.setEnabled(True)
             self.active_layer = self.iface.activeLayer()
             self.refresh_maplayers()
+
+        # Initialize activate
+        self.iface.layerTreeView().currentLayerChanged.connect(self.on_initial_selected_layer)
     
     def activate(self):
         self.ui.pbActivate.setEnabled(False)
@@ -93,11 +102,13 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             "Track Changes", 
             level=Qgis.Info
         )
+        
+        # disable initial layer selected
+        try:
+            self.iface.layerTreeView().currentLayerChanged.disconnect(self.on_initial_selected_layer)
+        except Exception:
+            pass
 
-        # If no change active layer
-        self.active_layer = self.iface.activeLayer()
-        self.active_layer_name = self.active_layer.source().split("layername=")[-1].split("|")[0]
-        self.connect_actions()
         # If new layer is selected
         self.layer_selection = self.iface.layerTreeView().selectionModel()
         self.layer_selection.selectionChanged.connect(self.on_selected_layer)
@@ -112,6 +123,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.active_layer.featureDeleted.connect(self.log_feature_deleted)
         self.active_layer.geometryChanged.connect(self.log_geometry_changed)
         self.active_layer.committedGeometriesChanges.connect(self.log_commited_geometries_changes)
+        # Action 3*
+        self.active_layer.attributeAdded.connect(self.log_attribute_added)
+        self.active_layer.attributeDeleted.connect(self.log_attribute_deleted)
 
     def disconnect_actions(self, layer):
         # Actions 1*
@@ -123,6 +137,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         layer.featureDeleted.disconnect(self.log_feature_deleted)
         layer.geometryChanged.disconnect(self.log_geometry_changed)
         layer.committedGeometriesChanges.disconnect(self.log_commited_geometries_changes)
+        # Action 3*
+        layer.attributeAdded.disconnect(self.log_attribute_added)
+        layer.attributeDeleted.disconnect(self.log_attribute_deleted)
 
     def deactivate(self):
         self.ui.pbActivate.setEnabled(True)
@@ -160,6 +177,27 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 self.active_layer = layer
                 self.active_layer_name = self.active_layer.source().split("layername=")[-1].split("|")[0]
                 self.connect_actions()
+
+    def on_initial_selected_layer(self, layer):
+        if (
+            isinstance(layer, QgsVectorLayer)
+            and self.gpkg_path in layer.source()
+        ):
+            # Disconnect existing actions
+            try:
+                self.disconnect_actions(self.active_layer)
+            except Exception:
+                pass
+
+            # Setup ui and active layer
+            self.ui.pbActivate.setEnabled(True)
+            self.active_layer = layer
+            self.active_layer_name = self.active_layer.source().split("layername=")[-1].split("|")[0]
+            
+            # Re-connect with new actions
+            self.connect_actions()
+        else:
+            self.ui.pbActivate.setEnabled(False)
 
     def create_changelog(self):
         self.gpkg_cursor.execute("""
@@ -217,6 +255,17 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         geoms = [{"fid": fid, "geometry": geom.asWkt()} 
                  for fid, geom in geometries.items()]
         self.logging_data(26, None, "commit geometry change", json.dumps(geoms))
+
+    def log_attribute_added(self, fid):
+        field = self.active_layer.fields()[fid]
+        field_object = {"name": field.name(), "type": field.displayType()}
+        self.layer_table_fields[self.active_layer_name].append(field_object)
+        self.logging_data(30, None, "add field", json.dumps(field_object))
+
+    def log_attribute_deleted(self, fid):
+        field = self.layer_table_fields[self.active_layer_name][fid]
+        self.logging_data(31, None, "remove field", json.dumps(field))
+        self.layer_table_fields[self.active_layer_name].pop(fid)
 
     def logging_data(self, change_code, feature_id, message, data):
         self.gpkg_cursor.execute("""
