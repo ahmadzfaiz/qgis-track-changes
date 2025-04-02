@@ -7,6 +7,7 @@ version_variables = [
   "track_changes/metadata.txt:version"
 ]
 changelog_file = "CHANGELOG.md"
+changelog_ignore_patterns = ["^\\d+\\.\\d+\\.\\d+-rc\\d+$"]
 
 # Configuration for main branch (stable releases)
 [tool.semantic_release.branches.main]
