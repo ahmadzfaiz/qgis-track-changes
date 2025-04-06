@@ -39,7 +39,12 @@ jobs:
       - name: Run Semantic Release Version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release version
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            semantic-release version
+          else
+            echo "Skipping version bump on non-main branch"
+          fi
 
       - name: Run Semantic Release Publish
         if: github.ref == 'refs/heads/main'
