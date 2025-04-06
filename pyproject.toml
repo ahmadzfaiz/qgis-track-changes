@@ -7,7 +7,10 @@ version_variables = [
   "track_changes/metadata.txt:version"
 ]
 changelog_file = "CHANGELOG.md"
-changelog_exclude_regex = "^v\\d+\\.\\d+\\.\\d+-rc\\.\\d+$"
+changelog_components = true
+changelog_filters = [
+    "^(?!.*-rc\\.\\d+$).*$"  # Only include versions that don't end with -rc.X
+]
 changelog_sections = [
     ["feat", "Features"],
     ["fix", "Bug Fixes"],
