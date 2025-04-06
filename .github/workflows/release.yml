@@ -11,17 +11,19 @@ on:
 permissions:
   contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: release
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -38,9 +40,18 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
+      - name: Clean RC tags
+        if: github.ref == 'refs/heads/main'
+        run: |
+          RC_TAGS=$(git tag -l "*-rc*")
+          if [ ! -z "$RC_TAGS" ]; then
+            echo "$RC_TAGS" | xargs git tag -d
+            echo "$RC_TAGS" | xargs -I {} git push origin :{}
+          fi
+
       - name: Run Semantic Release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           if [ "$GITHUB_REF" = "refs/heads/main" ]; then
             python -m semantic_release version
@@ -52,6 +63,8 @@ jobs:
         run: python -m metadata_versioning
   
       - name: Commit updated metadata.txt
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           git add track_changes/metadata.txt
           git commit -m "chore: update metadata.txt with new version" || echo "No changes to commit"
