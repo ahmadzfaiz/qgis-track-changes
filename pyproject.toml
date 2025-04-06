@@ -27,16 +27,6 @@ token = "GH_TOKEN"
 # Configuration for main branch (stable releases)
 [tool.semantic_release.branches.main]
 match = "main"
-prerelease = false
-prerelease_token = "rc"
-
-# Configuration for development branch (prereleases)
-[tool.semantic_release.branches."(?!main$).*"]
-match = "(?!main$).*"
-prerelease = true
-prerelease_token = "rc"
-changelog = false
-prerelease_tag_fmt = "rc.{version}"
 
 [tool.semantic_release.publish]
 upload_to_vcs_release = true
