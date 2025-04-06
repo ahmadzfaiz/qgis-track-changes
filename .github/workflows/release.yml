@@ -31,17 +31,13 @@ jobs:
       - name: Run Semantic Release Version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          export GH_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          semantic-release version
+        run: semantic-release version
 
       - name: Run Semantic Release Publish
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          export GH_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          semantic-release publish
+        run: semantic-release publish
 
       - name: Update metadata.txt
         run: python -m metadata_versioning
