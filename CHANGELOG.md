@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.8.7 (2025-04-06)
+
+### Bug Fixes
+
+- **release**: Ci/cd fix
+  ([`8e2322d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8e2322d57a7dc080b26fb569896bf691dfa4a80c))
+
+
 ## v0.8.6 (2025-04-06)
 
 ### Bug Fixes
