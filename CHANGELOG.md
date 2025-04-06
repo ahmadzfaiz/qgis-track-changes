@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.8.1 (2025-04-06)
+
+### Bug Fixes
+
+- Only run version on main branch
+  ([`92949a1`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/92949a179791720b7e3ca8967d93b6e4d90ee7ec))
+
+
 ## v0.8.0 (2025-04-06)
 
 ### Bug Fixes
