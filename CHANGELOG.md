@@ -1,7 +1,18 @@
 # CHANGELOG
 
 
+## v0.7.3-rc.2 (2025-04-06)
+
+
 ## v0.7.3 (2025-04-06)
+
+
+## v0.7.3-rc.1 (2025-04-06)
+
+### Bug Fixes
+
+- **release**: Completely revise semantic-release configuration and workflow
+  ([`88575e2`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/88575e2a88dbeaaea37a5f5cec69606eff8a7cba))
 
 
 ## v0.7.2-rc.2 (2025-04-06)
