@@ -10,7 +10,12 @@ changelog_file = "CHANGELOG.md"
 changelog_sections = [
     ["feat", "Features"],
     ["fix", "Bug Fixes"],
-    ["perf", "Performance"],
+    ["perf", "Performance Improvements"],
+    ["refactor", "Code Refactoring"],
+    ["style", "Code Style"],
+    ["test", "Tests"],
+    ["build", "Build System"],
+    ["ci", "Continuous Integration"],
     ["docs", "Documentation"],
     ["chore", "Chores"]
 ]
