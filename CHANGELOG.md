@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.5.1 (2025-04-06)
+
+### Chores
+
+- **gpkg_logger**: Selection highlight on active layer
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`bf98d4a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bf98d4a209faaeb3dfde05491a2d950690a795e8))
+
+
 ## v0.5.1-rc.4 (2025-04-06)
 
 ### Bug Fixes
