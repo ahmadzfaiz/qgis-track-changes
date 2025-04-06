@@ -31,13 +31,18 @@ jobs:
       - name: Run Semantic Release Version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release version
+        run: |
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            python -m semantic_release version
+          else
+            python -m semantic_release version --prerelease
+          fi
 
       - name: Run Semantic Release Publish
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release publish
+        run: python -m semantic_release publish
 
       - name: Update metadata.txt
         run: python -m metadata_versioning
