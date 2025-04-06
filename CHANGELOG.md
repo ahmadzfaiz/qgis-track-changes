@@ -1,6 +1,57 @@
 # CHANGELOG
 
 
+## v0.5.1-rc.4 (2025-04-06)
+
+### Bug Fixes
+
+- **gpkg_logger**: When gpkg file is changed, reset the editing configurations
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`ec1eb08`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ec1eb087b8ab5b6cf698920a0d3ec9c958e86a6d))
+
+
+## v0.5.1-rc.3 (2025-04-06)
+
+### Bug Fixes
+
+- **gpkg_logger**: Make deactivate logger will deactivate editing
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`c97ba8a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/c97ba8aa27003cea7c33bac9258f0d9589231625))
+
+### Chores
+
+- **gpkg_logger**: Add logger message
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`471471b`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/471471b50153b6c3d62eaf6b964b55c7a23e8cd2))
+
+
+## v0.5.1-rc.2 (2025-04-06)
+
+### Bug Fixes
+
+- **gpkg_logger**: Optimize gpkg database transaction for logger
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`4fbaded`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/4fbadedac05c02fc72c78288be1872aafef6177d))
+
+
+## v0.5.1-rc.1 (2025-04-06)
+
+### Bug Fixes
+
+- **gpkg_logger**: Disable editing when deactivate and reconnect changelog after reactivate
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`94de4f8`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/94de4f88385354c87684850700c7ce8e9189a96d))
+
+### Chores
+
+- **gpkg_logger**: Change list of layers from dot to geometry icon
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`6be8edb`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6be8edb5a7daff9a935709df4a48de31af33e0eb))
+
+- **release**: Fix merge main release changelog
+  ([`8d5a221`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8d5a221219a3a9d8da14009e7ca1f262aaa8e4d0))
+
+
 ## v0.5.0 (2025-04-06)
 
 
