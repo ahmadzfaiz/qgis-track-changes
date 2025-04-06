@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.8.3 (2025-04-06)
+
+### Bug Fixes
+
+- Bump patch version for RC cleanup
+  ([`a7a27ef`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a7a27efb2a8a7517a044fa4a1e1dc68813c61d94))
+
+
 ## v0.8.2 (2025-04-06)
 
 ### Bug Fixes
