@@ -2,7 +2,7 @@ import json
 import uuid
 import sqlite3
 from datetime import datetime
-from PyQt5.QtWidgets import QDockWidget, QListWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QDockWidget, QListWidgetItem, QMessageBox, QAbstractItemView
 from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsProviderRegistry, QgsVectorLayer, QgsWkbTypes
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
 from PyQt5.QtGui import QIcon
@@ -39,6 +39,10 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.layers_table = []
         self.layer_table_fields = {}
         self.ui.pbRefreshLayers.clicked.connect(self.refresh_maplayers)
+
+        # Make list widget non-interactive but still show selection
+        self.ui.listGpkgLayers.setSelectionMode(QAbstractItemView.NoSelection)
+        self.ui.listGpkgLayers.setFocusPolicy(QtCore.Qt.NoFocus)
 
         # Setup GPKG file for storing changelog
         self.ui.mQgsLogFile.setFilter("GeoPackage (*.gpkg)")
@@ -295,6 +299,11 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 pass
                 
         selected_layers = self.iface.layerTreeView().selectedLayers()
+        
+        # Clear all highlights first
+        for i in range(self.ui.listGpkgLayers.count()):
+            self.ui.listGpkgLayers.item(i).setBackground(QtCore.Qt.transparent)
+        
         for layer in selected_layers:
             if (
                 isinstance(layer, QgsVectorLayer)
@@ -303,6 +312,12 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 self.active_layer = layer
                 self.active_layer_name = self.active_layer.source().split("layername=")[-1].split("|")[0]
                 self.connect_actions()
+                
+                # Use default highlight color
+                for i in range(self.ui.listGpkgLayers.count()):
+                    item = self.ui.listGpkgLayers.item(i)
+                    if item.text() == self.active_layer_name:
+                        item.setBackground(self.palette().highlight())
 
     def on_initial_selected_layer(self, layer):
         if (
