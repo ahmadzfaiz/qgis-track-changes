@@ -1,7 +1,18 @@
 # CHANGELOG
 
 
+## v0.7.1-rc.2 (2025-04-06)
+
+
 ## v0.7.1 (2025-04-06)
+
+
+## v0.7.1-rc.1 (2025-04-06)
+
+### Bug Fixes
+
+- **changelog**: Add explicit regex to exclude RC versions
+  ([`d903047`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/d90304718ffba28e676a6c6bf23a46c0863872eb))
 
 
 ## v0.7.0-rc.3 (2025-04-06)
