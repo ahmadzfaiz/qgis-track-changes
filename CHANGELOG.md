@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.5.1-rc.2 (2025-04-06)
+
+### Bug Fixes
+
+- **gpkg_logger**: Optimize gpkg database transaction for logger
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`4fbaded`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/4fbadedac05c02fc72c78288be1872aafef6177d))
+
+
 ## v0.5.1-rc.1 (2025-04-06)
 
 ### Bug Fixes
@@ -10,6 +19,10 @@
   [`94de4f8`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/94de4f88385354c87684850700c7ce8e9189a96d))
 
 ### Chores
+
+- **gpkg_logger**: Change list of layers from dot to geometry icon
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`6be8edb`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6be8edb5a7daff9a935709df4a48de31af33e0eb))
 
 - **release**: Fix merge main release changelog
   ([`8d5a221`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8d5a221219a3a9d8da14009e7ca1f262aaa8e4d0))
