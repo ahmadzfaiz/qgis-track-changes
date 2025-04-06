@@ -28,15 +28,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-semantic-release
 
-      # Clean up any existing RC tags
-      - name: Remove RC tags
-        run: |
-          # Delete local RC tags
-          git tag -l "*-rc*" | xargs -r git tag -d
-          # Delete remote RC tags
-          git ls-remote --tags origin | grep -o 'refs/tags/.*-rc[0-9.]*$' | sed 's/refs\/tags\///' | xargs -r -I {} git push origin :{}
-
       - name: Run Semantic Release Version
+        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release version
