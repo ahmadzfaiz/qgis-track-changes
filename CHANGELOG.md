@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.5.1-rc.3 (2025-04-06)
+
+### Bug Fixes
+
+- **gpkg_logger**: Make deactivate logger will deactivate editing
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`c97ba8a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/c97ba8aa27003cea7c33bac9258f0d9589231625))
+
+
 ## v0.5.1-rc.2 (2025-04-06)
 
 ### Bug Fixes
