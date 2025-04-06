@@ -7,7 +7,10 @@ version_variables = [
   "track_changes/metadata.txt:version"
 ]
 changelog_file = "CHANGELOG.md"
-tag_format = "v{version}"
+changelog_components = true
+changelog_filters = [
+    "^(?!.*-rc\\.\\d+$).*$"  # Only include versions that don't end with -rc.X
+]
 changelog_sections = [
     ["feat", "Features"],
     ["fix", "Bug Fixes"],
@@ -21,14 +24,17 @@ changelog_sections = [
     ["chore", "Chores"]
 ]
 
-[tool.semantic_release.remote]
-token = "GH_TOKEN"
-
 # Configuration for main branch (stable releases)
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = false
+merge_prerelease = true
+prerelease_token = "rc"
 
-[tool.semantic_release.publish]
-upload_to_vcs_release = true
-remove_dist = true
+# Configuration for development branch (prereleases)
+[tool.semantic_release.branches.development]
+match = "(?!main$).*"
+prerelease = true
+prerelease_token = "rc"
+changelog = false
+merge_prerelease = false
