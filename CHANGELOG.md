@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.8.6-rc.1 (2025-04-06)
+
+### Bug Fixes
+
+- Bump patch version for RC cleanup
+  ([`e897f2b`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/e897f2b6b22835a6b50b00d5fc20bc8bfa0e87f7))
+
+- Ci/cd
+  ([`4e1a73b`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/4e1a73bfa1fc7f0c9a56241f8c4fcbe12077b483))
+
+- Properly format repository URL in workflow
+  ([`7812fda`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7812fda6fddffac2938be3f6e72a72bf2bc87e81))
+
+- Use correct GitHub Actions bot identity
+  ([`44d1fb3`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/44d1fb3d8bf8c2e4fe6366eefdbe83941a8b9af2))
+
+
 ## v0.8.3 (2025-04-06)
 
 ### Bug Fixes
