@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.8.4 (2025-04-06)
+
+### Bug Fixes
+
+- Properly format repository URL in workflow
+  ([`7812fda`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7812fda6fddffac2938be3f6e72a72bf2bc87e81))
+
+
 ## v0.8.3 (2025-04-06)
 
 ### Bug Fixes
