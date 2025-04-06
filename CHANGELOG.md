@@ -8,8 +8,19 @@
 - Update metadata.txt with new version
   ([`d0964af`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/d0964af5225659ea8661923104fe5b62e46e3548))
 
+- **default_logger**: Rename main_dock to default_logger
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`6758d8d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6758d8d3f1af7e028bd1c44922eb76b5ef85d7dc))
 
-## v0.4.3-rc.1 (2025-03-26)
+### Features
+
+- **gpkg_log**: Add new icon and widget for gpkg logger
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`7b9dd20`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7b9dd206aa06f516622438df3869d746d1c5a06d))
+
+- **main_ui**: Create toggle button to trigger dialog for gpkg
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`8e0265d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8e0265d9daa6ef0b7e0b946930c57412b683ba3f))
 
 ### Bug Fixes
 
@@ -23,6 +34,9 @@
 
 - **package**: Rename main.py to package.py for better readibility
   ([`8e7b884`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8e7b884e35f29a2f30f3b7837058018907efac08))
+
+- **version**: Include release candidate on merging into new published version
+  ([`a796d28`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a796d283187a97892d7b3fd23f6f3de9aba31282))
 
 ### Continuous Integration
 

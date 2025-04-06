@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'track_changes/ui/main_dock.ui'
+# Form implementation generated from reading ui file 'track_changes/ui/gpkg_logger.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SetupTrackingChanges(object):
     def setupUi(self, SetupTrackingChanges):
         SetupTrackingChanges.setObjectName("SetupTrackingChanges")
-        SetupTrackingChanges.resize(370, 244)
+        SetupTrackingChanges.resize(370, 262)
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.gridLayout = QtWidgets.QGridLayout(self.dockWidgetContents)
@@ -24,18 +24,9 @@ class Ui_SetupTrackingChanges(object):
         self.label = QtWidgets.QLabel(self.dockWidgetContents)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.mQgsLogFile = gui.QgsFileWidget(self.dockWidgetContents)
+        self.mQgsLogFile = QgsFileWidget(self.dockWidgetContents)
         self.mQgsLogFile.setObjectName("mQgsLogFile")
         self.verticalLayout.addWidget(self.mQgsLogFile)
-        self.label_2 = QtWidgets.QLabel(self.dockWidgetContents)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout.addWidget(self.label_2)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.cbVectorLayers = QtWidgets.QComboBox(self.dockWidgetContents)
-        self.cbVectorLayers.setObjectName("cbVectorLayers")
-        self.horizontalLayout_3.addWidget(self.cbVectorLayers)
-        self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.pbActivate = QtWidgets.QPushButton(self.dockWidgetContents)
@@ -57,14 +48,14 @@ class Ui_SetupTrackingChanges(object):
         self.label_3 = QtWidgets.QLabel(self.dockWidgetContents)
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_2.addWidget(self.label_3)
-        self.labelActive = QtWidgets.QLabel(self.dockWidgetContents)
-        self.labelActive.setObjectName("labelActive")
-        self.horizontalLayout_2.addWidget(self.labelActive)
         self.horizontalLayout_4.addLayout(self.horizontalLayout_2)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
-        spacerItem2 = QtWidgets.QSpacerItem(17, 67, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.listGpkgLayers = QtWidgets.QListWidget(self.dockWidgetContents)
+        self.listGpkgLayers.setObjectName("listGpkgLayers")
+        self.verticalLayout.addWidget(self.listGpkgLayers)
+        spacerItem2 = QtWidgets.QSpacerItem(14, 13, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem2)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         SetupTrackingChanges.setWidget(self.dockWidgetContents)
@@ -74,12 +65,10 @@ class Ui_SetupTrackingChanges(object):
 
     def retranslateUi(self, SetupTrackingChanges):
         _translate = QtCore.QCoreApplication.translate
-        SetupTrackingChanges.setWindowTitle(_translate("SetupTrackingChanges", "Setup tracking changes"))
-        self.label.setText(_translate("SetupTrackingChanges", "Log file destination"))
-        self.label_2.setText(_translate("SetupTrackingChanges", "Start/stop tracking changes"))
+        SetupTrackingChanges.setWindowTitle(_translate("SetupTrackingChanges", "GeoPackage tracking changes"))
+        self.label.setText(_translate("SetupTrackingChanges", "GeoPackage file destination"))
         self.pbActivate.setText(_translate("SetupTrackingChanges", "Activate"))
         self.pbDeactivate.setText(_translate("SetupTrackingChanges", "Deactivate"))
         self.pbRefreshLayers.setText(_translate("SetupTrackingChanges", "Refresh Layers"))
-        self.label_3.setText(_translate("SetupTrackingChanges", "Active Layer:"))
-        self.labelActive.setText(_translate("SetupTrackingChanges", "None"))
-from qgis import gui
+        self.label_3.setText(_translate("SetupTrackingChanges", "Tracked layers:"))
+from qgsfilewidget import QgsFileWidget
