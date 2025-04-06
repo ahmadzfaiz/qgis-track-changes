@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.7.0-rc.1 (2025-04-06)
+
+### Features
+
+- **changelog**: Add all conventional commit types to changelog sections
+  ([`ce6dffb`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ce6dffb85f1a6d5e9ab823bc8603fae29a3289d0))
+
+
+## v0.6.0 (2025-04-06)
+
+
+## v0.6.0-rc.1 (2025-04-06)
+
+
 ## v0.6.3-rc.1 (2025-04-06)
 
 ### Bug Fixes
@@ -26,7 +40,7 @@
 
 - Add test file for changelog testing
   ([`1c5b8a0`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/1c5b8a0a8c6953c54ae18871cbefb62e1842cc00))
-  
+
 - **release**: Update changelog configuration to handle RC versions
   ([`846c367`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/846c367e2b90209d0bb400dacfe7cc74aacdb654))
 
