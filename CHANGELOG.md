@@ -1,7 +1,21 @@
 # CHANGELOG
 
 
+## v0.5.0-rc.8 (2025-04-06)
+
+### Features
+
+- **gpkg_logger**: Add actions for attribute modifications
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`13316ea`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/13316ea8e809d5906b35840e41193821550b67a2))
+
+
 ## v0.5.0-rc.7 (2025-04-02)
+
+### Documentation
+
+- **changelog**: Fix changelog pattern
+  ([`3c77f6c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/3c77f6c20db862a250cd5d5ef9cc022e3e8cc5a7))
 
 
 ## v0.5.0-rc.6 (2025-04-01)
