@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.6.3-rc.1 (2025-04-06)
+
+### Bug Fixes
+
+- **release**: Update branch-specific settings for RC version handling
+  ([`fc92d7f`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/fc92d7ffa5ed093122048aa85df1477004b1afc0))
+
+
 ## v0.6.2 (2025-04-06)
 
 
