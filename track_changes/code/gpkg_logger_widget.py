@@ -125,6 +125,19 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         # If new layer is selected
         self.layer_selection = self.iface.layerTreeView().selectionModel()
         self.layer_selection.selectionChanged.connect(self.on_selected_layer)
+        
+        # Reconnect actions to the current active layer
+        current_layer = self.iface.activeLayer()
+        if current_layer and isinstance(current_layer, QgsVectorLayer) and self.gpkg_path in current_layer.source():
+            # Make sure to disconnect any existing handlers first
+            try:
+                self.disconnect_actions(current_layer)
+            except Exception:
+                pass
+                
+            self.active_layer = current_layer
+            self.active_layer_name = self.active_layer.source().split("layername=")[-1].split("|")[0]
+            self.connect_actions()
 
     def connect_actions(self):
         # Actions 1*
@@ -178,6 +191,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
         for layer in QgsProject.instance().mapLayers().values():
             if self.gpkg_path in layer.source():
+                layer.setReadOnly(True)
                 try:
                     self.disconnect_actions(layer)
                 except Exception:
@@ -185,10 +199,13 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
     def on_selected_layer(self, selected, deselected):
         """Triggered when clicking a layer in the Layers Panel"""
-        try:
-            self.disconnect_actions(self.active_layer)
-        except Exception:
-            pass
+        # Disconnect from previous active layer if it exists
+        if hasattr(self, 'active_layer') and self.active_layer:
+            try:
+                self.disconnect_actions(self.active_layer)
+            except Exception:
+                pass
+                
         selected_layers = self.iface.layerTreeView().selectedLayers()
         for layer in selected_layers:
             if (
@@ -205,10 +222,11 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             and self.gpkg_path in layer.source()
         ):
             # Disconnect existing actions
-            try:
-                self.disconnect_actions(self.active_layer)
-            except Exception:
-                pass
+            if hasattr(self, 'active_layer') and self.active_layer:
+                try:
+                    self.disconnect_actions(self.active_layer)
+                except Exception:
+                    pass
 
             # Setup ui and active layer
             self.ui.pbActivate.setEnabled(True)
