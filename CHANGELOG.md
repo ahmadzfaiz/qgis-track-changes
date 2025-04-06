@@ -1,67 +1,7 @@
 # CHANGELOG
 
 
-## v0.5.0-rc.8 (2025-04-06)
-
-### Features
-
-- **gpkg_logger**: Add actions for attribute modifications
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`13316ea`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/13316ea8e809d5906b35840e41193821550b67a2))
-
-
-## v0.5.0-rc.7 (2025-04-02)
-
-### Documentation
-
-- **changelog**: Fix changelog pattern
-  ([`3c77f6c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/3c77f6c20db862a250cd5d5ef9cc022e3e8cc5a7))
-
-
-## v0.5.0-rc.6 (2025-04-01)
-
-### Features
-
-- **gpkg_logger**: Add feature-related data changes
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`0779cb9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0779cb967236fe3e51b3236c0af548e4d878c1ec))
-
-- **gpkg_logger**: Add fields per layer logic and log add/remove field
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`8fcf6d4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8fcf6d4fa051aed5c6484186e510051e3427a629))
-
-
-## v0.5.0-rc.5 (2025-04-01)
-
-### Features
-
-- **gpkg_logger**: Save a proper start/stop editig log
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`b558daa`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b558daa10ffc251d983d40968a62630e45c27fdb))
-
-
-## v0.5.0-rc.4 (2025-03-31)
-
-
-## v0.5.0-rc.3 (2025-03-31)
-
-### Features
-
-- **gpkg_logger**: Add start/stop edit logger in gpkg
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`6bd0ded`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6bd0ded1084a5f15475f0dbb908315e9f7950def))
-
-
-## v0.5.0-rc.2 (2025-03-30)
-
-### Features
-
-- **gpkg_logger**: Add functionality to list gpkg layers
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`7308d52`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7308d52effd873b68e8be0878cd0ec5612eaa646))
-
-
-## v0.5.0-rc.1 (2025-03-28)
+## v0.4.3 (2025-03-26)
 
 ### Chores
 
@@ -81,9 +21,6 @@
 - **main_ui**: Create toggle button to trigger dialog for gpkg
   ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
   [`8e0265d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8e0265d9daa6ef0b7e0b946930c57412b683ba3f))
-
-
-## v0.4.3-rc.1 (2025-03-26)
 
 ### Bug Fixes
 
