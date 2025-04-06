@@ -26,7 +26,7 @@
 
 - Add test file for changelog testing
   ([`1c5b8a0`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/1c5b8a0a8c6953c54ae18871cbefb62e1842cc00))
-
+  
 - **release**: Update changelog configuration to handle RC versions
   ([`846c367`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/846c367e2b90209d0bb400dacfe7cc74aacdb654))
 
