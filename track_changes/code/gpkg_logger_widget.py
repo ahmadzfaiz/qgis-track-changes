@@ -132,11 +132,18 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             ]
     
     def on_file_selected(self, file_path):
+        # Reset read-only state for layers from previous GeoPackage
+        if hasattr(self, 'gpkg_path') and self.gpkg_path:
+            old_gpkg_path = self.gpkg_path
+            for layer in QgsProject.instance().mapLayers().values():
+                if old_gpkg_path in layer.source():
+                    layer.setReadOnly(False)  # Reset to default state
+
         if file_path:
             self.gpkg_path = file_path
             self.ui.pbRefreshLayers.setEnabled(True)
             self.active_layer = self.iface.activeLayer()
-            self.refresh_maplayers()
+            self.refresh_maplayers()  # This will set the new layers to read-only
 
         # Initialize activate
         self.iface.layerTreeView().currentLayerChanged.connect(self.on_initial_selected_layer)
