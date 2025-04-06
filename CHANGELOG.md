@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.7.2-rc.1 (2025-04-06)
+
+### Bug Fixes
+
+- **changelog**: Use changelog components and filters to exclude RC versions
+  ([`e94106f`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/e94106f0168d5df13fc5c1951d7335935c89bec7))
+
+
 ## v0.7.1-rc.2 (2025-04-06)
 
 
