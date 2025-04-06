@@ -1,6 +1,41 @@
 # CHANGELOG
 
 
+## v0.7.5 (2025-04-06)
+
+
+## v0.7.5-rc.1-rc.1 (2025-04-06)
+
+### Bug Fixes
+
+- **ci**: Improve RC tag handling and fix token usage
+  ([`7fa7433`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7fa7433a0f671f533b1bb7272130877af47dce35))
+
+
+## v0.7.4-rc.3 (2025-04-06)
+
+
+## v0.7.4 (2025-04-06)
+
+
+## v0.7.4-rc.2 (2025-04-06)
+
+### Bug Fixes
+
+- **ci**: Skip changelog updates on non-main branches
+  ([`5e1e587`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5e1e5877a242394612327f58df63b70f90f16043))
+
+
+## v0.7.4-rc.1 (2025-04-06)
+
+### Bug Fixes
+
+- **ci**: Update GitHub token permissions for releases
+  ([`2c52107`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/2c52107b00fdbe70c12fb634a57c42afdf5ce3bf))
+
+- **ci**: Use GITHUB_TOKEN with proper permissions
+  ([`1cb8990`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/1cb89902978b280b34ea22c11ff3a2b06920c270))
+
 
 ## v0.7.3-rc.2 (2025-04-06)
 
