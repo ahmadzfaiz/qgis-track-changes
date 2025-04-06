@@ -7,9 +7,17 @@ version_variables = [
   "track_changes/metadata.txt:version"
 ]
 changelog_file = "CHANGELOG.md"
-changelog_ignore_patterns = [
-    "^.*-rc\\.\\d+$",
-    "^.*-rc\\d+$"
+changelog_sections = [
+    ["feat", "Features"],
+    ["fix", "Bug Fixes"],
+    ["perf", "Performance Improvements"],
+    ["refactor", "Code Refactoring"],
+    ["style", "Code Style"],
+    ["test", "Tests"],
+    ["build", "Build System"],
+    ["ci", "Continuous Integration"],
+    ["docs", "Documentation"],
+    ["chore", "Chores"]
 ]
 
 # Configuration for main branch (stable releases)
@@ -17,9 +25,12 @@ changelog_ignore_patterns = [
 match = "main"
 prerelease = false
 merge_prerelease = true
+prerelease_token = "rc"
 
-# Configuration for all other branches (prereleases)
-[tool.semantic_release.branches."(?!main$).*"]
+# Configuration for development branch (prereleases)
+[tool.semantic_release.branches.development]
 match = "(?!main$).*"
 prerelease = true
+prerelease_token = "rc"
 changelog = false
+merge_prerelease = false
