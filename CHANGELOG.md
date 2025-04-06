@@ -1,16 +1,6 @@
 # CHANGELOG
 
 
-## v0.7.4-rc.1 (2025-04-06)
-
-### Bug Fixes
-
-- **ci**: Update GitHub token permissions for releases
-  ([`2c52107`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/2c52107b00fdbe70c12fb634a57c42afdf5ce3bf))
-
-- **ci**: Use GITHUB_TOKEN with proper permissions
-  ([`1cb8990`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/1cb89902978b280b34ea22c11ff3a2b06920c270))
-
 
 ## v0.7.3-rc.2 (2025-04-06)
 
