@@ -2,7 +2,7 @@ import json
 import uuid
 import sqlite3
 from datetime import datetime
-from PyQt5.QtWidgets import QDockWidget, QListWidgetItem
+from PyQt5.QtWidgets import QDockWidget, QListWidgetItem, QMessageBox
 from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsProviderRegistry, QgsVectorLayer, QgsWkbTypes
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
 from PyQt5.QtGui import QIcon
@@ -224,6 +224,36 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.ui.pbDeactivate.setEnabled(False)
         self.ui.pbRefreshLayers.setEnabled(True)
         self.ui.mQgsLogFile.setEnabled(True)
+
+        # Check for any layers in editing mode
+        editing_layers = []
+        for layer in QgsProject.instance().mapLayers().values():
+            if self.gpkg_path in layer.source() and layer.isEditable():
+                editing_layers.append(layer)
+
+        # If there are layers being edited, show prompt
+        if editing_layers:
+            reply = QMessageBox.question(
+                self,
+                "Save Changes",
+                "There are layers with unsaved changes. Do you want to save them?",
+                QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel,
+                QMessageBox.Save
+            )
+
+            if reply == QMessageBox.Cancel:
+                # User cancelled deactivation
+                self.ui.pbActivate.setEnabled(False)
+                self.ui.pbDeactivate.setEnabled(True)
+                self.ui.pbRefreshLayers.setEnabled(False)
+                self.ui.mQgsLogFile.setEnabled(False)
+                return
+            
+            for layer in editing_layers:
+                if reply == QMessageBox.Save:
+                    layer.commitChanges()
+                else:  # QMessageBox.Discard
+                    layer.rollBack()
 
         # Stop logging session
         self.gpkg_conn.close()
