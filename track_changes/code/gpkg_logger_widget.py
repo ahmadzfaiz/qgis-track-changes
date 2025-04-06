@@ -2,9 +2,12 @@ import json
 import uuid
 import sqlite3
 from datetime import datetime
-from PyQt5.QtWidgets import QDockWidget
-from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsProviderRegistry, QgsVectorLayer
+from PyQt5.QtWidgets import QDockWidget, QListWidgetItem
+from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsProviderRegistry, QgsVectorLayer, QgsWkbTypes
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
+from PyQt5.QtGui import QIcon
+from PyQt5 import QtCore
+from PyQt5.QtCore import QSize
 
 def get_plugin_version():
     from track_changes import __version__
@@ -47,15 +50,49 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.ui.pbDeactivate.setEnabled(False)
         self.ui.pbRefreshLayers.setEnabled(False)
 
+        # Setup icons for different geometry types
+        self.geometry_icons = {
+            'Point': QIcon(':/images/themes/default/mIconPointLayer.svg'),
+            'LineString': QIcon(':/images/themes/default/mIconLineLayer.svg'),
+            'Polygon': QIcon(':/images/themes/default/mIconPolygonLayer.svg'),
+            'MultiPoint': QIcon(':/images/themes/default/mIconPointLayer.svg'),
+            'MultiLineString': QIcon(':/images/themes/default/mIconLineLayer.svg'),
+            'MultiPolygon': QIcon(':/images/themes/default/mIconPolygonLayer.svg'),
+            'NoGeometry': QIcon(':/images/themes/default/mIconTableLayer.svg')
+        }
+
+        # Set smaller icon size for the list widget
+        self.ui.listGpkgLayers.setIconSize(QSize(16, 16))
+
     def populate_list_layers(self):
         self.ui.listGpkgLayers.clear()
         provider = QgsProviderRegistry.instance().providerMetadata("ogr")
         conn = provider.createConnection(self.gpkg_path, {})
         layers = conn.tables()
+        
         for layer in layers:
             layer_name = layer.tableName()
             if layer_name in self.layers_table:
-                self.ui.listGpkgLayers.addItem(f"• {layer_name}")
+                # Get the layer from project to determine its geometry type
+                gpkg_layer = QgsVectorLayer(f"{self.gpkg_path}|layername={layer_name}", layer_name, "ogr")
+                geom_type = gpkg_layer.geometryType()
+                
+                # Create list item with appropriate icon
+                item = QListWidgetItem()
+                item.setText(layer_name)
+                
+                # Set icon based on geometry type
+                if geom_type == QgsWkbTypes.PointGeometry:
+                    item.setIcon(self.geometry_icons['Point'])
+                elif geom_type == QgsWkbTypes.LineGeometry:
+                    item.setIcon(self.geometry_icons['LineString'])
+                elif geom_type == QgsWkbTypes.PolygonGeometry:
+                    item.setIcon(self.geometry_icons['Polygon'])
+                else:
+                    item.setIcon(self.geometry_icons['NoGeometry'])
+                
+                self.ui.listGpkgLayers.addItem(item)
+                
         self.ui.mQgsLogFile.setFilePath(self.gpkg_path)
 
     def refresh_maplayers(self):
