@@ -1,10 +1,15 @@
 # CHANGELOG
 
 
+## v0.7.6 (2025-04-06)
+
+### Bug Fixes
+
+- **release**: Remove all RC versioning, keep versioning only on main
+  ([`5ef6d4c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5ef6d4c97939ed59f1ed4cb8e8f78ec84bc1c882))
+
+
 ## v0.7.5 (2025-04-06)
-
-
-## v0.7.5-rc.1-rc.1 (2025-04-06)
 
 ### Bug Fixes
 
@@ -12,23 +17,12 @@
   ([`7fa7433`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7fa7433a0f671f533b1bb7272130877af47dce35))
 
 
-## v0.7.4-rc.3 (2025-04-06)
-
-
 ## v0.7.4 (2025-04-06)
-
-
-## v0.7.4-rc.2 (2025-04-06)
 
 ### Bug Fixes
 
 - **ci**: Skip changelog updates on non-main branches
   ([`5e1e587`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/5e1e5877a242394612327f58df63b70f90f16043))
-
-
-## v0.7.4-rc.1 (2025-04-06)
-
-### Bug Fixes
 
 - **ci**: Update GitHub token permissions for releases
   ([`2c52107`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/2c52107b00fdbe70c12fb634a57c42afdf5ce3bf))
@@ -37,13 +31,7 @@
   ([`1cb8990`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/1cb89902978b280b34ea22c11ff3a2b06920c270))
 
 
-## v0.7.3-rc.2 (2025-04-06)
-
-
 ## v0.7.3 (2025-04-06)
-
-
-## v0.7.3-rc.1 (2025-04-06)
 
 ### Bug Fixes
 
@@ -51,13 +39,7 @@
   ([`88575e2`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/88575e2a88dbeaaea37a5f5cec69606eff8a7cba))
 
 
-## v0.7.2-rc.2 (2025-04-06)
-
-
 ## v0.7.2 (2025-04-06)
-
-
-## v0.7.2-rc.1 (2025-04-06)
 
 ### Bug Fixes
 
@@ -65,13 +47,7 @@
   ([`e94106f`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/e94106f0168d5df13fc5c1951d7335935c89bec7))
 
 
-## v0.7.1-rc.2 (2025-04-06)
-
-
 ## v0.7.1 (2025-04-06)
-
-
-## v0.7.1-rc.1 (2025-04-06)
 
 ### Bug Fixes
 
@@ -79,21 +55,12 @@
   ([`d903047`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/d90304718ffba28e676a6c6bf23a46c0863872eb))
 
 
-## v0.7.0-rc.3 (2025-04-06)
-
-
 ## v0.7.0 (2025-04-06)
-
-
-## v0.7.0-rc.2 (2025-04-06)
 
 ### Bug Fixes
 
 - **ci**: Update semantic-release commands in GitHub Actions
   ([`59e0cb2`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/59e0cb297c80760cae6ae498c2f0ee275cc59f1e))
-
-
-## v0.7.0-rc.1 (2025-04-06)
 
 ### Features
 
@@ -102,12 +69,6 @@
 
 
 ## v0.6.0 (2025-04-06)
-
-
-## v0.6.0-rc.1 (2025-04-06)
-
-
-## v0.6.3-rc.1 (2025-04-06)
 
 ### Bug Fixes
 
@@ -139,29 +100,23 @@
 
 ## v0.5.1 (2025-04-06)
 
-### Chores
-
-- **gpkg_logger**: Selection highlight on active layer
-  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
-  [`bf98d4a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bf98d4a209faaeb3dfde05491a2d950690a795e8))
-
-
-## v0.5.1-rc.4 (2025-04-06)
-
 ### Bug Fixes
 
-- **gpkg_logger**: When gpkg file is changed, reset the editing configurations
+- **gpkg_logger**: Disable editing when deactivate and reconnect changelog after reactivate
   ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
-  [`ec1eb08`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ec1eb087b8ab5b6cf698920a0d3ec9c958e86a6d))
-
-
-## v0.5.1-rc.3 (2025-04-06)
-
-### Bug Fixes
+  [`94de4f8`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/94de4f88385354c87684850700c7ce8e9189a96d))
 
 - **gpkg_logger**: Make deactivate logger will deactivate editing
   ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
   [`c97ba8a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/c97ba8aa27003cea7c33bac9258f0d9589231625))
+
+- **gpkg_logger**: Optimize gpkg database transaction for logger
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`4fbaded`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/4fbadedac05c02fc72c78288be1872aafef6177d))
+
+- **gpkg_logger**: When gpkg file is changed, reset the editing configurations
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`ec1eb08`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ec1eb087b8ab5b6cf698920a0d3ec9c958e86a6d))
 
 ### Chores
 
@@ -169,29 +124,13 @@
   ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
   [`471471b`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/471471b50153b6c3d62eaf6b964b55c7a23e8cd2))
 
-
-## v0.5.1-rc.2 (2025-04-06)
-
-### Bug Fixes
-
-- **gpkg_logger**: Optimize gpkg database transaction for logger
-  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
-  [`4fbaded`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/4fbadedac05c02fc72c78288be1872aafef6177d))
-
-
-## v0.5.1-rc.1 (2025-04-06)
-
-### Bug Fixes
-
-- **gpkg_logger**: Disable editing when deactivate and reconnect changelog after reactivate
-  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
-  [`94de4f8`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/94de4f88385354c87684850700c7ce8e9189a96d))
-
-### Chores
-
 - **gpkg_logger**: Change list of layers from dot to geometry icon
   ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
   [`6be8edb`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6be8edb5a7daff9a935709df4a48de31af33e0eb))
+
+- **gpkg_logger**: Selection highlight on active layer
+  ([#42](https://github.com/ahmadzfaiz/qgis-track-changes/pull/42),
+  [`bf98d4a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bf98d4a209faaeb3dfde05491a2d950690a795e8))
 
 - **release**: Fix merge main release changelog
   ([`8d5a221`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8d5a221219a3a9d8da14009e7ca1f262aaa8e4d0))
@@ -202,68 +141,10 @@
 
 ## v0.4.3 (2025-03-26)
 
+### Bug Fixes
 
-## v0.5.0-rc.8 (2025-04-06)
-
-### Features
-
-- **gpkg_logger**: Add actions for attribute modifications
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`13316ea`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/13316ea8e809d5906b35840e41193821550b67a2))
-
-
-## v0.5.0-rc.7 (2025-04-02)
-
-### Documentation
-
-- **changelog**: Fix changelog pattern
-  ([`3c77f6c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/3c77f6c20db862a250cd5d5ef9cc022e3e8cc5a7))
-
-
-## v0.5.0-rc.6 (2025-04-01)
-
-### Features
-
-- **gpkg_logger**: Add feature-related data changes
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`0779cb9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0779cb967236fe3e51b3236c0af548e4d878c1ec))
-
-- **gpkg_logger**: Add fields per layer logic and log add/remove field
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`8fcf6d4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8fcf6d4fa051aed5c6484186e510051e3427a629))
-
-
-## v0.5.0-rc.5 (2025-04-01)
-
-### Features
-
-- **gpkg_logger**: Save a proper start/stop editig log
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`b558daa`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b558daa10ffc251d983d40968a62630e45c27fdb))
-
-
-## v0.5.0-rc.4 (2025-03-31)
-
-
-## v0.5.0-rc.3 (2025-03-31)
-
-### Features
-
-- **gpkg_logger**: Add start/stop edit logger in gpkg
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`6bd0ded`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6bd0ded1084a5f15475f0dbb908315e9f7950def))
-
-
-## v0.5.0-rc.2 (2025-03-30)
-
-### Features
-
-- **gpkg_logger**: Add functionality to list gpkg layers
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`7308d52`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7308d52effd873b68e8be0878cd0ec5612eaa646))
-
-
-## v0.5.0-rc.1 (2025-03-28)
+- **version**: Bump a version release to match with current software version
+  ([`9b7ca22`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/9b7ca226212b90ab34c83b03cc5b30176a37f4a9))
 
 ### Chores
 
@@ -273,26 +154,6 @@
 - **default_logger**: Rename main_dock to default_logger
   ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
   [`6758d8d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6758d8d3f1af7e028bd1c44922eb76b5ef85d7dc))
-
-### Features
-
-- **gpkg_log**: Add new icon and widget for gpkg logger
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`7b9dd20`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7b9dd206aa06f516622438df3869d746d1c5a06d))
-
-- **main_ui**: Create toggle button to trigger dialog for gpkg
-  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
-  [`8e0265d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8e0265d9daa6ef0b7e0b946930c57412b683ba3f))
-
-
-## v0.4.3-rc.1 (2025-03-26)
-
-### Bug Fixes
-
-- **version**: Bump a version release to match with current software version
-  ([`9b7ca22`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/9b7ca226212b90ab34c83b03cc5b30176a37f4a9))
-
-### Chores
 
 - **metadata**: Bump metadata versioning into __init__.py and metadata.txt
   ([`e889a13`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/e889a135937ff06c452250ac3203be353e6d7f1b))
@@ -308,11 +169,47 @@
 - **release**: Update metadata.txt for commit
   ([`03bc86c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/03bc86c172fa9cbe47c2006c81828c05a392639e))
 
+### Documentation
+
+- **changelog**: Fix changelog pattern
+  ([`3c77f6c`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/3c77f6c20db862a250cd5d5ef9cc022e3e8cc5a7))
+
+### Features
+
+- **gpkg_log**: Add new icon and widget for gpkg logger
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`7b9dd20`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7b9dd206aa06f516622438df3869d746d1c5a06d))
+
+- **gpkg_logger**: Add actions for attribute modifications
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`13316ea`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/13316ea8e809d5906b35840e41193821550b67a2))
+
+- **gpkg_logger**: Add feature-related data changes
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`0779cb9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0779cb967236fe3e51b3236c0af548e4d878c1ec))
+
+- **gpkg_logger**: Add fields per layer logic and log add/remove field
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`8fcf6d4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8fcf6d4fa051aed5c6484186e510051e3427a629))
+
+- **gpkg_logger**: Add functionality to list gpkg layers
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`7308d52`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7308d52effd873b68e8be0878cd0ec5612eaa646))
+
+- **gpkg_logger**: Add start/stop edit logger in gpkg
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`6bd0ded`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6bd0ded1084a5f15475f0dbb908315e9f7950def))
+
+- **gpkg_logger**: Save a proper start/stop editig log
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`b558daa`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/b558daa10ffc251d983d40968a62630e45c27fdb))
+
+- **main_ui**: Create toggle button to trigger dialog for gpkg
+  ([#32](https://github.com/ahmadzfaiz/qgis-track-changes/pull/32),
+  [`8e0265d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8e0265d9daa6ef0b7e0b946930c57412b683ba3f))
+
 
 ## v0.4.2 (2025-03-26)
-
-
-## v0.4.2-rc.1 (2025-03-26)
 
 ### Bug Fixes
 
