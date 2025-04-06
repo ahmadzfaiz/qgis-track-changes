@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.8.5 (2025-04-06)
+
+### Bug Fixes
+
+- Use correct GitHub Actions bot identity
+  ([`44d1fb3`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/44d1fb3d8bf8c2e4fe6366eefdbe83941a8b9af2))
+
+
 ## v0.8.4 (2025-04-06)
 
 ### Bug Fixes
