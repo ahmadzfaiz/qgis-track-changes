@@ -21,9 +21,6 @@ changelog_sections = [
     ["chore", "Chores"]
 ]
 
-[tool.semantic_release.remote]
-token = "GH_TOKEN"
-
 # Configuration for main branch (stable releases)
 [tool.semantic_release.branches.main]
 match = "main"
