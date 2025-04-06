@@ -31,6 +31,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         project = QgsProject.instance()
         self.author = project.metadata().author()
 
+        # Message bar
+        self.message_bar = self.iface.messageBar()
+
         # Map Layer
         self.layers = []
         self.layers_table = []
@@ -138,6 +141,10 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         # Initialize activate
         self.iface.layerTreeView().currentLayerChanged.connect(self.on_initial_selected_layer)
     
+    def show_info(self, message, level=Qgis.Info, duration=5):
+        """Show message in QGIS message bar"""
+        self.message_bar.pushMessage("Track Changes", message, level=level, duration=duration)
+
     def activate(self):
         self.ui.pbActivate.setEnabled(False)
         self.ui.pbDeactivate.setEnabled(True)
@@ -152,11 +159,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.gpkg_conn = sqlite3.connect(self.gpkg_path, timeout=30)
         self.gpkg_cursor = self.gpkg_conn.cursor()
         self.create_changelog()
-        QgsMessageLog.logMessage(
-            f"Activate tracking: {self.gpkg_path}",
-            "Track Changes", 
-            level=Qgis.Info
-        )
+        
+        # Show activation message
+        self.show_info(f"Track Changes activated for: {self.gpkg_path}")
         
         # disable initial layer selected
         try:
@@ -251,17 +256,17 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             
             for layer in editing_layers:
                 if reply == QMessageBox.Save:
-                    layer.commitChanges()
+                    if layer.commitChanges():
+                        self.show_info(f"Changes saved for layer: {layer.name()}")
+                    else:
+                        self.show_info(f"Failed to save changes for layer: {layer.name()}", level=Qgis.Warning)
                 else:  # QMessageBox.Discard
                     layer.rollBack()
+                    self.show_info(f"Changes discarded for layer: {layer.name()}")
 
         # Stop logging session
         self.gpkg_conn.close()
-        QgsMessageLog.logMessage(
-            f"Deactivate tracking: {self.gpkg_path}",
-            "Track Changes", 
-            level=Qgis.Info
-        )
+        self.show_info(f"Track Changes deactivated for: {self.gpkg_path}")
 
         for layer in QgsProject.instance().mapLayers().values():
             if self.gpkg_path in layer.source():
@@ -434,18 +439,10 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             try:
                 data = json.dumps(data)
             except (TypeError, ValueError) as e:
-                QgsMessageLog.logMessage(
-                    f"Invalid data format: {str(e)}",
-                    "Track Changes",
-                    level=Qgis.Warning
-                )
+                self.show_info(f"Invalid data format: {str(e)}", level=Qgis.Warning)
                 return
         if not self.gpkg_conn:
-            QgsMessageLog.logMessage(
-                "No active database connection",
-                "Track Changes",
-                level=Qgis.Warning
-            )
+            self.show_info("No active database connection", level=Qgis.Warning)
             return
         try:
             self.gpkg_conn.execute("BEGIN")
@@ -493,11 +490,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             )
             self.gpkg_conn.commit()
         except sqlite3.Error as e:
-            QgsMessageLog.logMessage(
-                f"Error logging changes: {str(e)}",
-                "Track Changes",
-                level=Qgis.Critical
-            )
+            self.show_info(f"Error logging changes: {str(e)}", level=Qgis.Critical)
         except:
             self.gpkg_conn.rollback()
             raise
@@ -521,27 +514,17 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             self.gpkg_cursor = self.gpkg_conn.cursor()
             return True
         except sqlite3.Error as e:
-            QgsMessageLog.logMessage(
-                f"Failed to reconnect: {str(e)}",
-                "Track Changes",
-                level=Qgis.Critical
-            )
+            self.show_info(f"Failed to reconnect: {str(e)}", level=Qgis.Critical)
             return False
 
     def check_connection_health(self):
         """Periodic check of connection health"""
         if not self.check_connection():
-            QgsMessageLog.logMessage(
-                "Connection lost, attempting to reconnect...",
-                "Track Changes",
-                level=Qgis.Warning
-            )
+            self.show_info("Connection lost, attempting to reconnect...", level=Qgis.Warning)
             if self.reconnect():
-                QgsMessageLog.logMessage(
-                    "Successfully reconnected",
-                    "Track Changes",
-                    level=Qgis.Info
-                )
+                self.show_info("Successfully reconnected")
+            else:
+                self.show_info("Failed to reconnect to database", level=Qgis.Critical)
 
     def cleanup(self):
         """Clean up resources when plugin is unloaded"""
