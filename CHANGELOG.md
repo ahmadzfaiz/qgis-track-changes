@@ -1,6 +1,5 @@
 # CHANGELOG
 
-
 ## v0.7.0-rc.2 (2025-04-06)
 
 ### Bug Fixes
