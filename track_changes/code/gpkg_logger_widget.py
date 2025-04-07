@@ -7,7 +7,7 @@ from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsProviderRegistry, QgsV
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QTimer
 
 def get_plugin_version():
     from track_changes import __version__
@@ -339,21 +339,28 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             # Re-connect with new actions
             self.connect_actions()
 
-            selected_layers = self.iface.layerTreeView().selectedLayers()
-            # Clear all highlights first
-            for i in range(self.ui.listGpkgLayers.count()):
-                self.ui.listGpkgLayers.item(i).setBackground(QtCore.Qt.transparent)
+            def set_highlight_layer():
+                selected_layers = self.iface.layerTreeView().selectedLayers()
 
-            for layer in selected_layers:
-                if (
-                    isinstance(layer, QgsVectorLayer)
-                    and self.gpkg_path in layer.source()
-                ):
-                    # Use default highlight color
-                    for i in range(self.ui.listGpkgLayers.count()):
-                        item = self.ui.listGpkgLayers.item(i)
-                        if item.text() == self.active_layer_name:
-                            item.setBackground(self.palette().highlight())
+                # Always clear highlights first
+                for i in range(self.ui.listGpkgLayers.count()):
+                    self.ui.listGpkgLayers.item(i).setBackground(QtCore.Qt.transparent)
+
+                # Only highlight if a matching layer is found
+                for lyr in selected_layers:
+                    source = lyr.source()
+                    if isinstance(lyr, QgsVectorLayer) and self.gpkg_path in source:
+                        if "layername=" in source:
+                            active_layer_name = source.split("layername=")[-1]
+                        else:
+                            active_layer_name = lyr.name()
+                        for i in range(self.ui.listGpkgLayers.count()):
+                            item = self.ui.listGpkgLayers.item(i)
+                            if item.text() == active_layer_name:
+                                item.setBackground(self.palette().highlight())
+
+            # Use a small delay to ensure selection is updated
+            QtCore.QTimer.singleShot(50, set_highlight_layer)
         else:
             self.ui.pbActivate.setEnabled(False)
 
