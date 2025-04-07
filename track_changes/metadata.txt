@@ -24,9 +24,12 @@ icon=icon.png
 
 experimental=True
 
-# deprecated flag (applies to the whole plugin, not just a single version
+# deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
 
 # Author contact information
 author=Ahmad Zaenun Faiz
 email=zaenun.faiz@gmail.com
+
+[py]
+requiredPackages=humanize
