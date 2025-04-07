@@ -338,6 +338,22 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             
             # Re-connect with new actions
             self.connect_actions()
+
+            selected_layers = self.iface.layerTreeView().selectedLayers()
+            # Clear all highlights first
+            for i in range(self.ui.listGpkgLayers.count()):
+                self.ui.listGpkgLayers.item(i).setBackground(QtCore.Qt.transparent)
+
+            for layer in selected_layers:
+                if (
+                    isinstance(layer, QgsVectorLayer)
+                    and self.gpkg_path in layer.source()
+                ):
+                    # Use default highlight color
+                    for i in range(self.ui.listGpkgLayers.count()):
+                        item = self.ui.listGpkgLayers.item(i)
+                        if item.text() == self.active_layer_name:
+                            item.setBackground(self.palette().highlight())
         else:
             self.ui.pbActivate.setEnabled(False)
 
