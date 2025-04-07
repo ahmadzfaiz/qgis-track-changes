@@ -3,7 +3,11 @@ name=QGIS Track Changes
 qgisMinimumVersion=3.0
 supportsQt6=True
 description=A plugin to track every change of vector data
-about=This tool still in development!
+about=This plugin helps track changes in vector layer data, including:
+  - Feature modifications
+  - Geometry updates
+  - Attribute changes
+  It ensures data integrity by logging changes efficiently within QGIS.
 version=0.8.7
 
 # Optional items:

@@ -11,6 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
+def get_plugin_version():
+    from track_changes import __version__
+    return __version__
+
+
 class Ui_About(object):
     def setupUi(self, About):
         About.setObjectName("About")
@@ -40,4 +45,4 @@ class Ui_About(object):
     def retranslateUi(self, About):
         _translate = QtCore.QCoreApplication.translate
         About.setWindowTitle(_translate("About", "About QGIS Tracking Changes"))
-        self.label.setText(_translate("About", "<html><head/><body><p><span style=\" font-weight:600;\">QGIS Track Changes</span><br/>Version: 0.4.0<br/><br/>This plugin helps track changes in vector layer data, including:<br/>- Feature modifications<br/>- Geometry updates<br/>- Attribute changes<br/><br/>It ensures data integrity by logging changes efficiently within QGIS.<br/><br/><span style=\" font-weight:600;\">Developer:</span> Ahmad Zaenun Faiz<br/><span style=\" font-weight:600;\">License:</span> GPL-3.0<br/><br/>For documentation, visit:<br/><a href=\"https://qgis-track-changes.readthedocs.io/en/latest/\"><span style=\" text-decoration: underline; color:#419cff;\">QGIS Track Changes Documentation</span></a></p></body></html>"))
+        self.label.setText(_translate("About", f"<html><head/><body><p><span style=\" font-weight:600;\">QGIS Track Changes</span><br/>Version: {get_plugin_version()}<br/><br/>This plugin helps track changes in vector layer data, including:<br/>- Feature modifications<br/>- Geometry updates<br/>- Attribute changes<br/><br/>It ensures data integrity by logging changes efficiently within QGIS.<br/><br/><span style=\" font-weight:600;\">Developer:</span> Ahmad Zaenun Faiz<br/><span style=\" font-weight:600;\">License:</span> GPL-3.0<br/><br/>For documentation, visit:<br/><a href=\"https://qgis-track-changes.readthedocs.io/en/latest/\"><span style=\" text-decoration: underline; color:#419cff;\">QGIS Track Changes Documentation</span></a></p></body></html>"))
