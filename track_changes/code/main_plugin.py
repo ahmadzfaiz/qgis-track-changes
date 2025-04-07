@@ -42,9 +42,11 @@ class TrackChangesPlugin:
     def unload(self):
         """Remove the menu action and toolbar button."""
         self.iface.removePluginMenu("&Track Changes", self.default_log_action)
+        self.iface.removePluginMenu("&Track Changes", self.gpkg_log_action)
         self.iface.removePluginMenu("&Track Changes", self.about_action)
         self.iface.removeToolBarIcon(self.default_log_action)
         self.iface.removeToolBarIcon(self.gpkg_log_action)
+        self.iface.removeToolBarIcon(self.about_action)
         self.default_log_action = None
         self.gpkg_log_action = None
         self.about_action = None
