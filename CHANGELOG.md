@@ -1,6 +1,28 @@
 # CHANGELOG
 
 
+## v0.9.1 (2025-04-07)
+
+### Bug Fixes
+
+- **gpkg_logger**: Add highlight in initial active layer
+  ([#66](https://github.com/ahmadzfaiz/qgis-track-changes/pull/66),
+  [`e6bb9a4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/e6bb9a4dae653bf51e8b15736e209479bee3fe79))
+
+- **gpkg_logger**: After refresh the file selection, remove highlight not working
+  ([#66](https://github.com/ahmadzfaiz/qgis-track-changes/pull/66),
+  [`bdd1ce0`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/bdd1ce05112c3756e6498e20b9bafcb5ecb8d6a0))
+
+- **gpkg_logger**: Fix first selection that not trigger highlight
+  ([#66](https://github.com/ahmadzfaiz/qgis-track-changes/pull/66),
+  [`6c9a7d1`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/6c9a7d14783245d4dca76903a72a8629565628f0))
+
+### Chores
+
+- **about**: Remove color in version number text
+  ([`e6fda1a`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/e6fda1a9acb8a12b2c75d2dc6206f3f38e4e3557))
+
+
 ## v0.9.0 (2025-04-07)
 
 ### Chores
