@@ -1,6 +1,25 @@
 # CHANGELOG
 
 
+## v0.8.8 (2025-04-07)
+
+### Bug Fixes
+
+- **gpkg_logger**: Add proper unload for geopackage tracker in plugin menu
+  ([#63](https://github.com/ahmadzfaiz/qgis-track-changes/pull/63),
+  [`2cbb791`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/2cbb7911340556b1b687f39eb7f8f0e30ed5c487))
+
+### Chores
+
+- **about**: Create dynamic version text in about page
+  ([#63](https://github.com/ahmadzfaiz/qgis-track-changes/pull/63),
+  [`62de476`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/62de476e98b5a0110677b02e72f8e975f9348e4c))
+
+- **metadata**: Add proper description
+  ([#63](https://github.com/ahmadzfaiz/qgis-track-changes/pull/63),
+  [`6649072`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/66490724c08391af00d508551c2988094ec1ffa1))
+
+
 ## v0.8.7 (2025-04-06)
 
 ### Bug Fixes
