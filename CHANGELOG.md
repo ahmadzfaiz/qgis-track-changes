@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.9.0 (2025-04-07)
+
+### Chores
+
+- **about**: Display tab ([#41](https://github.com/ahmadzfaiz/qgis-track-changes/pull/41),
+  [`94334ce`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/94334ce3cf9c06a09e02d0102424c9ee83eacbc3))
+
+### Features
+
+- **info**: Add table info to display data changes
+  ([#41](https://github.com/ahmadzfaiz/qgis-track-changes/pull/41),
+  [`484f623`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/484f623cdf93bb2da063127c77fab33e61405ff0))
+
+
 ## v0.8.8 (2025-04-07)
 
 ### Bug Fixes
