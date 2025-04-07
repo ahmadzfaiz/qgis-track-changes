@@ -20,7 +20,7 @@ class AboutWidget(QDialog):
         <html><head/><body>
         <p>
             <span style=" font-weight:600;">QGIS Track Changes</span><br/>
-            Version: <span style="color:#007acc;">{get_plugin_version()}</span><br/><br/>
+            Version: <i>{get_plugin_version()}</i><br/><br/>
             This plugin helps track changes in vector layer data, including:<br/>
             - Feature modifications<br/>
             - Geometry updates<br/>
