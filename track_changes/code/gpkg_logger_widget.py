@@ -320,6 +320,10 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                         item.setBackground(self.palette().highlight())
 
     def on_initial_selected_layer(self, layer):
+        # Always clear highlights first
+        for i in range(self.ui.listGpkgLayers.count()):
+            self.ui.listGpkgLayers.item(i).setBackground(QtCore.Qt.transparent)
+        
         if (
             isinstance(layer, QgsVectorLayer)
             and self.gpkg_path in layer.source()
