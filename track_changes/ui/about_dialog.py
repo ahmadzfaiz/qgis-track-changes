@@ -68,7 +68,7 @@ class Ui_About(object):
         self.gridLayout.addWidget(self.mainTab, 0, 0, 1, 1)
 
         self.retranslateUi(About)
-        self.mainTab.setCurrentIndex(1)
+        self.mainTab.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(About)
 
     def retranslateUi(self, About):
