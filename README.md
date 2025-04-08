@@ -29,6 +29,17 @@ Format tracking changes log: <br>
 ## Code Changelog
 - [Detail Change Logs](./CHANGELOG.md)
 
+## Testing
+This project uses tests that don't rely on QGIS imports, using mocks to simulate QGIS components. These can be run in any Python environment:
+
+```bash
+# Run all default tests
+python -m pytest tests/
+
+# Run a specific test file
+python -m pytest tests/test_about_widget.py
+```
+
 ## Contributors guide
 ### Before you contribute
 1. Read this guide carefully if you want to contribute on this plugin.
