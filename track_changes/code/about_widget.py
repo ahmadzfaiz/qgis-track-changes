@@ -2,6 +2,8 @@ import sqlite3
 import humanize
 from datetime import datetime
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QAbstractItemView
+from qgis.core import Qgis
+from qgis.utils import iface
 from ..ui.about_dialog import Ui_About
 
 def get_plugin_version():
@@ -43,7 +45,15 @@ class AboutWidget(QDialog):
 
     def populate_change_history(self, file_path):
         """Fill the change history table with changelog data."""
-        if file_path:
+        table = self.ui.changeHistoryTable
+        table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        table.setRowCount(0)
+
+        if not file_path:
+            return
+
+        conn = None
+        try:
             conn = sqlite3.connect(file_path, timeout=30)
             cursor = conn.cursor()
 
@@ -60,8 +70,6 @@ class AboutWidget(QDialog):
             """)
 
             data = cursor.fetchall()
-            table = self.ui.changeHistoryTable
-            table.setEditTriggers(QAbstractItemView.NoEditTriggers)
             table.setRowCount(len(data))
 
             for row_idx, row in enumerate(data):
@@ -83,3 +91,30 @@ class AboutWidget(QDialog):
                 current_width = table.columnWidth(col)
                 if current_width > max_width:
                     table.setColumnWidth(col, max_width)
+
+        except sqlite3.OperationalError as e:
+            if "no such table: gpkg_changelog" in str(e):
+                iface.messageBar().pushMessage(
+                    "Warning",
+                    f"File '{file_path}' doesn't have changelog yet. Please activate the plugin to track changes of the GeoPackage file first.",
+                    level=Qgis.Warning,
+                    duration=5
+                )
+            else:
+                iface.messageBar().pushMessage(
+                    "Error",
+                    f"Database error: {e}",
+                    level=Qgis.Critical,
+                    duration=5
+                )
+        except Exception as e:
+            iface.messageBar().pushMessage(
+                "Error",
+                f"An unexpected error occurred: {e}",
+                level=Qgis.Critical,
+                duration=5
+            )
+            print(f"An unexpected error occurred: {e}")
+        finally:
+            if conn:
+                conn.close()
