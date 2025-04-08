@@ -1,6 +1,43 @@
 # CHANGELOG
 
 
+## v0.9.2 (2025-04-08)
+
+### Bug Fixes
+
+- **change_history**: Handle error on sqlite query of gpkg changelog
+  ([#67](https://github.com/ahmadzfaiz/qgis-track-changes/pull/67),
+  [`18006b6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/18006b6fb38b46b68443574e976e4e83e3d9d924))
+
+### Chores
+
+- **metadata**: Add new tag
+  ([`68755f2`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/68755f25762a4163af5d7b825a4a28e7f9599337))
+
+- **metadata**: Remove experimental tag
+  ([`0c6cb20`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0c6cb205895f75263f418531d01824c3b7be3b39))
+
+### Continuous Integration
+
+- **unittest**: Add unittest in CI/CD
+  ([#69](https://github.com/ahmadzfaiz/qgis-track-changes/pull/69),
+  [`3091f97`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/3091f97fa1b5ee888ac0196dc20bbcd1f14de0cf))
+
+- **unittest**: Fix QGIS related test CI/CD
+  ([#69](https://github.com/ahmadzfaiz/qgis-track-changes/pull/69),
+  [`3581f65`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/3581f65eca1c1edd05d172fc82827d58f5b782ae))
+
+### Testing
+
+- Add unittests for all functionality
+  ([#69](https://github.com/ahmadzfaiz/qgis-track-changes/pull/69),
+  [`a5d7c36`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a5d7c36a1f46fa159ea0d60964c8a231c32c82ee))
+
+- **change_history**: Create a proper test to check gpkg with, without or empty changelog
+  ([#67](https://github.com/ahmadzfaiz/qgis-track-changes/pull/67),
+  [`976be3e`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/976be3e133017af7abfa2143c73a4c229c92d3f5))
+
+
 ## v0.9.1 (2025-04-07)
 
 ### Bug Fixes
