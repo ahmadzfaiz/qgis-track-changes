@@ -18,13 +18,10 @@ tracker=https://github.com/ahmadzfaiz/qgis-track-changes/issues
 repository=https://github.com/ahmadzfaiz/qgis-track-changes
 
 # tags are comma separated with spaces allowed
-tags=vector, tracking, changes
-
+tags=vector, tracking, changes, versioning
 icon=icon.png
 
 experimental=False
-
-# deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
 
 # Author contact information
