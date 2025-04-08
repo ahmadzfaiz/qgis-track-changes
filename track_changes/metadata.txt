@@ -22,7 +22,7 @@ tags=vector, tracking, changes
 
 icon=icon.png
 
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
