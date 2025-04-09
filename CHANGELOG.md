@@ -1,6 +1,29 @@
 # CHANGELOG
 
 
+## v0.10.0 (2025-04-09)
+
+### Bug Fixes
+
+- **gpkg_logger**: Fixing health check database connection
+  ([#71](https://github.com/ahmadzfaiz/qgis-track-changes/pull/71),
+  [`71e9323`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/71e93235650340f84f08f646653090c074aa9b73))
+
+- **gpkg_logger**: Version commit with no version change don't create new data version id
+  ([#71](https://github.com/ahmadzfaiz/qgis-track-changes/pull/71),
+  [`1c9a5eb`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/1c9a5ebdbc48b9c02cfade349b4cee7c11ff6daf))
+
+### Features
+
+- **gpkg_logger**: Add actions number 25 and 26
+  ([#71](https://github.com/ahmadzfaiz/qgis-track-changes/pull/71),
+  [`7dabe33`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7dabe333c0cae74d3ff986185f6b58b538ff1e2f))
+
+- **gpkg_logger**: Add versioning functionality on commit changes
+  ([#71](https://github.com/ahmadzfaiz/qgis-track-changes/pull/71),
+  [`fb0685b`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/fb0685bbcabfa54c6fa0b0334df3b9de56dd550f))
+
+
 ## v0.9.2 (2025-04-08)
 
 ### Bug Fixes

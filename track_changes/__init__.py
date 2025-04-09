@@ -1,6 +1,6 @@
 from .code.main_plugin import TrackChangesPlugin
 
-__version__ = "0.9.2"
+__version__ = "0.10.0"
 
 def classFactory(iface):
     return TrackChangesPlugin(iface)
