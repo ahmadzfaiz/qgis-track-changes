@@ -25,6 +25,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         # GPKG setup
         self.gpkg_path = None
         self.gpkg_conn = None
+        self.gpkg_cursor = None
+        self.connection_timeout = 30  # seconds
+        self.max_retries = 3  # Maximum number of retries for database operations
 
         # Project configurations
         self.app_version = Qgis.QGIS_VERSION
@@ -208,6 +211,8 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.active_layer.featureAdded.connect(self.log_feature_added)
         self.active_layer.featureDeleted.connect(self.log_feature_deleted)
         self.active_layer.geometryChanged.connect(self.log_geometry_changed)
+        self.active_layer.committedFeaturesAdded.connect(self.log_commited_feature_added)
+        self.active_layer.committedFeaturesRemoved.connect(self.log_commited_feature_deleted)
         self.active_layer.committedGeometriesChanges.connect(self.log_commited_geometries_changes)
         # Action 3*
         self.active_layer.attributeAdded.connect(self.log_attribute_added)
@@ -216,6 +221,8 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.active_layer.committedAttributesAdded.connect(self.log_committed_attributes_added)
         self.active_layer.committedAttributesDeleted.connect(self.log_committed_attributes_deleted)
         self.active_layer.committedAttributeValuesChanges.connect(self.log_committed_attribute_values_changes)
+        # Action 5*
+        self.active_layer.afterCommitChanges.connect(self.log_commit_changes)
 
     def disconnect_actions(self, layer):
         # Actions 1*
@@ -226,6 +233,8 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         layer.featureAdded.disconnect(self.log_feature_added)
         layer.featureDeleted.disconnect(self.log_feature_deleted)
         layer.geometryChanged.disconnect(self.log_geometry_changed)
+        layer.committedFeaturesAdded.disconnect(self.log_commited_feature_added)
+        layer.committedFeaturesRemoved.disconnect(self.log_commited_feature_deleted)
         layer.committedGeometriesChanges.disconnect(self.log_commited_geometries_changes)
         # Action 3*
         layer.attributeAdded.disconnect(self.log_attribute_added)
@@ -234,6 +243,8 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         layer.committedAttributesAdded.disconnect(self.log_committed_attributes_added)
         layer.committedAttributesDeleted.disconnect(self.log_committed_attributes_deleted)
         layer.committedAttributeValuesChanges.disconnect(self.log_committed_attribute_values_changes)
+        # Action 5*
+        layer.afterCommitChanges.disconnect(self.log_commit_changes)
 
     def deactivate(self):
         self.ui.pbActivate.setEnabled(True)
@@ -434,6 +445,20 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
     def log_geometry_changed(self, fid, geometry):
         properties = {"new_geometry": geometry.asWkt()}
         self.logging_data(23, fid, "geometry change", json.dumps(properties))
+
+    def log_commited_feature_added(self, lid, features):
+        feature_obj = []
+        for feature in features:
+            properties = {}
+            attributes = feature.attributes()
+            for idx, field in enumerate(self.active_layer.fields()):
+                properties[field.name()] = attributes[idx]
+            properties["geometry"] = feature.geometry().asWkt()
+            feature_obj.append(properties)
+        self.logging_data(24, None, "commit add feature", json.dumps(feature_obj))
+
+    def log_commited_feature_deleted(self, lid, fids):
+        self.logging_data(25, None, "commit delete feature", fids)
     
     def log_commited_geometries_changes(self, lid, geometries):
         geoms = [{"fid": fid, "geometry": geom.asWkt()} 
@@ -483,6 +508,61 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             att_objects.append(data)
         self.logging_data(35, None, "commit change attribute", json.dumps(att_objects))
 
+    def log_commit_changes(self):
+        commit_obj = self.detect_changes()
+        self.logging_data(50, None, "commit version changes", commit_obj)
+
+    def detect_changes(self):
+        self.gpkg_cursor.execute("""
+            SELECT data_version
+            FROM gpkg_changelog
+            ORDER BY id DESC 
+            LIMIT 1;
+        """)
+        last_version = self.gpkg_cursor.fetchone()[0]
+        major, minor, patch = map(int, last_version.split("."))
+
+        self.gpkg_cursor.execute("""
+            SELECT change_code, COUNT(change_code) AS count
+            FROM gpkg_changelog
+            WHERE data_version = ?
+            GROUP BY change_code
+        """, (last_version,))
+        change_count = {}
+        for item in self.gpkg_cursor.fetchall():
+            change_count[item[0]] = item[1]
+
+        # Code changes that trigger version update
+        code24 = change_count.get(24, 0) > 0
+        code25 = change_count.get(25, 0) > 0
+        code26 = change_count.get(26, 0) > 0
+        code33 = change_count.get(33, 0) > 0
+        code34 = change_count.get(34, 0) > 0
+        code35 = change_count.get(35, 0) > 0
+
+        if code25 or code34:
+            new_major = major + 1
+            new_version =  f"{new_major}.0.0"
+            message = "Major version update"
+        elif code24 or code33:
+            new_minor = minor + 1
+            new_version = f"{major}.{new_minor}.0"
+            message = "Minor version update"
+        elif code26 or code35:
+            new_patch = patch + 1
+            new_version = f"{major}.{minor}.{new_patch}"
+            message = "Patch version update"
+        else:
+            new_version = last_version
+            message = "No version update"
+
+        return {
+            "message": message,
+            "old_version": last_version,
+            "new_version": new_version,
+            "change_counts": change_count
+        }
+
     def logging_data(self, change_code, feature_id, message, data):
         if data and not isinstance(data, str):
             try:
@@ -490,59 +570,110 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             except (TypeError, ValueError) as e:
                 self.show_info(f"Invalid data format: {str(e)}", level=Qgis.Warning)
                 return
-        if not self.gpkg_conn:
-            self.show_info("No active database connection", level=Qgis.Warning)
-            return
-        try:
-            self.gpkg_conn.execute("BEGIN")
-            self.gpkg_cursor.execute("""
-                SELECT data_version, data_version_id 
-                FROM gpkg_changelog 
-                ORDER BY id DESC 
-                LIMIT 1;
-            """)
-            latest_record = self.gpkg_cursor.fetchone()
-            if latest_record is not None:
-                data_version = latest_record[0] 
-                data_version_id = latest_record[1]
-            else:
-                data_version = "0.0.0" 
-                data_version_id = uuid.uuid4().hex
+        
+        # Ensure we have a valid connection
+        if not self.gpkg_conn or not self.check_connection():
+            if not self.reconnect():
+                self.show_info("Cannot log changes: No active database connection", level=Qgis.Warning)
+                return
+        
+        retry_count = 0
+        while retry_count < self.max_retries:
+            try:
+                # Start a transaction
+                self.gpkg_conn.execute("BEGIN")
+                
+                # Get the latest record
+                self.gpkg_cursor.execute("""
+                    SELECT data_version, data_version_id 
+                    FROM gpkg_changelog 
+                    ORDER BY id DESC 
+                    LIMIT 1;
+                """)
+                latest_record = self.gpkg_cursor.fetchone()
 
-            self.gpkg_cursor.execute("""
-                INSERT INTO gpkg_changelog (
-                    data_version, 
-                    data_version_id, 
-                    timestamp, 
-                    change_code,
-                    author, 
-                    qgis_version, 
-                    layer_name, 
-                    feature_id, 
-                    message, 
-                    data, 
-                    qgis_trackchanges_version
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                    data_version,
-                    data_version_id,
-                    datetime.now(),
-                    change_code,
-                    self.author,
-                    self.app_version,
-                    self.active_layer_name,
-                    feature_id,
-                    message,
-                    data,
-                    get_plugin_version()
+                # Determine data version and ID
+                if change_code == 50:
+                    try:
+                        new_object = json.loads(data)
+                        data_version = new_object["new_version"]
+                    except Exception:
+                        data_version = latest_record[0] if latest_record else "0.0.0"
+                    try:
+                        commit_version_message = new_object["message"]
+                        if commit_version_message != "No version update":
+                            data_version_id = uuid.uuid4().hex
+                        else:
+                            data_version_id = latest_record[1]
+                    except Exception:
+                        data_version_id = uuid.uuid4().hex
+                elif latest_record is not None:
+                    data_version = latest_record[0] 
+                    data_version_id = latest_record[1]
+                else:
+                    data_version = "0.0.0" 
+                    data_version_id = uuid.uuid4().hex
+
+                # Insert the log entry
+                self.gpkg_cursor.execute("""
+                    INSERT INTO gpkg_changelog (
+                        data_version, 
+                        data_version_id, 
+                        timestamp, 
+                        change_code,
+                        author, 
+                        qgis_version, 
+                        layer_name, 
+                        feature_id, 
+                        message, 
+                        data, 
+                        qgis_trackchanges_version
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                        data_version,
+                        data_version_id,
+                        datetime.now(),
+                        change_code,
+                        self.author,
+                        self.app_version,
+                        self.active_layer_name,
+                        feature_id,
+                        message,
+                        data,
+                        get_plugin_version()
+                    )
                 )
-            )
-            self.gpkg_conn.commit()
-        except sqlite3.Error as e:
-            self.show_info(f"Error logging changes: {str(e)}", level=Qgis.Critical)
-        except:
+                
+                # Commit the transaction
+                self.gpkg_conn.commit()
+                return  # Success, exit the retry loop
+                
+            except sqlite3.OperationalError as e:
+                # Handle specific SQLite errors
+                if "database is locked" in str(e):
+                    # Wait a bit and retry
+                    QtCore.QThread.msleep(100 * (retry_count + 1))
+                    retry_count += 1
+                    continue
+                else:
+                    self.show_info(f"Database error: {str(e)}", level=Qgis.Critical)
+                    self.gpkg_conn.rollback()
+                    return
+                    
+            except sqlite3.Error as e:
+                self.show_info(f"Error logging changes: {str(e)}", level=Qgis.Critical)
+                self.gpkg_conn.rollback()
+                return
+                
+            except Exception as e:
+                self.show_info(f"Unexpected error: {str(e)}", level=Qgis.Critical)
+                self.gpkg_conn.rollback()
+                return
+        
+        # If we've exhausted all retries
+        if retry_count >= self.max_retries:
+            self.show_info("Failed to log changes after multiple attempts", level=Qgis.Critical)
             self.gpkg_conn.rollback()
-            raise
 
     def check_connection(self):
         """Check if connection is still valid"""
@@ -558,9 +689,19 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         """Attempt to reconnect if connection is lost"""
         try:
             if self.gpkg_conn:
-                self.gpkg_conn.close()
-            self.gpkg_conn = sqlite3.connect(self.gpkg_path)
+                try:
+                    self.gpkg_conn.close()
+                except sqlite3.Error:
+                    pass  # Ignore errors when closing a potentially broken connection
+                self.gpkg_conn = None
+                self.gpkg_cursor = None
+            
+            # Create a new connection with timeout
+            self.gpkg_conn = sqlite3.connect(self.gpkg_path, timeout=self.connection_timeout)
             self.gpkg_cursor = self.gpkg_conn.cursor()
+            
+            # Verify the connection is working
+            self.gpkg_cursor.execute("SELECT 1")
             return True
         except sqlite3.Error as e:
             self.show_info(f"Failed to reconnect: {str(e)}", level=Qgis.Critical)
@@ -574,16 +715,37 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 self.show_info("Successfully reconnected")
             else:
                 self.show_info("Failed to reconnect to database", level=Qgis.Critical)
+                # Try to reinitialize the connection on next operation
+                self.gpkg_conn = None
+                self.gpkg_cursor = None
 
     def cleanup(self):
         """Clean up resources when plugin is unloaded"""
         if self.check_timer:
             self.check_timer.stop()
+        
+        # Ensure all transactions are committed or rolled back
+        if self.gpkg_conn:
+            try:
+                # Check if there's an active transaction
+                self.gpkg_cursor.execute("SELECT 1")
+                self.gpkg_conn.commit()
+            except sqlite3.Error:
+                # If there's an error, try to rollback
+                try:
+                    self.gpkg_conn.rollback()
+                except sqlite3.Error:
+                    pass
+        
+        # Close the connection
         if self.gpkg_conn:
             try:
                 self.gpkg_conn.close()
             except sqlite3.Error:
                 pass
+            finally:
+                self.gpkg_conn = None
+                self.gpkg_cursor = None
 
     def wait_for_database(self, timeout=30):
         """Wait for database to become available"""
