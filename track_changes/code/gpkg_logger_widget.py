@@ -208,6 +208,8 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.active_layer.featureAdded.connect(self.log_feature_added)
         self.active_layer.featureDeleted.connect(self.log_feature_deleted)
         self.active_layer.geometryChanged.connect(self.log_geometry_changed)
+        self.active_layer.committedFeaturesAdded.connect(self.log_commited_feature_added)
+        self.active_layer.committedFeaturesRemoved.connect(self.log_commited_feature_deleted)
         self.active_layer.committedGeometriesChanges.connect(self.log_commited_geometries_changes)
         # Action 3*
         self.active_layer.attributeAdded.connect(self.log_attribute_added)
@@ -226,6 +228,8 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         layer.featureAdded.disconnect(self.log_feature_added)
         layer.featureDeleted.disconnect(self.log_feature_deleted)
         layer.geometryChanged.disconnect(self.log_geometry_changed)
+        layer.committedFeaturesAdded.disconnect(self.log_commited_feature_added)
+        layer.committedFeaturesRemoved.disconnect(self.log_commited_feature_deleted)
         layer.committedGeometriesChanges.disconnect(self.log_commited_geometries_changes)
         # Action 3*
         layer.attributeAdded.disconnect(self.log_attribute_added)
@@ -434,6 +438,20 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
     def log_geometry_changed(self, fid, geometry):
         properties = {"new_geometry": geometry.asWkt()}
         self.logging_data(23, fid, "geometry change", json.dumps(properties))
+
+    def log_commited_feature_added(self, lid, features):
+        feature_obj = []
+        for feature in features:
+            properties = {}
+            attributes = feature.attributes()
+            for idx, field in enumerate(self.active_layer.fields()):
+                properties[field.name()] = attributes[idx]
+            properties["geometry"] = feature.geometry().asWkt()
+            feature_obj.append(properties)
+        self.logging_data(24, None, "commit add feature", json.dumps(feature_obj))
+
+    def log_commited_feature_deleted(self, lid, fids):
+        self.logging_data(25, None, "commit delete feature", fids)
     
     def log_commited_geometries_changes(self, lid, geometries):
         geoms = [{"fid": fid, "geometry": geom.asWkt()} 
