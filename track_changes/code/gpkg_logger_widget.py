@@ -218,6 +218,8 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.active_layer.committedAttributesAdded.connect(self.log_committed_attributes_added)
         self.active_layer.committedAttributesDeleted.connect(self.log_committed_attributes_deleted)
         self.active_layer.committedAttributeValuesChanges.connect(self.log_committed_attribute_values_changes)
+        # Action 5*
+        self.active_layer.afterCommitChanges.connect(self.log_commit_changes)
 
     def disconnect_actions(self, layer):
         # Actions 1*
@@ -238,6 +240,8 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         layer.committedAttributesAdded.disconnect(self.log_committed_attributes_added)
         layer.committedAttributesDeleted.disconnect(self.log_committed_attributes_deleted)
         layer.committedAttributeValuesChanges.disconnect(self.log_committed_attribute_values_changes)
+        # Action 5*
+        layer.afterCommitChanges.disconnect(self.log_commit_changes)
 
     def deactivate(self):
         self.ui.pbActivate.setEnabled(True)
@@ -501,6 +505,61 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             att_objects.append(data)
         self.logging_data(35, None, "commit change attribute", json.dumps(att_objects))
 
+    def log_commit_changes(self):
+        commit_obj = self.detect_changes()
+        self.logging_data(50, None, "commit version changes", commit_obj)
+
+    def detect_changes(self):
+        self.gpkg_cursor.execute("""
+            SELECT data_version
+            FROM gpkg_changelog
+            ORDER BY id DESC 
+            LIMIT 1;
+        """)
+        last_version = self.gpkg_cursor.fetchone()[0]
+        major, minor, patch = map(int, last_version.split("."))
+
+        self.gpkg_cursor.execute("""
+            SELECT change_code, COUNT(change_code) AS count
+            FROM gpkg_changelog
+            WHERE data_version = ?
+            GROUP BY change_code
+        """, (last_version,))
+        change_count = {}
+        for item in self.gpkg_cursor.fetchall():
+            change_count[item[0]] = item[1]
+
+        # Code changes that trigger version update
+        code24 = change_count.get(24, 0) > 0
+        code25 = change_count.get(25, 0) > 0
+        code26 = change_count.get(26, 0) > 0
+        code33 = change_count.get(33, 0) > 0
+        code34 = change_count.get(34, 0) > 0
+        code35 = change_count.get(35, 0) > 0
+
+        if code25 or code34:
+            new_major = major + 1
+            new_version =  f"{new_major}.0.0"
+            message = "Major version update"
+        elif code24 or code33:
+            new_minor = minor + 1
+            new_version = f"{major}.{new_minor}.0"
+            message = "Minor version update"
+        elif code26 or code35:
+            new_patch = patch + 1
+            new_version = f"{major}.{minor}.{new_patch}"
+            message = "Patch version update"
+        else:
+            new_version = last_version
+            message = "No version update"
+
+        return {
+            "message": message,
+            "old_version": last_version,
+            "new_version": new_version,
+            "change_counts": change_count
+        }
+
     def logging_data(self, change_code, feature_id, message, data):
         if data and not isinstance(data, str):
             try:
@@ -520,7 +579,15 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 LIMIT 1;
             """)
             latest_record = self.gpkg_cursor.fetchone()
-            if latest_record is not None:
+
+            if change_code == 50:
+                try:
+                    new_object = json.loads(data)
+                    data_version = new_object["new_version"]
+                except Exception:
+                    data_version = latest_record[0]
+                data_version_id = uuid.uuid4().hex
+            elif latest_record is not None:
                 data_version = latest_record[0] 
                 data_version_id = latest_record[1]
             else:
