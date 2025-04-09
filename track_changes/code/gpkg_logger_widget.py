@@ -599,7 +599,14 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                         data_version = new_object["new_version"]
                     except Exception:
                         data_version = latest_record[0] if latest_record else "0.0.0"
-                    data_version_id = uuid.uuid4().hex
+                    try:
+                        commit_version_message = new_object["message"]
+                        if commit_version_message != "No version update":
+                            data_version_id = uuid.uuid4().hex
+                        else:
+                            data_version_id = latest_record[1]
+                    except Exception:
+                        data_version_id = uuid.uuid4().hex
                 elif latest_record is not None:
                     data_version = latest_record[0] 
                     data_version_id = latest_record[1]
