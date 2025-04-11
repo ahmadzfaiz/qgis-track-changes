@@ -1,3 +1,4 @@
+import time
 import logging
 from PyQt5.QtWidgets import QDockWidget
 from qgis.core import QgsMessageLog, Qgis, QgsProject
@@ -59,6 +60,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         # Set up new file handler
         file_handler = logging.FileHandler(self.log_file, mode="a")
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        formatter.converter = time.gmtime
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
 

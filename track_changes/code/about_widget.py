@@ -1,6 +1,6 @@
 import sqlite3
 import humanize
-from datetime import datetime
+from datetime import datetime, timezone
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QAbstractItemView
 from qgis.core import Qgis
 from qgis.utils import iface
@@ -46,7 +46,7 @@ def _fetch_and_populate_changelog(file_path, table, iface_ref):
             timestamp = row[0]
             try:
                 dt = datetime.fromisoformat(timestamp)
-                pretty_time = humanize.naturaltime(datetime.now() - dt)
+                pretty_time = humanize.naturaltime(datetime.now(timezone.utc) - dt)
             except Exception:
                 pretty_time = timestamp
 

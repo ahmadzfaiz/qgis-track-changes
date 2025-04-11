@@ -1,7 +1,7 @@
 import json
 import uuid
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from PyQt5.QtWidgets import QDockWidget, QListWidgetItem, QMessageBox, QAbstractItemView
 from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsProviderRegistry, QgsVectorLayer, QgsWkbTypes
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
@@ -632,7 +632,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 """, (
                         data_version,
                         data_version_id,
-                        datetime.now(),
+                        datetime.now(timezone.utc),
                         change_code,
                         self.author,
                         self.app_version,
