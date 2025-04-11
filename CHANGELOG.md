@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.10.1 (2025-04-11)
+
+### Bug Fixes
+
+- **default_logger**: Convert asctime logger to UTC time
+  ([#75](https://github.com/ahmadzfaiz/qgis-track-changes/pull/75),
+  [`a0afcd7`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/a0afcd71230d7c0efd3e193e6fc34830e34bc0f8))
+
+- **gpkg_logger**: Convert timestamp logger to UTC time
+  ([#75](https://github.com/ahmadzfaiz/qgis-track-changes/pull/75),
+  [`571165d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/571165dc5e4fd08df58dfd75cb93fa3dc1cd3542))
+
+
 ## v0.10.0 (2025-04-09)
 
 ### Bug Fixes
