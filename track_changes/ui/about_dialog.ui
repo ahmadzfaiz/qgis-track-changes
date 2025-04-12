@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>520</width>
+    <width>551</width>
     <height>385</height>
    </rect>
   </property>
@@ -61,49 +61,68 @@
           <widget class="QgsFileWidget" name="inputGpkgFile"/>
          </item>
          <item>
-          <widget class="QTableWidget" name="changeHistoryTable">
-           <column>
-            <property name="text">
-             <string>Last Modified</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Version</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Author</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Layer</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Feature ID</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Message</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Data</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>NOTE: currently only works for GeoPackage logger</string>
+          <widget class="QTabWidget" name="changeHistoryTab">
+           <property name="currentIndex">
+            <number>0</number>
            </property>
+           <widget class="QWidget" name="dashboardTab">
+            <attribute name="title">
+             <string>Dashboard</string>
+            </attribute>
+           </widget>
+           <widget class="QWidget" name="tableTab">
+            <attribute name="title">
+             <string>Table</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <item row="0" column="0">
+              <widget class="QTableWidget" name="changeHistoryTable">
+               <column>
+                <property name="text">
+                 <string>Last Modified</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Version</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Author</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Layer</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Feature ID</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Message</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Data</string>
+                </property>
+               </column>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>NOTE: currently only works for GeoPackage logger</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>

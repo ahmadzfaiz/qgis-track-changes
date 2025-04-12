@@ -46,6 +46,8 @@ def _fetch_and_populate_changelog(file_path, table, iface_ref):
             timestamp = row[0]
             try:
                 dt = datetime.fromisoformat(timestamp)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
                 pretty_time = humanize.naturaltime(datetime.now(timezone.utc) - dt)
             except Exception:
                 pretty_time = timestamp
