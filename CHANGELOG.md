@@ -1,6 +1,41 @@
 # CHANGELOG
 
 
+## v0.11.0 (2025-04-13)
+
+### Bug Fixes
+
+- **change_history**: Humanize datetime now with utc fix error
+  ([#75](https://github.com/ahmadzfaiz/qgis-track-changes/pull/75),
+  [`0662d20`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/0662d20acea9e99e4f0ea53d1532eb4d1a538de4))
+
+### Features
+
+- **change_history**: Add dashboard
+  ([#70](https://github.com/ahmadzfaiz/qgis-track-changes/pull/70),
+  [`d24a815`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/d24a815399244458b192c9ca7c4ee850f4b9a3c8))
+
+- **change_history**: Changing dashboard with dropdown picker
+  ([#70](https://github.com/ahmadzfaiz/qgis-track-changes/pull/70),
+  [`c601e12`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/c601e124c947356ad8be3956eaba9c1f17ad2f0b))
+
+- **change_history**: Changing gpkg path will refresh the chart canvas
+  ([#70](https://github.com/ahmadzfaiz/qgis-track-changes/pull/70),
+  [`fab8bd3`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/fab8bd3cd8602b63f463ca9290a3b36a2d57b411))
+
+- **change_history**: Use committed data tracking, not current data tracking
+  ([#70](https://github.com/ahmadzfaiz/qgis-track-changes/pull/70),
+  [`074799b`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/074799bc6b64180180c45002eb03fa5350fe7e76))
+
+### Testing
+
+- **about_widget**: Fix unittest
+  ([`2940154`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/294015453cbca118dcb549924e6e4ec8e3431e5a))
+
+- **about_widget**: Fix unittest
+  ([`75018a4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/75018a4252eb82368899e82b363aa447fb503c41))
+
+
 ## v0.10.1 (2025-04-11)
 
 ### Bug Fixes
