@@ -16,8 +16,8 @@ Format tracking changes log: <br>
 | 21 | feature add | Live |
 | 22 | feature delete | Live |
 | 23 | feature geometry change | Live |
-| 24 | feature add committed | Reserved |
-| 25 | feature delete committed | Reserved |
+| 24 | feature add committed | Live |
+| 25 | feature delete committed | Live |
 | 26 | features geometry change committed | Live |
 | 30 | attribute add | Live |
 | 31 | attribute delete | Live |
@@ -25,6 +25,7 @@ Format tracking changes log: <br>
 | 33 | attribute add committed | Live |
 | 34 | attribute delete committed | Live |
 | 35 | attribute values change committed | Live |
+| 50 | version change committed | Live |
 
 ## Code Changelog
 - [Detail Change Logs](./CHANGELOG.md)
@@ -77,37 +78,3 @@ Bug fixes that do not introduce new features.
 
 Use the commit message with this format: <br>
 `<type>(<scope>): <short description> (#<issue-number>)`
-
-#### Example usage
-| Type | Example Message |
-|----------|----------|
-| fix  | fix(logger): resolve error on logging (#5)  |
-| feat  | feat(graph): add graphic visualization (#12)  |
-| build  | build(pandas): update pandas dependencies and remove deprecated package (#36)  |
-| chore  | chore(ci): update GitHub Actions workflow (#8)  |
-| ci  | ci(python): update GitHub Actions to run tests on Python 3.13 (#76)  |
-| docs  | docs(readme): improve installation guide (#10)  |
-| refactor  | refactor(api): optimize query performance (#15)  |
-| style  | style(ui): fix button alignment in widget (#3)  |
-| test  | test(data): add unit tests for detecting data changes (#18)  |
-
-### Branch Naming
-Make a clear name of a branch
-| Type of Change | Branch Name Format | Example |
-|----------|----------|----------|
-| 🆕 Feature | feature/<short-name> | feature/readme-details |
-| 🐛 Bug Fix | fix/<short-name> | fix/readme-typo |
-| 📝 Documentation | docs/<short-name> | docs/update-readme |
-| 🚀 Release Preparation | release/<version> | release/1.2.0 |
-| 🛠️ Refactor | refactor/<short-name> | refactor/code-cleanup |
-
-### Breaking Changes
-This is used for extraordinary changes in the code, so we have to release new major version.
-#### How to use in commit message
-```
-fix!: Fix incorrect date parsing in reports
-
-BREAKING CHANGE: 
-Date formats now follow ISO 8601 (`YYYY-MM-DD`).  
-Any previous date strings (`DD/MM/YYYY`) must be converted.
-```
