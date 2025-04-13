@@ -30,6 +30,7 @@ jobs:
           pip install pytest
           pip install PyQt5
           pip install pytest-mock
+          pip install pandas
           pip install matplotlib
 
       - name: Run tests
