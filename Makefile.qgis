@@ -5,9 +5,7 @@ open_qtdesign:
 	/Applications/QGIS-LTR.app/Contents/MacOS/bin/designer
 
 create_ui:
-	source .venv/bin/activate
 	python -m PyQt5.uic.pyuic -o track_changes/ui/${NAME}.py track_changes/ui/${NAME}.ui
-	deactivate
 
 setup-hooks:
 	@echo "Setting up Git pre-push hook..."
