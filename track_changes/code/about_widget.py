@@ -1,12 +1,14 @@
 import json
+import os
 import sqlite3
 import humanize
 from datetime import datetime, timezone
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QAbstractItemView
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QAbstractItemView, QTableWidget
 from qgis.core import Qgis
 from qgis.utils import iface
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtGui import QPalette
+from qgis.PyQt.QtGui import QPalette, QColor
+import pandas as pd
 import matplotlib as mpl
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -28,6 +30,7 @@ class AboutWidget(QDialog):
         about_html = f"""
         <html><head/><body>
         <p>
+            <img src="{self.get_icon_path("../icon.png")}" height="100"><br/>
             <span style=" font-weight:600;">QGIS Track Changes</span><br/>
             Version: <i>{get_plugin_version()}</i><br/><br/>
             This plugin helps track changes in vector layer data, including:<br/>
@@ -49,6 +52,80 @@ class AboutWidget(QDialog):
 
         self.ui.inputGpkgFile.setFilter("GeoPackage (*.gpkg)")
         self.ui.inputGpkgFile.fileChanged.connect(self.populate_change_history)
+
+        self.ui.file_compare_1.setFilter("GeoPackage (*.gpkg)")
+        self.ui.file_compare_2.setFilter("GeoPackage (*.gpkg)")
+        self.ui.compare_button.clicked.connect(self.compare_data)
+
+    def compare_data(self):
+        conn1 = sqlite3.connect(self.ui.file_compare_1.filePath())
+        conn2 = sqlite3.connect(self.ui.file_compare_2.filePath())
+
+        query = "SELECT DISTINCT data_version, data_version_id FROM gpkg_changelog"
+        df1 = pd.read_sql_query(query, conn1)
+        df2 = pd.read_sql_query(query, conn2)
+
+        merged = df1.merge(
+            df2, 
+            on="data_version", 
+            how="outer", 
+            suffixes=("_df1", "_df2"), 
+            indicator=True
+        )
+        merged["status"] = merged.apply(self.compare_row, axis=1)
+        self.insert_table_from_df(merged[["data_version", "status"]])
+
+        conn1.close()
+        conn2.close()
+
+    def compare_row(self, row):
+        if pd.isna(row["data_version_id_df1"]):
+            return "⬅🟡 missing in left"
+        elif pd.isna(row["data_version_id_df2"]):
+            return "🟡➡ missing in right"
+        elif row["data_version_id_df1"] == row["data_version_id_df2"]:
+            return "✅ equal"
+        else:
+            return "🛑 not equal"
+        
+    def insert_table_from_df(self, df):
+        # Remove existing widgets in layout_compare
+        while self.ui.layout_compare.count():
+            old_widget = self.ui.layout_compare.takeAt(0).widget()
+            if old_widget:
+                old_widget.deleteLater()
+
+        table = QTableWidget()
+        table.setRowCount(len(df))
+        table.setColumnCount(len(df.columns))
+        table.setHorizontalHeaderLabels(df.columns)
+
+        for row_idx, (_, row) in enumerate(df.iterrows()):
+            for col_idx, (col_name, value) in enumerate(row.items()):
+                item = QTableWidgetItem(str(value))
+
+                # Apply color if column is 'status'
+                if col_name == "status":
+                    color = None
+                    status = str(value).lower()
+                    if "✅ equal" == status:
+                        color = QColor("green")
+                    elif "not equal" in status:
+                        color = QColor("red")
+                    elif "missing" in status:
+                        color = QColor("orange")
+
+                    if color:
+                        item.setBackground(color)
+
+                table.setItem(row_idx, col_idx, item)
+
+        table.resizeColumnsToContents()
+        self.ui.layout_compare.addWidget(table)
+
+    def get_icon_path(self, path):
+        """Return the absolute path to the plugin icon."""
+        return os.path.join(os.path.dirname(__file__), path)
 
     def populate_change_history(self, file_path):
         """Fill the change history table with changelog data by calling the helper function."""
