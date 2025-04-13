@@ -1,6 +1,29 @@
 # CHANGELOG
 
 
+## v0.12.0 (2025-04-13)
+
+### Continuous Integration
+
+- **release**: Add pandas library
+  ([`3fec722`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/3fec7223f12a2f594b3ba471468945f4d3044a28))
+
+### Documentation
+
+- Update tracking code status
+  ([`f6a31b6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/f6a31b6655d5a578cd649aada664de14a5a0bd4c))
+
+### Features
+
+- **data_comparison**: Add feature to compare gpkg data
+  ([#76](https://github.com/ahmadzfaiz/qgis-track-changes/pull/76),
+  [`59f607f`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/59f607f10820f26b92cec16719c2716fd2746635))
+
+- **data_comparison**: Close connection after compare
+  ([#76](https://github.com/ahmadzfaiz/qgis-track-changes/pull/76),
+  [`ad71757`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ad71757d04870cc099e8adc7f28bee6be93a8acd))
+
+
 ## v0.11.0 (2025-04-13)
 
 ### Bug Fixes

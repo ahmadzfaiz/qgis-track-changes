@@ -8,7 +8,7 @@ about=This plugin helps track changes in vector layer data, including:
   - Geometry updates
   - Attribute changes
   It ensures data integrity by logging changes efficiently within QGIS.
-version=0.11.0
+version=0.12.0
 
 # Optional items:
 
