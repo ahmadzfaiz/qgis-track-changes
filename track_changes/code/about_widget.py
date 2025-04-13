@@ -75,6 +75,9 @@ class AboutWidget(QDialog):
         merged["status"] = merged.apply(self.compare_row, axis=1)
         self.insert_table_from_df(merged[["data_version", "status"]])
 
+        conn1.close()
+        conn2.close()
+
     def compare_row(self, row):
         if pd.isna(row["data_version_id_df1"]):
             return "⬅🟡 missing in left"
