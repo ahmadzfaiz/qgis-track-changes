@@ -137,8 +137,16 @@ class AboutWidget(QDialog):
                 conn.close()
 
     def _fetch_and_populate_dashboard(self, file_path):
+        self.ui.version_picker.clear()
+        self.file_path = file_path
+
         try:
-            conn = sqlite3.connect(file_path, timeout=30)
+            self.ui.version_picker.currentTextChanged.disconnect(self.change_dashboard)
+        except:
+            pass
+
+        try:
+            conn = sqlite3.connect(self.file_path, timeout=30)
             cursor = conn.cursor()
             cursor.execute("""
                 SELECT data_version
@@ -172,13 +180,63 @@ class AboutWidget(QDialog):
                 formatted = datetime.fromtimestamp(item[0], tz=timezone.utc).strftime('%d %b %y\n%H:%M')
                 timeframe_counts[formatted] = item[1]
 
+            cursor.execute("""
+                SELECT DISTINCT data_version
+                FROM gpkg_changelog
+                ORDER BY id DESC
+            """)
+            version_list = [item[0] for item in cursor.fetchall()]
+
             conn.close()
         except Exception:
             last_version = "0.0.0"
             data_counts = {}
             timeframe_counts = {}
+            version_list = []
+
+        self.ui.version_picker.addItems(version_list)
         
         self.populate_version_detail(last_version, data_counts)
+        self.populate_version_chart(data_counts, timeframe_counts)
+
+        self.ui.version_picker.currentTextChanged.connect(self.change_dashboard)
+
+    def change_dashboard(self, version):
+        print(version)
+        try:
+            conn = sqlite3.connect(self.file_path, timeout=30)
+            cursor = conn.cursor()
+
+            cursor.execute("""
+                SELECT change_code, COUNT(*)
+                FROM gpkg_changelog
+                WHERE data_version = ?
+                GROUP BY change_code
+            """, (version,))
+            data_counts = {}
+            for item in cursor.fetchall():
+                data_counts[item[0]] = item[1]
+
+            cursor.execute("""
+                SELECT
+                    (strftime('%s', timestamp) / 1800) * 1800 AS interval_start,
+                    COUNT(*)
+                FROM gpkg_changelog
+                WHERE data_version = ?
+                GROUP BY interval_start
+                ORDER BY interval_start;
+            """, (version,))
+            timeframe_counts = {}
+            for item in cursor.fetchall():
+                formatted = datetime.fromtimestamp(item[0], tz=timezone.utc).strftime('%d %b %y\n%H:%M')
+                timeframe_counts[formatted] = item[1]
+
+            conn.close()
+        except Exception:
+            data_counts = {}
+            timeframe_counts = {}
+        
+        self.populate_version_detail(version, data_counts)
         self.populate_version_chart(data_counts, timeframe_counts)
 
     def populate_version_detail(self, last_version, data_counts):
