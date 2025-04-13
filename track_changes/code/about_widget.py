@@ -169,12 +169,11 @@ class AboutWidget(QDialog):
             """, (last_version,))
             timeframe_counts = {}
             for item in cursor.fetchall():
-                formatted = datetime.fromtimestamp(item[0], tz=timezone.utc).strftime('%d %b %y %H:%M')
+                formatted = datetime.fromtimestamp(item[0], tz=timezone.utc).strftime('%d %b %y\n%H:%M')
                 timeframe_counts[formatted] = item[1]
 
             conn.close()
-        except Exception as e:
-            print(e)
+        except Exception:
             last_version = "0.0.0"
             data_counts = {}
             timeframe_counts = {}
@@ -304,15 +303,25 @@ class AboutWidget(QDialog):
         self.bg_hex = palette.color(QPalette.Window).name()
         self.fg_hex = palette.color(QPalette.WindowText).name()
 
-        # Create themed figure + canvas
-        self.figure = Figure(facecolor=self.bg_hex)
-        self.canvas = FigureCanvas(self.figure)
-        self.canvas.setStyleSheet(f"background-color: {self.bg_hex};")
-        self.canvas.setAttribute(Qt.WA_TranslucentBackground)
-        self.canvas.setAutoFillBackground(False)
+        # If the canvas is already created, just clear the figure
+        if hasattr(self, 'canvas'):
+            self.figure.clear()  # Clear the figure
+        else:
+            # Create new figure + canvas only if not already created
+            self.figure = Figure(facecolor=self.bg_hex)
+            self.canvas = FigureCanvas(self.figure)
+            self.canvas.setStyleSheet(f"background-color: {self.bg_hex};")
+            self.canvas.setAttribute(Qt.WA_TranslucentBackground)
+            self.canvas.setAutoFillBackground(False)
 
-        # Add to your UI container
-        self.ui.Chart.addWidget(self.canvas)
+            # Remove the old canvas widget, if any
+            if self.ui.Chart.count() > 0:
+                old_widget = self.ui.Chart.takeAt(0)
+                if old_widget and old_widget.widget():
+                    old_widget.widget().deleteLater()
+
+            # Add the new canvas to UI container
+            self.ui.Chart.addWidget(self.canvas)
 
         # Draw the chart
         self.figure.clear()
@@ -367,7 +376,7 @@ class AboutWidget(QDialog):
         # --- Filter labels
         filtered_labels = [label if i % label_interval == 0 else '' for i, label in enumerate(x_labels)]
         ax2.set_xticks(x_numeric)
-        ax2.set_xticklabels(filtered_labels, rotation=15, color=self.fg_hex, fontsize=7, ha='right')
+        ax2.set_xticklabels(filtered_labels, rotation=30, color=self.fg_hex, fontsize=5, ha='right')
         ax2.tick_params(axis='x', bottom=False)
         for i, label in enumerate(filtered_labels):
             if label != '':
