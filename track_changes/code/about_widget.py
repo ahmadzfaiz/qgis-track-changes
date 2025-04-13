@@ -154,6 +154,16 @@ class AboutWidget(QDialog):
                 ORDER BY id DESC 
                 LIMIT 1;
             """)
+            current_version = cursor.fetchone()[0]
+
+            cursor.execute("""
+                SELECT 
+                    json_extract(data, '$.old_version') AS previous_version
+                FROM gpkg_changelog
+                WHERE change_code = 50 
+                    AND data_version = ?
+                    AND json_extract(data, '$.message') != "No version update"
+            """, (current_version,))
             last_version = cursor.fetchone()[0]
 
             cursor.execute("""
@@ -196,23 +206,32 @@ class AboutWidget(QDialog):
 
         self.ui.version_picker.addItems(version_list)
         
-        self.populate_version_detail(last_version, data_counts)
+        self.populate_version_detail(current_version, data_counts)
         self.populate_version_chart(data_counts, timeframe_counts)
 
         self.ui.version_picker.currentTextChanged.connect(self.change_dashboard)
 
     def change_dashboard(self, version):
-        print(version)
         try:
             conn = sqlite3.connect(self.file_path, timeout=30)
             cursor = conn.cursor()
+
+            cursor.execute("""
+                SELECT 
+                    json_extract(data, '$.old_version') AS previous_version
+                FROM gpkg_changelog
+                WHERE change_code = 50 
+                    AND data_version = ?
+                    AND json_extract(data, '$.message') != "No version update"
+            """, (version,))
+            last_version = cursor.fetchone()[0]
 
             cursor.execute("""
                 SELECT change_code, COUNT(*)
                 FROM gpkg_changelog
                 WHERE data_version = ?
                 GROUP BY change_code
-            """, (version,))
+            """, (last_version,))
             data_counts = {}
             for item in cursor.fetchall():
                 data_counts[item[0]] = item[1]
@@ -225,7 +244,7 @@ class AboutWidget(QDialog):
                 WHERE data_version = ?
                 GROUP BY interval_start
                 ORDER BY interval_start;
-            """, (version,))
+            """, (last_version,))
             timeframe_counts = {}
             for item in cursor.fetchall():
                 formatted = datetime.fromtimestamp(item[0], tz=timezone.utc).strftime('%d %b %y\n%H:%M')
@@ -233,6 +252,7 @@ class AboutWidget(QDialog):
 
             conn.close()
         except Exception:
+            last_version = "0.0.0"
             data_counts = {}
             timeframe_counts = {}
         
@@ -259,7 +279,7 @@ class AboutWidget(QDialog):
 
         data_version_html = f"""
         <html><head/><body>
-        <p><span style=" font-size:14pt;">Data version:</span></p>
+        <p><span style=" font-size:14pt;">Committed data version:</span></p>
         <p><span style=" font-size:48pt; font-weight:600;">{last_version}</span></p>
         <p><span style=" font-size:12pt;">Data changes:</span></p>
         <table border="1" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="0" cellpadding="2">
