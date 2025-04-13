@@ -8,24 +8,24 @@ Format tracking changes log: <br>
 ### Tracking Code
 | Code | Explanation | Status |
 |----------|----------|----------|
-| 00 | activate layer track change | Live |
-| 01 | deactivate layer track change | Live |
-| 10 | start editing | Live |
-| 11 | stop editing | Live |
-| 20 | features selection | Live |
-| 21 | feature add | Live |
-| 22 | feature delete | Live |
-| 23 | feature geometry change | Live |
-| 24 | feature add committed | Live |
-| 25 | feature delete committed | Live |
-| 26 | features geometry change committed | Live |
-| 30 | attribute add | Live |
-| 31 | attribute delete | Live |
-| 32 | attribute value change | Live |
-| 33 | attribute add committed | Live |
-| 34 | attribute delete committed | Live |
-| 35 | attribute values change committed | Live |
-| 50 | version change committed | Live |
+| 00 | activate layer track change | ✅ Live |
+| 01 | deactivate layer track change | ✅ Live |
+| 10 | start editing | ✅ Live |
+| 11 | stop editing | ✅ Live |
+| 20 | features selection | ✅ Live |
+| 21 | feature add | ✅ Live |
+| 22 | feature delete | ✅ Live |
+| 23 | feature geometry change | ✅ Live |
+| 24 | feature add committed | ✅ Live |
+| 25 | feature delete committed | ✅ Live |
+| 26 | features geometry change committed | ✅ Live |
+| 30 | attribute add | ✅ Live |
+| 31 | attribute delete | ✅ Live |
+| 32 | attribute value change | ✅ Live |
+| 33 | attribute add committed | ✅ Live |
+| 34 | attribute delete committed | ✅ Live |
+| 35 | attribute values change committed | ✅ Live |
+| 50 | version change committed | ✅ Live |
 
 ## Code Changelog
 - [Detail Change Logs](./CHANGELOG.md)
