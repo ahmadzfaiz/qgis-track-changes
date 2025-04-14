@@ -410,6 +410,25 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             CREATE INDEX IF NOT EXISTS idx_changelog_feature 
             ON gpkg_changelog(feature_id)
         """)
+
+        # Add changelog into extension list
+        self.gpkg_cursor.execute("""
+            INSERT INTO gpkg_extensions (
+                table_name, column_name, extension_name, definition, scope
+            )
+            SELECT 
+                'gpkg_changelog', 
+                NULL, 
+                'qgis_track_changes',
+                'https://qgis-track-changes.readthedocs.io/en/latest/api.html', 
+                'read-write'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM gpkg_extensions
+                WHERE table_name = 'gpkg_changelog'
+                AND column_name IS NULL
+                AND extension_name = 'qgis_track_changes'
+            );
+        """)
         
         self.gpkg_conn.commit()
 
