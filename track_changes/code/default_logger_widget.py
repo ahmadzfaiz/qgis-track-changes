@@ -182,6 +182,11 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.logger.info(f"11 | {self.author} stopped editing of layer \"{self.layer.id()}\"")
 
     def log_selection_changed(self):
+        # Check wheter logging features are selected
+        if not self.ui.cbTrackSelection.isChecked():
+            return
+        
+        # Track logging code 20
         for feature in self.layer.selectedFeatures():
             fid = feature.id()
             feature = self.layer.getFeature(fid)
