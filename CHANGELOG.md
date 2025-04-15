@@ -1,6 +1,35 @@
 # CHANGELOG
 
 
+## v0.13.0 (2025-04-15)
+
+### Bug Fixes
+
+- **default_logger**: Fix different change code
+  ([#77](https://github.com/ahmadzfaiz/qgis-track-changes/pull/77),
+  [`ce5bd15`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ce5bd15f3637b70e6c5c743a67243c6c0e9b4d8c))
+
+### Chores
+
+- **change_history**: Remove label that only support GPKG in table
+  ([#77](https://github.com/ahmadzfaiz/qgis-track-changes/pull/77),
+  [`c6b217f`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/c6b217f92aaa2811a7d7a7cf9c7474b628d6cf32))
+
+- **logger**: Add qgis track changes into GPKG extension list
+  ([#85](https://github.com/ahmadzfaiz/qgis-track-changes/pull/85),
+  [`2e4cc83`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/2e4cc83cf9091a381ea67ff8d532e7e3996783ac))
+
+### Features
+
+- **change_history**: Add dashboard for logfile
+  ([#77](https://github.com/ahmadzfaiz/qgis-track-changes/pull/77),
+  [`f2f34d7`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/f2f34d7a9d9d8a4f5f5daf187b761615dc64c4c9))
+
+- **change_history**: Add log file to track the changes
+  ([#77](https://github.com/ahmadzfaiz/qgis-track-changes/pull/77),
+  [`ac00c89`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ac00c892604715ebb87fa8defb7bceceac679dc3))
+
+
 ## v0.12.0 (2025-04-13)
 
 ### Continuous Integration
