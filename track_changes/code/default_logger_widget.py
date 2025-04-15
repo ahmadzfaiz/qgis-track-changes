@@ -211,7 +211,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
     def log_commited_geometries_changes(self, lid, geometries):
         self.logger.info(f"26 | Geometries changes by {self.author} is committed. Layer ID: {lid}")
         for fid, geometry in geometries.items():
-            self.logger.info(f"26 | Committed changed geometry. Layer ID: {self.layer.id()}. Feature ID: {fid}. New geometry: {geometry.asWkt()}")
+            self.logger.info(f"26 | Committed changed geometry by {self.author}. Layer ID: {self.layer.id()}. Feature ID: {fid}. New geometry: {geometry.asWkt()}")
 
     def log_attribute_added(self, fid):
         field_name = self.layer.fields()[fid].name()
@@ -233,14 +233,14 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             att_name = attribute.name()
             att_index = self.layer.fields().indexFromName(att_name)
             att_type = attribute.displayType()
-            self.logger.info(f"33 | Committed added attribute. Layer ID: {lid}. New field: {att_name}. Field type: {att_type}")
+            self.logger.info(f"33 | Committed added attribute by {self.author}. Layer ID: {lid}. New field: {att_name}. Field type: {att_type}")
             self.committed_fields.insert(att_index, att_name)
             
     def log_committed_attributes_deleted(self, lid, attributes):
         self.logger.info(f"34 | Attributes deleted by {self.author} is committed. Layer ID: {lid}")
         for attribute in attributes:
             att_name = self.committed_fields[attribute]
-            self.logger.info(f"33 | Committed deleted attribute. Layer ID: {lid}. Remove field: {att_name}")
+            self.logger.info(f"34 | Committed deleted attribute. Layer ID: {lid}. Remove field: {att_name}")
             self.committed_fields.pop(attribute)
     
     def log_committed_attribute_values_changes(self, lid, attributes):
@@ -248,4 +248,4 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         for fid, values in attributes.items():
             for cid, value in values.items():
                 field_name = self.fields[cid]
-                self.logger.info(f"35 | Committed changed attribute. Layer ID: {self.layer.id()}. Feature ID: {fid}. Field name: {field_name}. Field content: {value}")
+                self.logger.info(f"35 | Committed changed attribute by {self.author}. Layer ID: {self.layer.id()}. Feature ID: {fid}. Field name: {field_name}. Field content: {value}")
