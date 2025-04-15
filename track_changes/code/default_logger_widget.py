@@ -240,7 +240,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.logger.info(f"34 | Attributes deleted by {self.author} is committed. Layer ID: {lid}")
         for attribute in attributes:
             att_name = self.committed_fields[attribute]
-            self.logger.info(f"33 | Committed deleted attribute. Layer ID: {lid}. Remove field: {att_name}")
+            self.logger.info(f"34 | Committed deleted attribute. Layer ID: {lid}. Remove field: {att_name}")
             self.committed_fields.pop(attribute)
     
     def log_committed_attribute_values_changes(self, lid, attributes):
