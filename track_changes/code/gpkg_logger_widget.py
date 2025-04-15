@@ -439,6 +439,11 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.logging_data(11, None, "stop editing", None)
 
     def log_selection_changed(self):
+        # Check wheter logging features are selected
+        if not self.ui.cbTrackSelection.isChecked():
+            return
+        
+        
         for feature in self.active_layer.selectedFeatures():
             fid = feature.id()
             feature = self.active_layer.getFeature(fid)
