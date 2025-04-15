@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sqlite3
 import humanize
 from datetime import datetime, timezone
@@ -50,7 +51,7 @@ class AboutWidget(QDialog):
 
         self.ui.label.setText(about_html)
 
-        self.ui.inputGpkgFile.setFilter("GeoPackage (*.gpkg)")
+        self.ui.inputGpkgFile.setFilter("GeoPackage (*.gpkg);;Log Files (*.log)")
         self.ui.inputGpkgFile.fileChanged.connect(self.populate_change_history)
 
         self.ui.file_compare_1.setFilter("GeoPackage (*.gpkg)")
@@ -128,10 +129,244 @@ class AboutWidget(QDialog):
         return os.path.join(os.path.dirname(__file__), path)
 
     def populate_change_history(self, file_path):
-        """Fill the change history table with changelog data by calling the helper function."""
-        # Pass the actual table widget and the global iface reference
-        self._fetch_and_populate_changelog(file_path, self.ui.changeHistoryTable, iface)
-        self._fetch_and_populate_dashboard(file_path)
+        """Fill the change history table or handle log files depending on file type."""
+        _, ext = os.path.splitext(file_path.lower())
+
+        if ext == ".gpkg":
+            self._fetch_and_populate_changelog(file_path, self.ui.changeHistoryTable, iface)
+            self._fetch_and_populate_dashboard(file_path)
+        elif ext == ".log":
+            self._fetch_and_populate_logfile(file_path, self.ui.changeHistoryTable, iface)
+        else:
+            print(f"Unsupported file type: {ext}")
+
+    def _fetch_and_populate_logfile(self, file_path, table, iface_ref):
+        table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        table.setRowCount(0)  # Clear table before populating
+
+        if not file_path:
+            return
+        
+        entries = self.parse_log(file_path)
+        table.setRowCount(len(entries))
+
+        for row_idx, entry in enumerate(entries):
+            timestamp = entry["timestamp"]
+            author = ""
+            layer_id = ""
+            feature_id = ""
+            message = ""
+            data = ""
+            try:
+                if timestamp.tzinfo is None:
+                    timestamp = timestamp.replace(tzinfo=timezone.utc)
+                pretty_time = humanize.naturaltime(datetime.now(timezone.utc) - timestamp)
+            except Exception:
+                pretty_time = timestamp
+
+            if entry["code"] == "00":
+                pattern = re.compile(r'^(?P<author>.+?) activated the track changes of layer "(?P<layer_id>[^"]+)" using QGIS version (?P<qgis_version>[\w\.\-]+)$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "activate track change"
+            elif entry["code"] == "01":
+                pattern = re.compile(r'^(?P<author>.+?) deactivated the track changes of layer "(?P<layer_id>[^"]+)" using QGIS version (?P<qgis_version>[\w\.\-]+)$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "deactivate track change"
+            elif entry["code"] == "10":
+                pattern = re.compile(r'^(?P<author>[^>]+)\sstarted editing of layer\s"(?P<layer_id>[^"]+)"$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "start editing"
+            elif entry["code"] == "11":
+                pattern = re.compile(r'^(?P<author>.+?)\sstopped editing of layer\s"(?P<layer_id>[^"]+)"$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "stop editing"
+            elif entry["code"] == "20":
+                pattern = re.compile(r'^(?P<author>.+?) selecting feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>\d+)\. Properties: (?P<data>\{.*\})$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    feature_id = groups["feature_id"]
+                    message = "selecting feature"
+                    data = groups["data"]
+            elif entry["code"] == "21":
+                pattern = re.compile(r'^(?P<author>.+?) added feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Properties: (?P<data>\{.*\})$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    feature_id = groups["feature_id"]
+                    message = "add feature"
+                    data = groups["data"]
+            elif entry["code"] == "22":
+                pattern = re.compile(r'^(?P<author>.+?) deleted feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    feature_id = groups["feature_id"]
+                    message = "delete feature"
+            elif entry["code"] == "23":
+                pattern = re.compile(r'^(?P<author>.+?) changed geometry\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. New geometry: (?P<geometry>[A-Za-z]+ \([^)]+\))$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    feature_id = groups["feature_id"]
+                    message = "geometry change"
+                    data = json.dumps({"geometry": groups["geometry"]})
+            elif entry["code"] == "26":
+                pattern_1 = re.compile(r'^Geometries changes by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
+                pattern_2 = re.compile(r'^Committed changed geometry by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. New geometry: (?P<geometry>[A-Za-z]+ \([^)]+\))$')
+                match_1 = pattern_1.match(entry["message"])
+                match_2 = pattern_2.match(entry["message"])
+                if match_1:
+                    groups = match_1.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "commit geometry change"
+                elif match_2:
+                    groups = match_2.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    feature_id = groups["feature_id"]
+                    message = "commited geometry change"
+                    data = json.dumps({"geometry": groups["geometry"]})
+            elif entry["code"] == "30":
+                pattern = re.compile(r'^(?P<author>.+?) added attribute\. Layer ID: (?P<layer_id>[^.]+)\. Field name: (?P<field_name>\w+)$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "add field"
+                    data = json.dumps({"field_name": groups["field_name"]})
+            elif entry["code"] == "31":
+                pattern = re.compile(r'^(?P<author>.+?) deleted attribute\. Layer ID: (?P<layer_id>[^.]+)\. Field name: (?P<field_name>\w+)$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "remove field"
+                    data = json.dumps({"field_name": groups["field_name"]})
+            elif entry["code"] == "32":
+                pattern = re.compile(r'^(?P<author>.+?) changed attribute\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Field name: (?P<field_name>\w+)\. Field content: (?P<field_content>.+)$')
+                match = pattern.match(entry["message"])
+                if match:
+                    groups = match.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "change attribute"
+                    data = json.dumps({
+                        "field_name": groups["field_name"], 
+                        "field_content": groups["field_content"]
+                    })
+            elif entry["code"] == "33":
+                pattern_1 = re.compile(r'^Attributes added by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
+                pattern_2 = re.compile(r'^Committed added attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. New field: (?P<field_name>\w+)\. Field type: (?P<field_type>\w+(?:\(\d+\))?)$')
+                match_1 = pattern_1.match(entry["message"])
+                match_2 = pattern_2.match(entry["message"])
+                if match_1:
+                    groups = match_1.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "commit add field"
+                elif match_2:
+                    groups = match_2.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "committed add field"
+                    data = json.dumps({
+                        "field_name": groups["field_name"],
+                        "field_type": groups["field_type"]
+                    })
+            elif entry["code"] == "34":
+                pattern_1 = re.compile(r'^Attributes deleted by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
+                pattern_2 = re.compile(r'^Committed deleted attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Remove field: (?P<field_name>\w+)$')
+                match_1 = pattern_1.match(entry["message"])
+                match_2 = pattern_2.match(entry["message"])
+                if match_1:
+                    groups = match_1.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "commit remove field"
+                elif match_2:
+                    groups = match_2.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "committed remove field"
+                    data = json.dumps({"field_name": groups["field_name"]})
+            elif entry["code"] == "35":
+                pattern_1 = re.compile(r'^Attributes changes by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
+                pattern_2 = re.compile(r'^Committed changed attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Field name: (?P<field_name>\w+)\. Field content: (?P<field_content>.+)$')
+                match_1 = pattern_1.match(entry["message"])
+                match_2 = pattern_2.match(entry["message"])
+                if match_1:
+                    groups = match_1.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "commit change attribute"
+                elif match_2:
+                    groups = match_2.groupdict()
+                    author = groups["author"]
+                    layer_id = groups["layer_id"]
+                    message = "committed change attribute"
+                    data = json.dumps({
+                        "field_name": groups["field_name"], 
+                        "field_content": groups["field_content"]
+                    })
+
+            row_data = (pretty_time, "", author, layer_id, feature_id, message, data)
+            for col_idx, value in enumerate(row_data):
+                item = QTableWidgetItem(str(value))
+                table.setItem(row_idx, col_idx, item)
+
+        table.resizeColumnsToContents()
+        max_width = 300
+        for col in range(table.columnCount()):
+            current_width = table.columnWidth(col)
+            if current_width > max_width:
+                table.setColumnWidth(col, max_width)
+
+
+    def parse_log(self, log_path):
+        parsed_entries = []
+        log_pattern = re.compile(
+            r'^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) - '
+            r'(?P<level>\w+) - '
+            r'(?P<code>\d+)\s\|\s(?P<message>.*)$'
+        )
+
+        with open(log_path, 'r') as f:
+            for line in f:
+                match = log_pattern.match(line.strip())
+                if match:
+                    data = match.groupdict()
+                    data['timestamp'] = datetime.strptime(data['timestamp'], '%Y-%m-%d %H:%M:%S,%f')
+                    parsed_entries.append(data)
+
+        return parsed_entries
 
     def _fetch_and_populate_changelog(self, file_path, table, iface_ref):
         """Connects to GPKG, fetches changelog, and populates the table.
