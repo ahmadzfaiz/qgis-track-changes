@@ -140,7 +140,26 @@ class AboutWidget(QDialog):
         else:
             print(f"Unsupported file type: {ext}")
 
+    def round_down_to_6_hours(self, dt: datetime) -> datetime:
+        timestamp = dt.replace(hour=(dt.hour // 6) * 6, minute=0, second=0, microsecond=0)
+        return timestamp.strftime('%d %b %y\n%H:%M')
+    
+    def add_key_in_dict(self, my_dict, key):
+        if key in my_dict:
+            my_dict[key] += 1
+        else:
+            my_dict[key] = 0
+
     def _fetch_and_populate_logfile(self, file_path, table, iface_ref):
+        # Dashboard Config
+        data_counts = {
+            10: 0, 11: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0, 25: 0, 
+            26: 0, 30: 0, 31: 0, 32: 0, 33: 0, 34: 0, 35: 0, 50: 0,
+        }
+        timeframe_counts = {}
+        self.ui.version_picker.clear()
+
+        # Table Config
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         table.setRowCount(0)  # Clear table before populating
 
@@ -163,6 +182,11 @@ class AboutWidget(QDialog):
                 pretty_time = humanize.naturaltime(datetime.now(timezone.utc) - timestamp)
             except Exception:
                 pretty_time = timestamp
+            
+            self.add_key_in_dict(
+                timeframe_counts, 
+                self.round_down_to_6_hours(timestamp)
+            )
 
             if entry["code"] == "00":
                 pattern = re.compile(r'^(?P<author>.+?) activated the track changes of layer "(?P<layer_id>[^"]+)" using QGIS version (?P<qgis_version>[\w\.\-]+)$')
@@ -181,6 +205,7 @@ class AboutWidget(QDialog):
                     layer_id = groups["layer_id"]
                     message = "deactivate track change"
             elif entry["code"] == "10":
+                data_counts[10] += 1
                 pattern = re.compile(r'^(?P<author>[^>]+)\sstarted editing of layer\s"(?P<layer_id>[^"]+)"$')
                 match = pattern.match(entry["message"])
                 if match:
@@ -189,6 +214,7 @@ class AboutWidget(QDialog):
                     layer_id = groups["layer_id"]
                     message = "start editing"
             elif entry["code"] == "11":
+                data_counts[11] += 1
                 pattern = re.compile(r'^(?P<author>.+?)\sstopped editing of layer\s"(?P<layer_id>[^"]+)"$')
                 match = pattern.match(entry["message"])
                 if match:
@@ -197,6 +223,7 @@ class AboutWidget(QDialog):
                     layer_id = groups["layer_id"]
                     message = "stop editing"
             elif entry["code"] == "20":
+                data_counts[20] += 1
                 pattern = re.compile(r'^(?P<author>.+?) selecting feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>\d+)\. Properties: (?P<data>\{.*\})$')
                 match = pattern.match(entry["message"])
                 if match:
@@ -207,6 +234,7 @@ class AboutWidget(QDialog):
                     message = "selecting feature"
                     data = groups["data"]
             elif entry["code"] == "21":
+                data_counts[21] += 1
                 pattern = re.compile(r'^(?P<author>.+?) added feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Properties: (?P<data>\{.*\})$')
                 match = pattern.match(entry["message"])
                 if match:
@@ -217,6 +245,7 @@ class AboutWidget(QDialog):
                     message = "add feature"
                     data = groups["data"]
             elif entry["code"] == "22":
+                data_counts[22] += 1
                 pattern = re.compile(r'^(?P<author>.+?) deleted feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)$')
                 match = pattern.match(entry["message"])
                 if match:
@@ -226,6 +255,7 @@ class AboutWidget(QDialog):
                     feature_id = groups["feature_id"]
                     message = "delete feature"
             elif entry["code"] == "23":
+                data_counts[23] += 1
                 pattern = re.compile(r'^(?P<author>.+?) changed geometry\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. New geometry: (?P<geometry>[A-Za-z]+ \([^)]+\))$')
                 match = pattern.match(entry["message"])
                 if match:
@@ -236,6 +266,7 @@ class AboutWidget(QDialog):
                     message = "geometry change"
                     data = json.dumps({"geometry": groups["geometry"]})
             elif entry["code"] == "26":
+                data_counts[26] += 1
                 pattern_1 = re.compile(r'^Geometries changes by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
                 pattern_2 = re.compile(r'^Committed changed geometry by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. New geometry: (?P<geometry>[A-Za-z]+ \([^)]+\))$')
                 match_1 = pattern_1.match(entry["message"])
@@ -253,6 +284,7 @@ class AboutWidget(QDialog):
                     message = "commited geometry change"
                     data = json.dumps({"geometry": groups["geometry"]})
             elif entry["code"] == "30":
+                data_counts[30] += 1
                 pattern = re.compile(r'^(?P<author>.+?) added attribute\. Layer ID: (?P<layer_id>[^.]+)\. Field name: (?P<field_name>\w+)$')
                 match = pattern.match(entry["message"])
                 if match:
@@ -262,6 +294,7 @@ class AboutWidget(QDialog):
                     message = "add field"
                     data = json.dumps({"field_name": groups["field_name"]})
             elif entry["code"] == "31":
+                data_counts[31] += 1
                 pattern = re.compile(r'^(?P<author>.+?) deleted attribute\. Layer ID: (?P<layer_id>[^.]+)\. Field name: (?P<field_name>\w+)$')
                 match = pattern.match(entry["message"])
                 if match:
@@ -271,6 +304,7 @@ class AboutWidget(QDialog):
                     message = "remove field"
                     data = json.dumps({"field_name": groups["field_name"]})
             elif entry["code"] == "32":
+                data_counts[32] += 1
                 pattern = re.compile(r'^(?P<author>.+?) changed attribute\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Field name: (?P<field_name>\w+)\. Field content: (?P<field_content>.+)$')
                 match = pattern.match(entry["message"])
                 if match:
@@ -283,6 +317,7 @@ class AboutWidget(QDialog):
                         "field_content": groups["field_content"]
                     })
             elif entry["code"] == "33":
+                data_counts[33] += 1
                 pattern_1 = re.compile(r'^Attributes added by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
                 pattern_2 = re.compile(r'^Committed added attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. New field: (?P<field_name>\w+)\. Field type: (?P<field_type>\w+(?:\(\d+\))?)$')
                 match_1 = pattern_1.match(entry["message"])
@@ -302,6 +337,7 @@ class AboutWidget(QDialog):
                         "field_type": groups["field_type"]
                     })
             elif entry["code"] == "34":
+                data_counts[34] += 1
                 pattern_1 = re.compile(r'^Attributes deleted by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
                 pattern_2 = re.compile(r'^Committed deleted attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Remove field: (?P<field_name>\w+)$')
                 match_1 = pattern_1.match(entry["message"])
@@ -318,6 +354,7 @@ class AboutWidget(QDialog):
                     message = "committed remove field"
                     data = json.dumps({"field_name": groups["field_name"]})
             elif entry["code"] == "35":
+                data_counts[35] += 1
                 pattern_1 = re.compile(r'^Attributes changes by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
                 pattern_2 = re.compile(r'^Committed changed attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Field name: (?P<field_name>\w+)\. Field content: (?P<field_content>.+)$')
                 match_1 = pattern_1.match(entry["message"])
@@ -348,6 +385,10 @@ class AboutWidget(QDialog):
             current_width = table.columnWidth(col)
             if current_width > max_width:
                 table.setColumnWidth(col, max_width)
+
+        # Populate the dashboard
+        self.populate_version_detail("No version", data_counts)
+        self.populate_version_chart(data_counts, timeframe_counts)
 
 
     def parse_log(self, log_path):
@@ -743,7 +784,7 @@ class AboutWidget(QDialog):
         # --- Line Chart (Bottom)
         ax2 = self.figure.add_subplot(212)
         ax2.set_facecolor(self.bg_hex)
-        ax2.set_title("Timeframe of data changes", color=self.fg_hex)
+        ax2.set_title("Timeframe of data changes (UTC)", color=self.fg_hex)
 
         x_labels = list(data.keys())
         y_values = list(data.values())
