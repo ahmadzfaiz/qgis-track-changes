@@ -3,7 +3,7 @@ import os
 import re
 import sqlite3
 from typing import Optional
-import humanize
+from .utils import time_ago, ensure_datetime
 from datetime import datetime, timezone
 from PyQt5.QtWidgets import (
     QDialog,
@@ -210,12 +210,12 @@ class AboutWidget(QDialog):
             message = ""
             data = ""
             try:
-                if timestamp.tzinfo is None:
-                    timestamp = timestamp.replace(tzinfo=timezone.utc)
-                pretty_time = humanize.naturaltime(
-                    datetime.now(timezone.utc) - timestamp
-                )
-            except Exception:
+                dt = ensure_datetime(timestamp)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                pretty_time = time_ago(dt, datetime.now(timezone.utc))
+            except Exception as e:
+                print(e)
                 pretty_time = timestamp
 
             self.add_key_in_dict(
@@ -524,10 +524,10 @@ class AboutWidget(QDialog):
             for row_idx, row in enumerate(data):
                 timestamp = row[0]
                 try:
-                    dt = datetime.fromisoformat(timestamp)
+                    dt = ensure_datetime(timestamp)
                     if dt.tzinfo is None:
                         dt = dt.replace(tzinfo=timezone.utc)
-                    pretty_time = humanize.naturaltime(datetime.now(timezone.utc) - dt)
+                    pretty_time = time_ago(dt, datetime.now(timezone.utc))
                 except Exception:
                     pretty_time = timestamp
 
