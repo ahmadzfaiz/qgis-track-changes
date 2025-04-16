@@ -5,7 +5,13 @@ import sqlite3
 from typing import Optional
 import humanize
 from datetime import datetime, timezone
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QAbstractItemView, QTableWidget, QWidget
+from PyQt5.QtWidgets import (
+    QDialog,
+    QTableWidgetItem,
+    QAbstractItemView,
+    QTableWidget,
+    QWidget,
+)
 from qgis.core import Qgis
 from qgis.utils import iface
 from qgis.PyQt.QtCore import Qt
@@ -147,9 +153,7 @@ class AboutWidget(QDialog):
             )
             self._fetch_and_populate_dashboard(file_path)
         elif ext == ".log":
-            self._fetch_and_populate_logfile(
-                file_path, self.ui.changeHistoryTable
-            )
+            self._fetch_and_populate_logfile(file_path, self.ui.changeHistoryTable)
         else:
             print(f"Unsupported file type: {ext}")
 
@@ -484,7 +488,9 @@ class AboutWidget(QDialog):
 
         return parsed_entries
 
-    def _fetch_and_populate_changelog(self, file_path: str, table: QTableWidget, iface_ref: "QgsInterface") -> None:
+    def _fetch_and_populate_changelog(
+        self, file_path: str, table: QTableWidget, iface_ref: "QgsInterface"
+    ) -> None:
         """Connects to GPKG, fetches changelog, and populates the table.
 
         Handles database errors and missing table, reporting via iface message bar.
@@ -706,7 +712,9 @@ class AboutWidget(QDialog):
         self.populate_version_detail(version, data_counts)
         self.populate_version_chart(data_counts, timeframe_counts)
 
-    def populate_version_detail(self, last_version: str, data_counts: dict[int, int]) -> None:
+    def populate_version_detail(
+        self, last_version: str, data_counts: dict[int, int]
+    ) -> None:
         code10 = data_counts.get(10, 0)
         code11 = data_counts.get(11, 0)
         code20 = data_counts.get(20, 0)
@@ -822,7 +830,9 @@ class AboutWidget(QDialog):
         """
         self.ui.data_version_description.setText(data_version_html)
 
-    def populate_version_chart(self, data_counts: dict[int, int], timeframe_counts: dict[str, int]) -> None:
+    def populate_version_chart(
+        self, data_counts: dict[int, int], timeframe_counts: dict[str, int]
+    ) -> None:
         # Get theme colors
         palette = iface.mainWindow().palette()
         self.bg_hex = palette.color(QPalette.Window).name()
