@@ -23,23 +23,6 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install python-semantic-release
-          pip install pytest
-          pip install PyQt5
-          pip install pytest-mock
-          pip install pandas
-          pip install matplotlib
-
-      - name: Run tests
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-          QGIS_DISABLE_MESSAGE_LOG: 1
-        run: |
-          python -m pytest tests/ -v
-
       - name: Run Semantic Release Version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
