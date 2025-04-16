@@ -2,9 +2,10 @@ import json
 import os
 import re
 import sqlite3
+from typing import Optional
 import humanize
 from datetime import datetime, timezone
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QAbstractItemView, QTableWidget
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QAbstractItemView, QTableWidget, QWidget
 from qgis.core import Qgis
 from qgis.utils import iface
 from qgis.PyQt.QtCore import Qt
@@ -15,8 +16,13 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from ..ui.about_dialog import Ui_About
 
+from typing import TYPE_CHECKING
 
-def get_plugin_version():
+if TYPE_CHECKING:
+    from qgis.gui import QgsInterface
+
+
+def get_plugin_version() -> str:
     from track_changes import __version__
 
     return __version__
@@ -25,7 +31,7 @@ def get_plugin_version():
 class AboutWidget(QDialog):
     """A dialog window for the About section."""
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.ui = Ui_About()
         self.ui.setupUi(self)
@@ -61,7 +67,7 @@ class AboutWidget(QDialog):
         self.ui.file_compare_2.setFilter("GeoPackage (*.gpkg)")
         self.ui.compare_button.clicked.connect(self.compare_data)
 
-    def compare_data(self):
+    def compare_data(self) -> None:
         conn1 = sqlite3.connect(self.ui.file_compare_1.filePath())
         conn2 = sqlite3.connect(self.ui.file_compare_2.filePath())
 
@@ -82,7 +88,7 @@ class AboutWidget(QDialog):
         conn1.close()
         conn2.close()
 
-    def compare_row(self, row):
+    def compare_row(self, row: pd.Series) -> str:
         if pd.isna(row["data_version_id_df1"]):
             return "⬅🟡 missing in left"
         elif pd.isna(row["data_version_id_df2"]):
@@ -92,7 +98,7 @@ class AboutWidget(QDialog):
         else:
             return "🛑 not equal"
 
-    def insert_table_from_df(self, df):
+    def insert_table_from_df(self, df: pd.DataFrame) -> None:
         # Remove existing widgets in layout_compare
         while self.ui.layout_compare.count():
             old_widget = self.ui.layout_compare.takeAt(0).widget()
@@ -127,11 +133,11 @@ class AboutWidget(QDialog):
         table.resizeColumnsToContents()
         self.ui.layout_compare.addWidget(table)
 
-    def get_icon_path(self, path):
+    def get_icon_path(self, path: str) -> str:
         """Return the absolute path to the plugin icon."""
         return os.path.join(os.path.dirname(__file__), path)
 
-    def populate_change_history(self, file_path):
+    def populate_change_history(self, file_path: str) -> None:
         """Fill the change history table or handle log files depending on file type."""
         _, ext = os.path.splitext(file_path.lower())
 
@@ -142,24 +148,24 @@ class AboutWidget(QDialog):
             self._fetch_and_populate_dashboard(file_path)
         elif ext == ".log":
             self._fetch_and_populate_logfile(
-                file_path, self.ui.changeHistoryTable, iface
+                file_path, self.ui.changeHistoryTable
             )
         else:
             print(f"Unsupported file type: {ext}")
 
-    def round_down_to_6_hours(self, dt: datetime) -> datetime:
+    def round_down_to_6_hours(self, dt: datetime) -> str:
         timestamp = dt.replace(
             hour=(dt.hour // 6) * 6, minute=0, second=0, microsecond=0
         )
         return timestamp.strftime("%d %b %y\n%H:%M")
 
-    def add_key_in_dict(self, my_dict, key):
+    def add_key_in_dict(self, my_dict: dict[str, int], key: str) -> None:
         if key in my_dict:
             my_dict[key] += 1
         else:
             my_dict[key] = 0
 
-    def _fetch_and_populate_logfile(self, file_path, table, iface_ref):
+    def _fetch_and_populate_logfile(self, file_path: str, table: QTableWidget) -> None:
         # Dashboard Config
         data_counts = {
             10: 0,
@@ -179,7 +185,7 @@ class AboutWidget(QDialog):
             35: 0,
             50: 0,
         }
-        timeframe_counts = {}
+        timeframe_counts: dict[str, int] = {}
         self.ui.version_picker.clear()
 
         # Table Config
@@ -458,7 +464,7 @@ class AboutWidget(QDialog):
         self.populate_version_detail("No version", data_counts)
         self.populate_version_chart(data_counts, timeframe_counts)
 
-    def parse_log(self, log_path):
+    def parse_log(self, log_path: str) -> list[dict]:
         parsed_entries = []
         log_pattern = re.compile(
             r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) - "
@@ -478,7 +484,7 @@ class AboutWidget(QDialog):
 
         return parsed_entries
 
-    def _fetch_and_populate_changelog(self, file_path, table, iface_ref):
+    def _fetch_and_populate_changelog(self, file_path: str, table: QTableWidget, iface_ref: "QgsInterface") -> None:
         """Connects to GPKG, fetches changelog, and populates the table.
 
         Handles database errors and missing table, reporting via iface message bar.
@@ -555,7 +561,7 @@ class AboutWidget(QDialog):
             if conn:
                 conn.close()
 
-    def _fetch_and_populate_dashboard(self, file_path):
+    def _fetch_and_populate_dashboard(self, file_path: str) -> None:
         self.ui.version_picker.clear()
         self.file_path = file_path
 
@@ -641,7 +647,7 @@ class AboutWidget(QDialog):
 
         self.ui.version_picker.currentTextChanged.connect(self.change_dashboard)
 
-    def change_dashboard(self, version):
+    def change_dashboard(self, version: str) -> None:
         try:
             conn = sqlite3.connect(self.file_path, timeout=30)
             cursor = conn.cursor()
@@ -700,7 +706,7 @@ class AboutWidget(QDialog):
         self.populate_version_detail(version, data_counts)
         self.populate_version_chart(data_counts, timeframe_counts)
 
-    def populate_version_detail(self, last_version, data_counts):
+    def populate_version_detail(self, last_version: str, data_counts: dict[int, int]) -> None:
         code10 = data_counts.get(10, 0)
         code11 = data_counts.get(11, 0)
         code20 = data_counts.get(20, 0)
@@ -816,7 +822,7 @@ class AboutWidget(QDialog):
         """
         self.ui.data_version_description.setText(data_version_html)
 
-    def populate_version_chart(self, data_counts, timeframe_counts):
+    def populate_version_chart(self, data_counts: dict[int, int], timeframe_counts: dict[str, int]) -> None:
         # Get theme colors
         palette = iface.mainWindow().palette()
         self.bg_hex = palette.color(QPalette.Window).name()
@@ -824,7 +830,7 @@ class AboutWidget(QDialog):
 
         # If the canvas is already created, just clear the figure
         if hasattr(self, "canvas"):
-            self.figure.clear()  # Clear the figure
+            self.figure.clear()  # type: ignore
         else:
             # Create new figure + canvas only if not already created
             self.figure = Figure(facecolor=self.bg_hex)
@@ -848,7 +854,7 @@ class AboutWidget(QDialog):
         self.draw_line_chart(timeframe_counts)
         self.canvas.draw()
 
-    def draw_pie_chart(self, data):
+    def draw_pie_chart(self, data: dict) -> None:
         # --- Pie Chart (Top)
         ax1 = self.figure.add_subplot(211)
         ax1.set_facecolor(self.bg_hex)
@@ -857,7 +863,7 @@ class AboutWidget(QDialog):
         pie_labels = list(data.keys())
         pie_sizes = list(data.values())
 
-        def autopct_filter(pct):
+        def autopct_filter(pct: float) -> str:
             return f"{pct:.1f}%" if pct >= 10 else ""
 
         ax1.pie(
@@ -868,7 +874,7 @@ class AboutWidget(QDialog):
             textprops={"color": self.fg_hex},
         )
 
-    def draw_line_chart(self, data):
+    def draw_line_chart(self, data: dict) -> None:
         # --- Line Chart (Bottom)
         ax2 = self.figure.add_subplot(212)
         ax2.set_facecolor(self.bg_hex)
