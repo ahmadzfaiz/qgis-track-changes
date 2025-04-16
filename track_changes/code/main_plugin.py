@@ -6,6 +6,7 @@ from .default_logger_widget import FeatureLogger as DefaultFeatureLogger
 from .gpkg_logger_widget import FeatureLogger as GpkgFeatureLogger
 from .about_widget import AboutWidget
 
+
 class TrackChangesPlugin:
     def __init__(self, iface):
         self.iface = iface
@@ -19,13 +20,23 @@ class TrackChangesPlugin:
     def initGui(self):
         """Create the menu action and toolbar button."""
         # About Action
-        self.about_action = QAction(QIcon(self.get_icon_path("../icon.png")), "About", self.iface.mainWindow())
+        self.about_action = QAction(
+            QIcon(self.get_icon_path("../icon.png")), "About", self.iface.mainWindow()
+        )
         self.about_action.triggered.connect(self.about)
 
         # Setup Tracking Action
-        self.default_log_action = QAction(QIcon(self.get_icon_path("../ui/icon/default.png")), "Default tracking", self.iface.mainWindow())
+        self.default_log_action = QAction(
+            QIcon(self.get_icon_path("../ui/icon/default.png")),
+            "Default tracking",
+            self.iface.mainWindow(),
+        )
         self.default_log_action.triggered.connect(self.run_default)
-        self.gpkg_log_action = QAction(QIcon(self.get_icon_path("../ui/icon/gpkg.png")), "GeoPackage tracking", self.iface.mainWindow())
+        self.gpkg_log_action = QAction(
+            QIcon(self.get_icon_path("../ui/icon/gpkg.png")),
+            "GeoPackage tracking",
+            self.iface.mainWindow(),
+        )
         self.gpkg_log_action.triggered.connect(self.run_gpkg)
 
         # Add to QGIS menu
@@ -37,7 +48,6 @@ class TrackChangesPlugin:
         self.toolbar.addAction(self.about_action)
         self.toolbar.addAction(self.default_log_action)
         self.toolbar.addAction(self.gpkg_log_action)
-
 
     def unload(self):
         """Remove the menu action and toolbar button."""
@@ -67,7 +77,7 @@ class TrackChangesPlugin:
             self.gpkg_log_dialog = GpkgFeatureLogger(self.iface)
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.gpkg_log_dialog)
             return
-        
+
         # Toggle visibility
         self.gpkg_log_dialog.setVisible(not self.gpkg_log_dialog.isVisible())
 

@@ -15,9 +15,12 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from ..ui.about_dialog import Ui_About
 
+
 def get_plugin_version():
     from track_changes import __version__
+
     return __version__
+
 
 class AboutWidget(QDialog):
     """A dialog window for the About section."""
@@ -26,7 +29,7 @@ class AboutWidget(QDialog):
         super().__init__(parent)
         self.ui = Ui_About()
         self.ui.setupUi(self)
-        mpl.rcParams['font.size'] = 8
+        mpl.rcParams["font.size"] = 8
 
         about_html = f"""
         <html><head/><body>
@@ -67,11 +70,11 @@ class AboutWidget(QDialog):
         df2 = pd.read_sql_query(query, conn2)
 
         merged = df1.merge(
-            df2, 
-            on="data_version", 
-            how="outer", 
-            suffixes=("_df1", "_df2"), 
-            indicator=True
+            df2,
+            on="data_version",
+            how="outer",
+            suffixes=("_df1", "_df2"),
+            indicator=True,
         )
         merged["status"] = merged.apply(self.compare_row, axis=1)
         self.insert_table_from_df(merged[["data_version", "status"]])
@@ -88,7 +91,7 @@ class AboutWidget(QDialog):
             return "✅ equal"
         else:
             return "🛑 not equal"
-        
+
     def insert_table_from_df(self, df):
         # Remove existing widgets in layout_compare
         while self.ui.layout_compare.count():
@@ -133,17 +136,23 @@ class AboutWidget(QDialog):
         _, ext = os.path.splitext(file_path.lower())
 
         if ext == ".gpkg":
-            self._fetch_and_populate_changelog(file_path, self.ui.changeHistoryTable, iface)
+            self._fetch_and_populate_changelog(
+                file_path, self.ui.changeHistoryTable, iface
+            )
             self._fetch_and_populate_dashboard(file_path)
         elif ext == ".log":
-            self._fetch_and_populate_logfile(file_path, self.ui.changeHistoryTable, iface)
+            self._fetch_and_populate_logfile(
+                file_path, self.ui.changeHistoryTable, iface
+            )
         else:
             print(f"Unsupported file type: {ext}")
 
     def round_down_to_6_hours(self, dt: datetime) -> datetime:
-        timestamp = dt.replace(hour=(dt.hour // 6) * 6, minute=0, second=0, microsecond=0)
-        return timestamp.strftime('%d %b %y\n%H:%M')
-    
+        timestamp = dt.replace(
+            hour=(dt.hour // 6) * 6, minute=0, second=0, microsecond=0
+        )
+        return timestamp.strftime("%d %b %y\n%H:%M")
+
     def add_key_in_dict(self, my_dict, key):
         if key in my_dict:
             my_dict[key] += 1
@@ -153,8 +162,22 @@ class AboutWidget(QDialog):
     def _fetch_and_populate_logfile(self, file_path, table, iface_ref):
         # Dashboard Config
         data_counts = {
-            10: 0, 11: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0, 25: 0, 
-            26: 0, 30: 0, 31: 0, 32: 0, 33: 0, 34: 0, 35: 0, 50: 0,
+            10: 0,
+            11: 0,
+            20: 0,
+            21: 0,
+            22: 0,
+            23: 0,
+            24: 0,
+            25: 0,
+            26: 0,
+            30: 0,
+            31: 0,
+            32: 0,
+            33: 0,
+            34: 0,
+            35: 0,
+            50: 0,
         }
         timeframe_counts = {}
         self.ui.version_picker.clear()
@@ -165,7 +188,7 @@ class AboutWidget(QDialog):
 
         if not file_path:
             return
-        
+
         entries = self.parse_log(file_path)
         table.setRowCount(len(entries))
 
@@ -179,17 +202,20 @@ class AboutWidget(QDialog):
             try:
                 if timestamp.tzinfo is None:
                     timestamp = timestamp.replace(tzinfo=timezone.utc)
-                pretty_time = humanize.naturaltime(datetime.now(timezone.utc) - timestamp)
+                pretty_time = humanize.naturaltime(
+                    datetime.now(timezone.utc) - timestamp
+                )
             except Exception:
                 pretty_time = timestamp
-            
+
             self.add_key_in_dict(
-                timeframe_counts, 
-                self.round_down_to_6_hours(timestamp)
+                timeframe_counts, self.round_down_to_6_hours(timestamp)
             )
 
             if entry["code"] == "00":
-                pattern = re.compile(r'^(?P<author>.+?) activated the track changes of layer "(?P<layer_id>[^"]+)" using QGIS version (?P<qgis_version>[\w\.\-]+)$')
+                pattern = re.compile(
+                    r'^(?P<author>.+?) activated the track changes of layer "(?P<layer_id>[^"]+)" using QGIS version (?P<qgis_version>[\w\.\-]+)$'
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -197,7 +223,9 @@ class AboutWidget(QDialog):
                     layer_id = groups["layer_id"]
                     message = "activate track change"
             elif entry["code"] == "01":
-                pattern = re.compile(r'^(?P<author>.+?) deactivated the track changes of layer "(?P<layer_id>[^"]+)" using QGIS version (?P<qgis_version>[\w\.\-]+)$')
+                pattern = re.compile(
+                    r'^(?P<author>.+?) deactivated the track changes of layer "(?P<layer_id>[^"]+)" using QGIS version (?P<qgis_version>[\w\.\-]+)$'
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -206,7 +234,9 @@ class AboutWidget(QDialog):
                     message = "deactivate track change"
             elif entry["code"] == "10":
                 data_counts[10] += 1
-                pattern = re.compile(r'^(?P<author>[^>]+)\sstarted editing of layer\s"(?P<layer_id>[^"]+)"$')
+                pattern = re.compile(
+                    r'^(?P<author>[^>]+)\sstarted editing of layer\s"(?P<layer_id>[^"]+)"$'
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -215,7 +245,9 @@ class AboutWidget(QDialog):
                     message = "start editing"
             elif entry["code"] == "11":
                 data_counts[11] += 1
-                pattern = re.compile(r'^(?P<author>.+?)\sstopped editing of layer\s"(?P<layer_id>[^"]+)"$')
+                pattern = re.compile(
+                    r'^(?P<author>.+?)\sstopped editing of layer\s"(?P<layer_id>[^"]+)"$'
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -224,7 +256,9 @@ class AboutWidget(QDialog):
                     message = "stop editing"
             elif entry["code"] == "20":
                 data_counts[20] += 1
-                pattern = re.compile(r'^(?P<author>.+?) selecting feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>\d+)\. Properties: (?P<data>\{.*\})$')
+                pattern = re.compile(
+                    r"^(?P<author>.+?) selecting feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>\d+)\. Properties: (?P<data>\{.*\})$"
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -235,7 +269,9 @@ class AboutWidget(QDialog):
                     data = groups["data"]
             elif entry["code"] == "21":
                 data_counts[21] += 1
-                pattern = re.compile(r'^(?P<author>.+?) added feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Properties: (?P<data>\{.*\})$')
+                pattern = re.compile(
+                    r"^(?P<author>.+?) added feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Properties: (?P<data>\{.*\})$"
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -246,7 +282,9 @@ class AboutWidget(QDialog):
                     data = groups["data"]
             elif entry["code"] == "22":
                 data_counts[22] += 1
-                pattern = re.compile(r'^(?P<author>.+?) deleted feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)$')
+                pattern = re.compile(
+                    r"^(?P<author>.+?) deleted feature\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)$"
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -256,7 +294,9 @@ class AboutWidget(QDialog):
                     message = "delete feature"
             elif entry["code"] == "23":
                 data_counts[23] += 1
-                pattern = re.compile(r'^(?P<author>.+?) changed geometry\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. New geometry: (?P<geometry>[A-Za-z]+ \([^)]+\))$')
+                pattern = re.compile(
+                    r"^(?P<author>.+?) changed geometry\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. New geometry: (?P<geometry>[A-Za-z]+ \([^)]+\))$"
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -267,8 +307,12 @@ class AboutWidget(QDialog):
                     data = json.dumps({"geometry": groups["geometry"]})
             elif entry["code"] == "26":
                 data_counts[26] += 1
-                pattern_1 = re.compile(r'^Geometries changes by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
-                pattern_2 = re.compile(r'^Committed changed geometry by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. New geometry: (?P<geometry>[A-Za-z]+ \([^)]+\))$')
+                pattern_1 = re.compile(
+                    r"^Geometries changes by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$"
+                )
+                pattern_2 = re.compile(
+                    r"^Committed changed geometry by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. New geometry: (?P<geometry>[A-Za-z]+ \([^)]+\))$"
+                )
                 match_1 = pattern_1.match(entry["message"])
                 match_2 = pattern_2.match(entry["message"])
                 if match_1:
@@ -285,7 +329,9 @@ class AboutWidget(QDialog):
                     data = json.dumps({"geometry": groups["geometry"]})
             elif entry["code"] == "30":
                 data_counts[30] += 1
-                pattern = re.compile(r'^(?P<author>.+?) added attribute\. Layer ID: (?P<layer_id>[^.]+)\. Field name: (?P<field_name>\w+)$')
+                pattern = re.compile(
+                    r"^(?P<author>.+?) added attribute\. Layer ID: (?P<layer_id>[^.]+)\. Field name: (?P<field_name>\w+)$"
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -295,7 +341,9 @@ class AboutWidget(QDialog):
                     data = json.dumps({"field_name": groups["field_name"]})
             elif entry["code"] == "31":
                 data_counts[31] += 1
-                pattern = re.compile(r'^(?P<author>.+?) deleted attribute\. Layer ID: (?P<layer_id>[^.]+)\. Field name: (?P<field_name>\w+)$')
+                pattern = re.compile(
+                    r"^(?P<author>.+?) deleted attribute\. Layer ID: (?P<layer_id>[^.]+)\. Field name: (?P<field_name>\w+)$"
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
@@ -305,21 +353,29 @@ class AboutWidget(QDialog):
                     data = json.dumps({"field_name": groups["field_name"]})
             elif entry["code"] == "32":
                 data_counts[32] += 1
-                pattern = re.compile(r'^(?P<author>.+?) changed attribute\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Field name: (?P<field_name>\w+)\. Field content: (?P<field_content>.+)$')
+                pattern = re.compile(
+                    r"^(?P<author>.+?) changed attribute\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Field name: (?P<field_name>\w+)\. Field content: (?P<field_content>.+)$"
+                )
                 match = pattern.match(entry["message"])
                 if match:
                     groups = match.groupdict()
                     author = groups["author"]
                     layer_id = groups["layer_id"]
                     message = "change attribute"
-                    data = json.dumps({
-                        "field_name": groups["field_name"], 
-                        "field_content": groups["field_content"]
-                    })
+                    data = json.dumps(
+                        {
+                            "field_name": groups["field_name"],
+                            "field_content": groups["field_content"],
+                        }
+                    )
             elif entry["code"] == "33":
                 data_counts[33] += 1
-                pattern_1 = re.compile(r'^Attributes added by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
-                pattern_2 = re.compile(r'^Committed added attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. New field: (?P<field_name>\w+)\. Field type: (?P<field_type>\w+(?:\(\d+\))?)$')
+                pattern_1 = re.compile(
+                    r"^Attributes added by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$"
+                )
+                pattern_2 = re.compile(
+                    r"^Committed added attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. New field: (?P<field_name>\w+)\. Field type: (?P<field_type>\w+(?:\(\d+\))?)$"
+                )
                 match_1 = pattern_1.match(entry["message"])
                 match_2 = pattern_2.match(entry["message"])
                 if match_1:
@@ -332,14 +388,20 @@ class AboutWidget(QDialog):
                     author = groups["author"]
                     layer_id = groups["layer_id"]
                     message = "committed add field"
-                    data = json.dumps({
-                        "field_name": groups["field_name"],
-                        "field_type": groups["field_type"]
-                    })
+                    data = json.dumps(
+                        {
+                            "field_name": groups["field_name"],
+                            "field_type": groups["field_type"],
+                        }
+                    )
             elif entry["code"] == "34":
                 data_counts[34] += 1
-                pattern_1 = re.compile(r'^Attributes deleted by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
-                pattern_2 = re.compile(r'^Committed deleted attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Remove field: (?P<field_name>\w+)$')
+                pattern_1 = re.compile(
+                    r"^Attributes deleted by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$"
+                )
+                pattern_2 = re.compile(
+                    r"^Committed deleted attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Remove field: (?P<field_name>\w+)$"
+                )
                 match_1 = pattern_1.match(entry["message"])
                 match_2 = pattern_2.match(entry["message"])
                 if match_1:
@@ -355,8 +417,12 @@ class AboutWidget(QDialog):
                     data = json.dumps({"field_name": groups["field_name"]})
             elif entry["code"] == "35":
                 data_counts[35] += 1
-                pattern_1 = re.compile(r'^Attributes changes by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$')
-                pattern_2 = re.compile(r'^Committed changed attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Field name: (?P<field_name>\w+)\. Field content: (?P<field_content>.+)$')
+                pattern_1 = re.compile(
+                    r"^Attributes changes by (?P<author>.+?) is committed\. Layer ID: (?P<layer_id>[^.]+)$"
+                )
+                pattern_2 = re.compile(
+                    r"^Committed changed attribute by (?P<author>.+?)\. Layer ID: (?P<layer_id>[^.]+)\. Feature ID: (?P<feature_id>-?\d+)\. Field name: (?P<field_name>\w+)\. Field content: (?P<field_content>.+)$"
+                )
                 match_1 = pattern_1.match(entry["message"])
                 match_2 = pattern_2.match(entry["message"])
                 if match_1:
@@ -369,10 +435,12 @@ class AboutWidget(QDialog):
                     author = groups["author"]
                     layer_id = groups["layer_id"]
                     message = "committed change attribute"
-                    data = json.dumps({
-                        "field_name": groups["field_name"], 
-                        "field_content": groups["field_content"]
-                    })
+                    data = json.dumps(
+                        {
+                            "field_name": groups["field_name"],
+                            "field_content": groups["field_content"],
+                        }
+                    )
 
             row_data = (pretty_time, "", author, layer_id, feature_id, message, data)
             for col_idx, value in enumerate(row_data):
@@ -390,28 +458,29 @@ class AboutWidget(QDialog):
         self.populate_version_detail("No version", data_counts)
         self.populate_version_chart(data_counts, timeframe_counts)
 
-
     def parse_log(self, log_path):
         parsed_entries = []
         log_pattern = re.compile(
-            r'^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) - '
-            r'(?P<level>\w+) - '
-            r'(?P<code>\d+)\s\|\s(?P<message>.*)$'
+            r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) - "
+            r"(?P<level>\w+) - "
+            r"(?P<code>\d+)\s\|\s(?P<message>.*)$"
         )
 
-        with open(log_path, 'r') as f:
+        with open(log_path, "r") as f:
             for line in f:
                 match = log_pattern.match(line.strip())
                 if match:
                     data = match.groupdict()
-                    data['timestamp'] = datetime.strptime(data['timestamp'], '%Y-%m-%d %H:%M:%S,%f')
+                    data["timestamp"] = datetime.strptime(
+                        data["timestamp"], "%Y-%m-%d %H:%M:%S,%f"
+                    )
                     parsed_entries.append(data)
 
         return parsed_entries
 
     def _fetch_and_populate_changelog(self, file_path, table, iface_ref):
         """Connects to GPKG, fetches changelog, and populates the table.
-        
+
         Handles database errors and missing table, reporting via iface message bar.
         """
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -450,7 +519,7 @@ class AboutWidget(QDialog):
                 except Exception:
                     pretty_time = timestamp
 
-                row_data = (pretty_time,) + row[1:] # Create tuple for table row
+                row_data = (pretty_time,) + row[1:]  # Create tuple for table row
                 for col_idx, value in enumerate(row_data):
                     item = QTableWidgetItem(str(value))
                     table.setItem(row_idx, col_idx, item)
@@ -468,23 +537,20 @@ class AboutWidget(QDialog):
                     "Warning",
                     f"File '{file_path}' doesn't have changelog yet. Please activate the plugin to track changes of the GeoPackage file first.",
                     level=Qgis.Warning,
-                    duration=5
+                    duration=5,
                 )
             else:
                 iface_ref.messageBar().pushMessage(
-                    "Error",
-                    f"Database error: {e}",
-                    level=Qgis.Critical,
-                    duration=5
+                    "Error", f"Database error: {e}", level=Qgis.Critical, duration=5
                 )
         except Exception as e:
             iface_ref.messageBar().pushMessage(
                 "Error",
                 f"An unexpected error occurred: {e}",
                 level=Qgis.Critical,
-                duration=5
+                duration=5,
             )
-            print(f"An unexpected error occurred: {e}") 
+            print(f"An unexpected error occurred: {e}")
         finally:
             if conn:
                 conn.close()
@@ -509,27 +575,34 @@ class AboutWidget(QDialog):
             """)
             current_version = cursor.fetchone()[0]
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT 
                     json_extract(data, '$.old_version') AS previous_version
                 FROM gpkg_changelog
                 WHERE change_code = 50 
                     AND data_version = ?
                     AND json_extract(data, '$.message') != "No version update"
-            """, (current_version,))
+            """,
+                (current_version,),
+            )
             last_version = cursor.fetchone()[0]
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT change_code, COUNT(*)
                 FROM gpkg_changelog
                 WHERE data_version = ?
                 GROUP BY change_code
-            """, (last_version,))
+            """,
+                (last_version,),
+            )
             data_counts = {}
             for item in cursor.fetchall():
                 data_counts[item[0]] = item[1]
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT
                     (strftime('%s', timestamp) / 1800) * 1800 AS interval_start,
                     COUNT(*)
@@ -537,10 +610,14 @@ class AboutWidget(QDialog):
                 WHERE data_version = ?
                 GROUP BY interval_start
                 ORDER BY interval_start;
-            """, (last_version,))
+            """,
+                (last_version,),
+            )
             timeframe_counts = {}
             for item in cursor.fetchall():
-                formatted = datetime.fromtimestamp(item[0], tz=timezone.utc).strftime('%d %b %y\n%H:%M')
+                formatted = datetime.fromtimestamp(item[0], tz=timezone.utc).strftime(
+                    "%d %b %y\n%H:%M"
+                )
                 timeframe_counts[formatted] = item[1]
 
             cursor.execute("""
@@ -558,7 +635,7 @@ class AboutWidget(QDialog):
             version_list = []
 
         self.ui.version_picker.addItems(version_list)
-        
+
         self.populate_version_detail(current_version, data_counts)
         self.populate_version_chart(data_counts, timeframe_counts)
 
@@ -569,27 +646,34 @@ class AboutWidget(QDialog):
             conn = sqlite3.connect(self.file_path, timeout=30)
             cursor = conn.cursor()
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT 
                     json_extract(data, '$.old_version') AS previous_version
                 FROM gpkg_changelog
                 WHERE change_code = 50 
                     AND data_version = ?
                     AND json_extract(data, '$.message') != "No version update"
-            """, (version,))
+            """,
+                (version,),
+            )
             last_version = cursor.fetchone()[0]
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT change_code, COUNT(*)
                 FROM gpkg_changelog
                 WHERE data_version = ?
                 GROUP BY change_code
-            """, (last_version,))
+            """,
+                (last_version,),
+            )
             data_counts = {}
             for item in cursor.fetchall():
                 data_counts[item[0]] = item[1]
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT
                     (strftime('%s', timestamp) / 1800) * 1800 AS interval_start,
                     COUNT(*)
@@ -597,10 +681,14 @@ class AboutWidget(QDialog):
                 WHERE data_version = ?
                 GROUP BY interval_start
                 ORDER BY interval_start;
-            """, (last_version,))
+            """,
+                (last_version,),
+            )
             timeframe_counts = {}
             for item in cursor.fetchall():
-                formatted = datetime.fromtimestamp(item[0], tz=timezone.utc).strftime('%d %b %y\n%H:%M')
+                formatted = datetime.fromtimestamp(item[0], tz=timezone.utc).strftime(
+                    "%d %b %y\n%H:%M"
+                )
                 timeframe_counts[formatted] = item[1]
 
             conn.close()
@@ -608,7 +696,7 @@ class AboutWidget(QDialog):
             last_version = "0.0.0"
             data_counts = {}
             timeframe_counts = {}
-        
+
         self.populate_version_detail(version, data_counts)
         self.populate_version_chart(data_counts, timeframe_counts)
 
@@ -726,7 +814,7 @@ class AboutWidget(QDialog):
         </table>
         </body></html>
         """
-        self.ui.data_version_description.setText(data_version_html)  
+        self.ui.data_version_description.setText(data_version_html)
 
     def populate_version_chart(self, data_counts, timeframe_counts):
         # Get theme colors
@@ -735,7 +823,7 @@ class AboutWidget(QDialog):
         self.fg_hex = palette.color(QPalette.WindowText).name()
 
         # If the canvas is already created, just clear the figure
-        if hasattr(self, 'canvas'):
+        if hasattr(self, "canvas"):
             self.figure.clear()  # Clear the figure
         else:
             # Create new figure + canvas only if not already created
@@ -770,14 +858,14 @@ class AboutWidget(QDialog):
         pie_sizes = list(data.values())
 
         def autopct_filter(pct):
-            return f'{pct:.1f}%' if pct >= 10 else ''
+            return f"{pct:.1f}%" if pct >= 10 else ""
 
         ax1.pie(
             pie_sizes,
             labels=pie_labels,
             autopct=autopct_filter,
             startangle=140,
-            textprops={'color': self.fg_hex}
+            textprops={"color": self.fg_hex},
         )
 
     def draw_line_chart(self, data):
@@ -791,7 +879,7 @@ class AboutWidget(QDialog):
         x_numeric = list(range(len(x_labels)))
 
         # --- Plot the actual line
-        ax2.plot(x_numeric, y_values, marker='o', color=self.fg_hex)
+        ax2.plot(x_numeric, y_values, marker="o", color=self.fg_hex)
 
         # --- Determine label interval
         length = len(x_numeric)
@@ -805,15 +893,19 @@ class AboutWidget(QDialog):
             label_interval = 5
 
         # --- Filter labels
-        filtered_labels = [label if i % label_interval == 0 else '' for i, label in enumerate(x_labels)]
+        filtered_labels = [
+            label if i % label_interval == 0 else "" for i, label in enumerate(x_labels)
+        ]
         ax2.set_xticks(x_numeric)
-        ax2.set_xticklabels(filtered_labels, rotation=30, color=self.fg_hex, fontsize=5, ha='right')
-        ax2.tick_params(axis='x', bottom=False)
+        ax2.set_xticklabels(
+            filtered_labels, rotation=30, color=self.fg_hex, fontsize=5, ha="right"
+        )
+        ax2.tick_params(axis="x", bottom=False)
         for i, label in enumerate(filtered_labels):
-            if label != '':
+            if label != "":
                 ax2.axvline(x=i, ymin=0, ymax=0.05, color=self.fg_hex, linewidth=1)
 
         # --- Y-axis style
-        ax2.tick_params(axis='y', colors=self.fg_hex)
+        ax2.tick_params(axis="y", colors=self.fg_hex)
         for spine in ax2.spines.values():
             spine.set_color(self.fg_hex)
