@@ -47,7 +47,9 @@ class Ui_SetupTrackingChanges(object):
         self.pbRefreshLayers = QtWidgets.QPushButton(self.dockWidgetContents)
         self.pbRefreshLayers.setObjectName("pbRefreshLayers")
         self.horizontalLayout.addWidget(self.pbRefreshLayers)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
@@ -61,10 +63,14 @@ class Ui_SetupTrackingChanges(object):
         self.labelActive.setObjectName("labelActive")
         self.horizontalLayout_2.addWidget(self.labelActive)
         self.horizontalLayout_4.addLayout(self.horizontalLayout_2)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_4.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
-        spacerItem2 = QtWidgets.QSpacerItem(17, 67, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            17, 67, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout.addItem(spacerItem2)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         SetupTrackingChanges.setWidget(self.dockWidgetContents)
@@ -74,12 +80,20 @@ class Ui_SetupTrackingChanges(object):
 
     def retranslateUi(self, SetupTrackingChanges):
         _translate = QtCore.QCoreApplication.translate
-        SetupTrackingChanges.setWindowTitle(_translate("SetupTrackingChanges", "Default tracking changes"))
+        SetupTrackingChanges.setWindowTitle(
+            _translate("SetupTrackingChanges", "Default tracking changes")
+        )
         self.label.setText(_translate("SetupTrackingChanges", "Log file destination"))
-        self.label_2.setText(_translate("SetupTrackingChanges", "Start/stop tracking changes"))
+        self.label_2.setText(
+            _translate("SetupTrackingChanges", "Start/stop tracking changes")
+        )
         self.pbActivate.setText(_translate("SetupTrackingChanges", "Activate"))
         self.pbDeactivate.setText(_translate("SetupTrackingChanges", "Deactivate"))
-        self.pbRefreshLayers.setText(_translate("SetupTrackingChanges", "Refresh Layers"))
+        self.pbRefreshLayers.setText(
+            _translate("SetupTrackingChanges", "Refresh Layers")
+        )
         self.label_3.setText(_translate("SetupTrackingChanges", "Active Layer:"))
         self.labelActive.setText(_translate("SetupTrackingChanges", "None"))
+
+
 from qgsfilewidget import QgsFileWidget

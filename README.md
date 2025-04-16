@@ -45,7 +45,7 @@ python -m pytest tests/test_about_widget.py
 ### Before you contribute
 1. Read this guide carefully if you want to contribute on this plugin.
 2. Please create a pull request when change the code.
-3. After clone this repository into your local machine, please run `make setup-hooks` to prevent direct push into main branch.
+3. After clone this repository into your local machine, please run `make setup-hooks -f Makefile.qgis` to prevent direct push into main branch.
 
 ### Commit types for Version Change
 We use Semantic Versioning. Semantic Release automatically bumps versions based on commit messages. Here is the rule:

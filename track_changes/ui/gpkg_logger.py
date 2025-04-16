@@ -38,7 +38,9 @@ class Ui_SetupTrackingChanges(object):
         self.pbRefreshLayers = QtWidgets.QPushButton(self.dockWidgetContents)
         self.pbRefreshLayers.setObjectName("pbRefreshLayers")
         self.horizontalLayout.addWidget(self.pbRefreshLayers)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
@@ -49,13 +51,17 @@ class Ui_SetupTrackingChanges(object):
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_2.addWidget(self.label_3)
         self.horizontalLayout_4.addLayout(self.horizontalLayout_2)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_4.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.listGpkgLayers = QtWidgets.QListWidget(self.dockWidgetContents)
         self.listGpkgLayers.setObjectName("listGpkgLayers")
         self.verticalLayout.addWidget(self.listGpkgLayers)
-        spacerItem2 = QtWidgets.QSpacerItem(14, 13, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            14, 13, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout.addItem(spacerItem2)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         SetupTrackingChanges.setWidget(self.dockWidgetContents)
@@ -65,10 +71,18 @@ class Ui_SetupTrackingChanges(object):
 
     def retranslateUi(self, SetupTrackingChanges):
         _translate = QtCore.QCoreApplication.translate
-        SetupTrackingChanges.setWindowTitle(_translate("SetupTrackingChanges", "GeoPackage tracking changes"))
-        self.label.setText(_translate("SetupTrackingChanges", "GeoPackage file destination"))
+        SetupTrackingChanges.setWindowTitle(
+            _translate("SetupTrackingChanges", "GeoPackage tracking changes")
+        )
+        self.label.setText(
+            _translate("SetupTrackingChanges", "GeoPackage file destination")
+        )
         self.pbActivate.setText(_translate("SetupTrackingChanges", "Activate"))
         self.pbDeactivate.setText(_translate("SetupTrackingChanges", "Deactivate"))
-        self.pbRefreshLayers.setText(_translate("SetupTrackingChanges", "Refresh Layers"))
+        self.pbRefreshLayers.setText(
+            _translate("SetupTrackingChanges", "Refresh Layers")
+        )
         self.label_3.setText(_translate("SetupTrackingChanges", "Tracked layers:"))
+
+
 from qgsfilewidget import QgsFileWidget
