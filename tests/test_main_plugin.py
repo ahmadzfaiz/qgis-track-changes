@@ -90,16 +90,19 @@ class TestTrackChangesPlugin(unittest.TestCase):
         self.assertEqual(self.plugin.iface, self.iface)
         self.assertIsNone(self.plugin.default_log_dialog)
         self.assertIsNone(self.plugin.gpkg_log_dialog)
+        self.assertIsNone(self.plugin.about_action)
+        self.assertIsNone(self.plugin.default_log_action)
+        self.assertIsNone(self.plugin.gpkg_log_action)
 
-    # def test_initGui(self):
-    #     self.plugin.initGui()
+    def test_initGui(self):
+        self.plugin.initGui()
         
-    #     self.assertIsNotNone(self.plugin.about_action)
-    #     self.assertIsNotNone(self.plugin.default_log_action)
-    #     self.assertIsNotNone(self.plugin.gpkg_log_action)
+        self.assertIsNotNone(self.plugin.about_action)
+        self.assertIsNotNone(self.plugin.default_log_action)
+        self.assertIsNotNone(self.plugin.gpkg_log_action)
         
-    #     self.iface.addPluginToMenu.assert_called()
-    #     self.toolbar.addAction.assert_called()
+        self.iface.addPluginToMenu.assert_called()
+        self.toolbar.addAction.assert_called()
 
     def test_unload(self):
         self.plugin.about_action = MagicMock()
