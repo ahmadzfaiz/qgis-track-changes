@@ -14,7 +14,7 @@ from qgis.core import (
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
-from PyQt5.QtCore import QSize, QTimer
+from PyQt5.QtCore import QSize
 
 
 def get_plugin_version():

@@ -561,7 +561,7 @@ class AboutWidget(QDialog):
 
         try:
             self.ui.version_picker.currentTextChanged.disconnect(self.change_dashboard)
-        except:
+        except Exception:
             pass
 
         try:

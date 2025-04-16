@@ -108,7 +108,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             try:
                 self.fields = [field.name() for field in self.layer.fields()]
                 self.committed_fields = [field.name() for field in self.layer.fields()]
-            except:
+            except Exception:
                 pass
 
     def activate_signals(self):
