@@ -1,4 +1,5 @@
 import json
+from typing import Optional, Union
 import uuid
 import sqlite3
 from datetime import datetime, timezone
@@ -10,6 +11,8 @@ from qgis.core import (
     QgsProviderRegistry,
     QgsVectorLayer,
     QgsWkbTypes,
+    QgsFeature,
+    QgsField
 )
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
 from PyQt5.QtGui import QIcon
@@ -17,7 +20,13 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QSize
 
 
-def get_plugin_version():
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from qgis.gui import QgsInterface
+
+
+def get_plugin_version() -> str:
     from track_changes import __version__
 
     return __version__
@@ -25,8 +34,7 @@ def get_plugin_version():
 
 class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
     """Feature to log GeoPackage vector data changes"""
-
-    def __init__(self, iface):
+    def __init__(self, iface: 'QgsInterface') -> None:
         super().__init__()
         # Setup UI
         self.iface = iface
@@ -34,11 +42,11 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.ui.setupUi(self)
 
         # GPKG setup
-        self.gpkg_path = None
-        self.gpkg_conn = None
-        self.gpkg_cursor = None
+        self.gpkg_path: str = ""
         self.connection_timeout = 30  # seconds
         self.max_retries = 3  # Maximum number of retries for database operations
+        self.gpkg_conn: Optional[sqlite3.Connection]
+        self.gpkg_cursor: Optional[sqlite3.Cursor] = None
 
         # Project configurations
         self.app_version = Qgis.QGIS_VERSION
@@ -49,9 +57,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.message_bar = self.iface.messageBar()
 
         # Map Layer
-        self.layers = []
-        self.layers_table = []
-        self.layer_table_fields = {}
+        self.layers: list[QgsVectorLayer] = []
+        self.layers_table: list[str] = []
+        self.layer_table_fields: dict[str, list] = {}
         self.ui.pbRefreshLayers.clicked.connect(self.refresh_maplayers)
 
         # Make list widget non-interactive but still show selection
@@ -86,11 +94,11 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.ui.listGpkgLayers.setIconSize(QSize(16, 16))
 
         # Add timer for connection health check
-        self.check_timer = QtCore.QTimer()
-        self.check_timer.timeout.connect(self.check_connection_health)
+        self.check_timer: QtCore.QTimer = QtCore.QTimer()
+        self.check_timer.timeout.connect(self.check_connection_health) # type: ignore[attr-defined]
         self.check_timer.setInterval(60000)  # Check every minute
 
-    def populate_list_layers(self):
+    def populate_list_layers(self) -> None:
         self.ui.listGpkgLayers.clear()
         provider = QgsProviderRegistry.instance().providerMetadata("ogr")
         conn = provider.createConnection(self.gpkg_path, {})
@@ -123,7 +131,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
         self.ui.mQgsLogFile.setFilePath(self.gpkg_path)
 
-    def refresh_maplayers(self):
+    def refresh_maplayers(self) -> None:
         """Retrieve the GeoPackage path from the active layer."""
         self.layers = []
         self.layers_table = []
@@ -153,7 +161,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 for field in gpkg_layer.fields()
             ]
 
-    def on_file_selected(self, file_path):
+    def on_file_selected(self, file_path: str) -> None:
         # Reset read-only state for layers from previous GeoPackage
         if hasattr(self, "gpkg_path") and self.gpkg_path:
             old_gpkg_path = self.gpkg_path
@@ -172,13 +180,13 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             self.on_initial_selected_layer
         )
 
-    def show_info(self, message, level=Qgis.Info, duration=5):
+    def show_info(self, message: str, level: Qgis=Qgis.Info, duration: int=5) -> None:
         """Show message in QGIS message bar"""
         self.message_bar.pushMessage(
             "Track Changes", message, level=level, duration=duration
         )
 
-    def activate(self):
+    def activate(self) -> None:
         self.ui.pbActivate.setEnabled(False)
         self.ui.pbDeactivate.setEnabled(True)
         self.ui.pbRefreshLayers.setEnabled(False)
@@ -229,7 +237,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
         self.check_timer.start()
 
-    def connect_actions(self):
+    def connect_actions(self) -> None:
         # Actions 1*
         self.active_layer.editingStarted.connect(self.log_editing_started)
         self.active_layer.editingStopped.connect(self.log_editing_stopped)
@@ -265,7 +273,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         # Action 5*
         self.active_layer.afterCommitChanges.connect(self.log_commit_changes)
 
-    def disconnect_actions(self, layer):
+    def disconnect_actions(self, layer: QgsVectorLayer) -> None:
         # Actions 1*
         layer.editingStarted.disconnect(self.log_editing_started)
         layer.editingStopped.disconnect(self.log_editing_stopped)
@@ -293,7 +301,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         # Action 5*
         layer.afterCommitChanges.disconnect(self.log_commit_changes)
 
-    def deactivate(self):
+    def deactivate(self) -> None:
         self.ui.pbActivate.setEnabled(True)
         self.ui.pbDeactivate.setEnabled(False)
         self.ui.pbRefreshLayers.setEnabled(True)
@@ -337,8 +345,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                     self.show_info(f"Changes discarded for layer: {layer.name()}")
 
         # Stop logging session
-        self.gpkg_conn.close()
-        self.show_info(f"Track Changes deactivated for: {self.gpkg_path}")
+        if self.gpkg_conn is not None:
+            self.gpkg_conn.close()
+            self.show_info(f"Track Changes deactivated for: {self.gpkg_path}")
 
         for layer in QgsProject.instance().mapLayers().values():
             if self.gpkg_path in layer.source():
@@ -350,7 +359,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
         self.check_timer.stop()
 
-    def on_selected_layer(self, selected, deselected):
+    def on_selected_layer(self, selected: QgsVectorLayer, deselected: QgsVectorLayer) -> None:
         """Triggered when clicking a layer in the Layers Panel"""
         # Disconnect from previous active layer if it exists
         if hasattr(self, "active_layer") and self.active_layer:
@@ -379,7 +388,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                     if item.text() == self.active_layer_name:
                         item.setBackground(self.palette().highlight())
 
-    def on_initial_selected_layer(self, layer):
+    def on_initial_selected_layer(self, layer: QgsVectorLayer) -> None:
         # Always clear highlights first
         for i in range(self.ui.listGpkgLayers.count()):
             self.ui.listGpkgLayers.item(i).setBackground(QtCore.Qt.transparent)
@@ -402,7 +411,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             # Re-connect with new actions
             self.connect_actions()
 
-            def set_highlight_layer():
+            def set_highlight_layer() -> None:
                 selected_layers = self.iface.layerTreeView().selectedLayers()
 
                 # Always clear highlights first
@@ -427,66 +436,68 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         else:
             self.ui.pbActivate.setEnabled(False)
 
-    def create_changelog(self):
-        self.gpkg_cursor.execute("""
-            CREATE TABLE IF NOT EXISTS gpkg_changelog (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                data_version TEXT NOT NULL DEFAULT '0.0.0',
-                data_version_id TEXT NOT NULL,
-                timestamp DATETIME NOT NULL,
-                change_code INT NOT NULL,
-                author TEXT NOT NULL,
-                qgis_version TEXT,
-                layer_name TEXT,
-                feature_id INTEGER,
-                message TEXT,
-                data JSON,
-                qgis_trackchanges_version TEXT
-            )
-        """)
+    def create_changelog(self) -> None:
+        if self.gpkg_cursor is not None:
+            self.gpkg_cursor.execute("""
+                CREATE TABLE IF NOT EXISTS gpkg_changelog (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    data_version TEXT NOT NULL DEFAULT '0.0.0',
+                    data_version_id TEXT NOT NULL,
+                    timestamp DATETIME NOT NULL,
+                    change_code INT NOT NULL,
+                    author TEXT NOT NULL,
+                    qgis_version TEXT,
+                    layer_name TEXT,
+                    feature_id INTEGER,
+                    message TEXT,
+                    data JSON,
+                    qgis_trackchanges_version TEXT
+                )
+            """)
 
-        # Add indices for frequently queried columns
-        self.gpkg_cursor.execute("""
-            CREATE INDEX IF NOT EXISTS idx_changelog_layer 
-            ON gpkg_changelog(layer_name)
-        """)
-        self.gpkg_cursor.execute("""
-            CREATE INDEX IF NOT EXISTS idx_changelog_timestamp 
-            ON gpkg_changelog(timestamp)
-        """)
-        self.gpkg_cursor.execute("""
-            CREATE INDEX IF NOT EXISTS idx_changelog_feature 
-            ON gpkg_changelog(feature_id)
-        """)
+            # Add indices for frequently queried columns
+            self.gpkg_cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_changelog_layer 
+                ON gpkg_changelog(layer_name)
+            """)
+            self.gpkg_cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_changelog_timestamp 
+                ON gpkg_changelog(timestamp)
+            """)
+            self.gpkg_cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_changelog_feature 
+                ON gpkg_changelog(feature_id)
+            """)
 
-        # Add changelog into extension list
-        self.gpkg_cursor.execute("""
-            INSERT INTO gpkg_extensions (
-                table_name, column_name, extension_name, definition, scope
-            )
-            SELECT 
-                'gpkg_changelog', 
-                NULL, 
-                'qgis_track_changes',
-                'https://qgis-track-changes.readthedocs.io/en/latest/api.html', 
-                'read-write'
-            WHERE NOT EXISTS (
-                SELECT 1 FROM gpkg_extensions
-                WHERE table_name = 'gpkg_changelog'
-                AND column_name IS NULL
-                AND extension_name = 'qgis_track_changes'
-            );
-        """)
+            # Add changelog into extension list
+            self.gpkg_cursor.execute("""
+                INSERT INTO gpkg_extensions (
+                    table_name, column_name, extension_name, definition, scope
+                )
+                SELECT 
+                    'gpkg_changelog', 
+                    NULL, 
+                    'qgis_track_changes',
+                    'https://qgis-track-changes.readthedocs.io/en/latest/api.html', 
+                    'read-write'
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM gpkg_extensions
+                    WHERE table_name = 'gpkg_changelog'
+                    AND column_name IS NULL
+                    AND extension_name = 'qgis_track_changes'
+                );
+            """)
 
-        self.gpkg_conn.commit()
+            if self.gpkg_conn is not None:
+                self.gpkg_conn.commit()
 
-    def log_editing_started(self):
+    def log_editing_started(self) -> None:
         self.logging_data(10, None, "start editing", None)
 
-    def log_editing_stopped(self):
+    def log_editing_stopped(self) -> None:
         self.logging_data(11, None, "stop editing", None)
 
-    def log_selection_changed(self):
+    def log_selection_changed(self) -> None:
         for feature in self.active_layer.selectedFeatures():
             fid = feature.id()
             feature = self.active_layer.getFeature(fid)
@@ -497,7 +508,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             properties["geometry"] = feature.geometry().asWkt()
             self.logging_data(20, fid, "selecting feature", json.dumps(properties))
 
-    def log_feature_added(self, fid):
+    def log_feature_added(self, fid: int) -> None:
         feature = self.active_layer.getFeature(fid)
         properties = {}
         attributes = feature.attributes()
@@ -506,14 +517,14 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         properties["geometry"] = feature.geometry().asWkt()
         self.logging_data(21, fid, "add feature", json.dumps(properties))
 
-    def log_feature_deleted(self, fid):
+    def log_feature_deleted(self, fid: int) -> None:
         self.logging_data(22, fid, "delete feature", None)
 
-    def log_geometry_changed(self, fid, geometry):
+    def log_geometry_changed(self, fid: int, geometry: QgsVectorLayer) -> None:
         properties = {"new_geometry": geometry.asWkt()}
         self.logging_data(23, fid, "geometry change", json.dumps(properties))
 
-    def log_commited_feature_added(self, lid, features):
+    def log_commited_feature_added(self, lid: str, features: list[QgsFeature]) -> None:
         feature_obj = []
         for feature in features:
             properties = {}
@@ -524,32 +535,32 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             feature_obj.append(properties)
         self.logging_data(24, None, "commit add feature", json.dumps(feature_obj))
 
-    def log_commited_feature_deleted(self, lid, fids):
+    def log_commited_feature_deleted(self, lid: str, fids: str) -> None:
         self.logging_data(25, None, "commit delete feature", fids)
 
-    def log_commited_geometries_changes(self, lid, geometries):
+    def log_commited_geometries_changes(self, lid: str, geometries: dict[str, QgsVectorLayer]) -> None:
         geoms = [
             {"fid": fid, "geometry": geom.asWkt()} for fid, geom in geometries.items()
         ]
         self.logging_data(26, None, "commit geometry change", json.dumps(geoms))
 
-    def log_attribute_added(self, fid):
+    def log_attribute_added(self, fid: int) -> None:
         field = self.active_layer.fields()[fid]
         field_object = {"name": field.name(), "type": field.displayType()}
         self.layer_table_fields[self.active_layer_name].append(field_object)
         self.logging_data(30, None, "add field", json.dumps(field_object))
 
-    def log_attribute_deleted(self, fid):
+    def log_attribute_deleted(self, fid: int) -> None:
         field = self.layer_table_fields[self.active_layer_name][fid]
         self.logging_data(31, None, "remove field", json.dumps(field))
         self.layer_table_fields[self.active_layer_name].pop(fid)
 
-    def log_attribute_value_changed(self, fid, index, value):
+    def log_attribute_value_changed(self, fid: int, index: int, value: str) -> None:
         field = self.layer_table_fields[self.active_layer_name][index]
         att_object = {field["name"]: value}
         self.logging_data(32, fid, "change attribute", json.dumps(att_object))
 
-    def log_committed_attributes_added(self, lid, attributes):
+    def log_committed_attributes_added(self, lid: str, attributes: list[QgsField]) -> None:
         table_name = lid[:-37]
         att_objects = [
             {"name": field.name(), "type": field.displayType()} for field in attributes
@@ -557,7 +568,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.commited_layer_table_fields[table_name].extend(att_objects)
         self.logging_data(33, None, "commit add field", json.dumps(att_objects))
 
-    def log_committed_attributes_deleted(self, lid, attributes):
+    def log_committed_attributes_deleted(self, lid: str, attributes: list[QgsField]) -> None:
         table_name = lid[:-37]
         att_objects = []
         for idx in sorted(attributes, reverse=True):
@@ -565,7 +576,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             del self.commited_layer_table_fields[table_name][idx]
         self.logging_data(34, None, "commit remove field", json.dumps(att_objects))
 
-    def log_committed_attribute_values_changes(self, lid, attributes):
+    def log_committed_attribute_values_changes(self, lid: str, attributes: dict[str, QgsField]) -> None:
         table_name = lid[:-37]
         att_objects = []
         for fid, values in attributes.items():
@@ -575,65 +586,69 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             att_objects.append(data)
         self.logging_data(35, None, "commit change attribute", json.dumps(att_objects))
 
-    def log_commit_changes(self):
-        commit_obj = self.detect_changes()
+    def log_commit_changes(self) -> None:
+        commit_obj = json.dumps(self.detect_changes())
         self.logging_data(50, None, "commit version changes", commit_obj)
 
-    def detect_changes(self):
-        self.gpkg_cursor.execute("""
-            SELECT data_version
-            FROM gpkg_changelog
-            ORDER BY id DESC 
-            LIMIT 1;
-        """)
-        last_version = self.gpkg_cursor.fetchone()[0]
-        major, minor, patch = map(int, last_version.split("."))
+    def detect_changes(self) -> dict[str, Union[str, dict]]:
+        if self.gpkg_cursor is not None:
+            self.gpkg_cursor.execute("""
+                SELECT data_version
+                FROM gpkg_changelog
+                ORDER BY id DESC 
+                LIMIT 1;
+            """)
+            last_version = self.gpkg_cursor.fetchone()[0]
+            major, minor, patch = map(int, last_version.split("."))
 
-        self.gpkg_cursor.execute(
-            """
-            SELECT change_code, COUNT(change_code) AS count
-            FROM gpkg_changelog
-            WHERE data_version = ?
-            GROUP BY change_code
-        """,
-            (last_version,),
-        )
-        change_count = {}
-        for item in self.gpkg_cursor.fetchall():
-            change_count[item[0]] = item[1]
+            self.gpkg_cursor.execute(
+                """
+                SELECT change_code, COUNT(change_code) AS count
+                FROM gpkg_changelog
+                WHERE data_version = ?
+                GROUP BY change_code
+            """,
+                (last_version,),
+            )
+            change_count = {}
+            for item in self.gpkg_cursor.fetchall():
+                change_count[item[0]] = item[1]
 
-        # Code changes that trigger version update
-        code24 = change_count.get(24, 0) > 0
-        code25 = change_count.get(25, 0) > 0
-        code26 = change_count.get(26, 0) > 0
-        code33 = change_count.get(33, 0) > 0
-        code34 = change_count.get(34, 0) > 0
-        code35 = change_count.get(35, 0) > 0
+            # Code changes that trigger version update
+            code24 = change_count.get(24, 0) > 0
+            code25 = change_count.get(25, 0) > 0
+            code26 = change_count.get(26, 0) > 0
+            code33 = change_count.get(33, 0) > 0
+            code34 = change_count.get(34, 0) > 0
+            code35 = change_count.get(35, 0) > 0
 
-        if code25 or code34:
-            new_major = major + 1
-            new_version = f"{new_major}.0.0"
-            message = "Major version update"
-        elif code24 or code33:
-            new_minor = minor + 1
-            new_version = f"{major}.{new_minor}.0"
-            message = "Minor version update"
-        elif code26 or code35:
-            new_patch = patch + 1
-            new_version = f"{major}.{minor}.{new_patch}"
-            message = "Patch version update"
+            if code25 or code34:
+                new_major = major + 1
+                new_version = f"{new_major}.0.0"
+                message = "Major version update"
+            elif code24 or code33:
+                new_minor = minor + 1
+                new_version = f"{major}.{new_minor}.0"
+                message = "Minor version update"
+            elif code26 or code35:
+                new_patch = patch + 1
+                new_version = f"{major}.{minor}.{new_patch}"
+                message = "Patch version update"
+            else:
+                new_version = last_version
+                message = "No version update"
+
+            return {
+                "message": message,
+                "old_version": last_version,
+                "new_version": new_version,
+                "change_counts": change_count,
+            }
+        
         else:
-            new_version = last_version
-            message = "No version update"
+            return {}
 
-        return {
-            "message": message,
-            "old_version": last_version,
-            "new_version": new_version,
-            "change_counts": change_count,
-        }
-
-    def logging_data(self, change_code, feature_id, message, data):
+    def logging_data(self, change_code: int, feature_id: Optional[int], message: str, data: Optional[str]) -> None:
         if data and not isinstance(data, str):
             try:
                 data = json.dumps(data)
@@ -652,107 +667,114 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
         retry_count = 0
         while retry_count < self.max_retries:
-            try:
-                # Start a transaction
-                self.gpkg_conn.execute("BEGIN")
+            if self.gpkg_conn is not None:
+                try:
+                    # Start a transaction
+                    self.gpkg_conn.execute("BEGIN")
 
-                # Get the latest record
-                self.gpkg_cursor.execute("""
-                    SELECT data_version, data_version_id 
-                    FROM gpkg_changelog 
-                    ORDER BY id DESC 
-                    LIMIT 1;
-                """)
-                latest_record = self.gpkg_cursor.fetchone()
+                    # Get the latest record
+                    if self.gpkg_cursor is not None:
+                        self.gpkg_cursor.execute("""
+                            SELECT data_version, data_version_id 
+                            FROM gpkg_changelog 
+                            ORDER BY id DESC 
+                            LIMIT 1;
+                        """)
+                        latest_record = self.gpkg_cursor.fetchone()
 
-                # Determine data version and ID
-                if change_code == 50:
-                    try:
-                        new_object = json.loads(data)
-                        data_version = new_object["new_version"]
-                    except Exception:
-                        data_version = latest_record[0] if latest_record else "0.0.0"
-                    try:
-                        commit_version_message = new_object["message"]
-                        if commit_version_message != "No version update":
-                            data_version_id = uuid.uuid4().hex
-                        else:
+                        # Determine data version and ID
+                        if change_code == 50:
+                            if isinstance(data, str):
+                                try:
+                                    new_object = json.loads(data)
+                                    data_version = new_object["new_version"]
+                                except Exception:
+                                    data_version = latest_record[0] if latest_record else "0.0.0"
+                            else:
+                                data_version = latest_record[0] if latest_record else "0.0.0"
+
+                            try:
+                                commit_version_message = new_object["message"]
+                                if commit_version_message != "No version update":
+                                    data_version_id = uuid.uuid4().hex
+                                else:
+                                    data_version_id = latest_record[1]
+                            except Exception:
+                                data_version_id = uuid.uuid4().hex
+                        elif latest_record is not None:
+                            data_version = latest_record[0]
                             data_version_id = latest_record[1]
-                    except Exception:
-                        data_version_id = uuid.uuid4().hex
-                elif latest_record is not None:
-                    data_version = latest_record[0]
-                    data_version_id = latest_record[1]
-                else:
-                    data_version = "0.0.0"
-                    data_version_id = uuid.uuid4().hex
+                        else:
+                            data_version = "0.0.0"
+                            data_version_id = uuid.uuid4().hex
 
-                # Insert the log entry
-                self.gpkg_cursor.execute(
-                    """
-                    INSERT INTO gpkg_changelog (
-                        data_version, 
-                        data_version_id, 
-                        timestamp, 
-                        change_code,
-                        author, 
-                        qgis_version, 
-                        layer_name, 
-                        feature_id, 
-                        message, 
-                        data, 
-                        qgis_trackchanges_version
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                    (
-                        data_version,
-                        data_version_id,
-                        datetime.now(timezone.utc),
-                        change_code,
-                        self.author,
-                        self.app_version,
-                        self.active_layer_name,
-                        feature_id,
-                        message,
-                        data,
-                        get_plugin_version(),
-                    ),
-                )
+                        # Insert the log entry
+                        self.gpkg_cursor.execute(
+                            """
+                            INSERT INTO gpkg_changelog (
+                                data_version, 
+                                data_version_id, 
+                                timestamp, 
+                                change_code,
+                                author, 
+                                qgis_version, 
+                                layer_name, 
+                                feature_id, 
+                                message, 
+                                data, 
+                                qgis_trackchanges_version
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                            (
+                                data_version,
+                                data_version_id,
+                                datetime.now(timezone.utc),
+                                change_code,
+                                self.author,
+                                self.app_version,
+                                self.active_layer_name,
+                                feature_id,
+                                message,
+                                data,
+                                get_plugin_version(),
+                            ),
+                        )
 
-                # Commit the transaction
-                self.gpkg_conn.commit()
-                return  # Success, exit the retry loop
+                    # Commit the transaction
+                    self.gpkg_conn.commit()
+                    return  # Success, exit the retry loop
 
-            except sqlite3.OperationalError as e:
-                # Handle specific SQLite errors
-                if "database is locked" in str(e):
-                    # Wait a bit and retry
-                    QtCore.QThread.msleep(100 * (retry_count + 1))
-                    retry_count += 1
-                    continue
-                else:
-                    self.show_info(f"Database error: {str(e)}", level=Qgis.Critical)
+                except sqlite3.OperationalError as e:
+                    # Handle specific SQLite errors
+                    if "database is locked" in str(e):
+                        # Wait a bit and retry
+                        QtCore.QThread.msleep(100 * (retry_count + 1))
+                        retry_count += 1
+                        continue
+                    else:
+                        self.show_info(f"Database error: {str(e)}", level=Qgis.Critical)
+                        self.gpkg_conn.rollback()
+                        return
+
+                except sqlite3.Error as e:
+                    self.show_info(f"Error logging changes: {str(e)}", level=Qgis.Critical)
                     self.gpkg_conn.rollback()
                     return
 
-            except sqlite3.Error as e:
-                self.show_info(f"Error logging changes: {str(e)}", level=Qgis.Critical)
-                self.gpkg_conn.rollback()
-                return
-
-            except Exception as e:
-                self.show_info(f"Unexpected error: {str(e)}", level=Qgis.Critical)
-                self.gpkg_conn.rollback()
-                return
+                except Exception as e:
+                    self.show_info(f"Unexpected error: {str(e)}", level=Qgis.Critical)
+                    self.gpkg_conn.rollback()
+                    return
 
         # If we've exhausted all retries
-        if retry_count >= self.max_retries:
-            self.show_info(
-                "Failed to log changes after multiple attempts", level=Qgis.Critical
-            )
-            self.gpkg_conn.rollback()
+        if self.gpkg_conn is not None:
+            if retry_count >= self.max_retries:
+                self.show_info(
+                    "Failed to log changes after multiple attempts", level=Qgis.Critical
+                )
+                self.gpkg_conn.rollback()
 
-    def check_connection(self):
+    def check_connection(self) -> bool:
         """Check if connection is still valid"""
         if self.gpkg_conn:
             try:
@@ -762,7 +784,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 return False
         return False
 
-    def reconnect(self):
+    def reconnect(self) -> bool:
         """Attempt to reconnect if connection is lost"""
         try:
             if self.gpkg_conn:
@@ -786,7 +808,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             self.show_info(f"Failed to reconnect: {str(e)}", level=Qgis.Critical)
             return False
 
-    def check_connection_health(self):
+    def check_connection_health(self) -> None:
         """Periodic check of connection health"""
         if not self.check_connection():
             self.show_info(
@@ -800,7 +822,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 self.gpkg_conn = None
                 self.gpkg_cursor = None
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         """Clean up resources when plugin is unloaded"""
         if self.check_timer:
             self.check_timer.stop()
@@ -809,8 +831,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         if self.gpkg_conn:
             try:
                 # Check if there's an active transaction
-                self.gpkg_cursor.execute("SELECT 1")
-                self.gpkg_conn.commit()
+                if self.gpkg_cursor is not None:
+                    self.gpkg_cursor.execute("SELECT 1")
+                    self.gpkg_conn.commit()
             except sqlite3.Error:
                 # If there's an error, try to rollback
                 try:
@@ -828,13 +851,14 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 self.gpkg_conn = None
                 self.gpkg_cursor = None
 
-    def wait_for_database(self, timeout=30):
+    def wait_for_database(self, timeout:int=30) -> bool:
         """Wait for database to become available"""
         start_time = datetime.now()
         while (datetime.now() - start_time).seconds < timeout:
             try:
-                self.gpkg_conn.execute("SELECT 1")
-                return True
+                if self.gpkg_conn is not None:
+                    self.gpkg_conn.execute("SELECT 1")
+                    return True
             except sqlite3.OperationalError as e:
                 if "database is locked" in str(e):
                     QtCore.QThread.msleep(100)
@@ -842,40 +866,45 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 raise
         return False
 
-    def verify_changelog_structure(self):
+    def verify_changelog_structure(self) -> bool:
         """Verify that changelog table has correct structure"""
         try:
-            self.gpkg_cursor.execute("""
-                SELECT sql FROM sqlite_master 
-                WHERE type='table' AND name='gpkg_changelog'
-            """)
-            table_sql = self.gpkg_cursor.fetchone()
-            if table_sql:
-                # Table exists, verify columns
-                self.gpkg_cursor.execute("PRAGMA table_info(gpkg_changelog)")
-                columns = {row[1] for row in self.gpkg_cursor.fetchall()}
-                required_columns = {
-                    "id",
-                    "data_version",
-                    "data_version_id",
-                    "timestamp",
-                    "change_code",
-                    "author",
-                    "qgis_version",
-                    "layer_name",
-                    "feature_id",
-                    "message",
-                    "data",
-                    "qgis_trackchanges_version",
-                }
-                if not required_columns.issubset(columns):
-                    QgsMessageLog.logMessage(
-                        "Changelog table structure is invalid",
-                        "Track Changes",
-                        level=Qgis.Critical,
-                    )
-                    return False
-            return True
+            if self.gpkg_cursor is not None:
+                self.gpkg_cursor.execute("""
+                    SELECT sql FROM sqlite_master 
+                    WHERE type='table' AND name='gpkg_changelog'
+                """)
+                table_sql = self.gpkg_cursor.fetchone()
+                if table_sql:
+                    # Table exists, verify columns
+                    self.gpkg_cursor.execute("PRAGMA table_info(gpkg_changelog)")
+                    columns = {row[1] for row in self.gpkg_cursor.fetchall()}
+                    required_columns = {
+                        "id",
+                        "data_version",
+                        "data_version_id",
+                        "timestamp",
+                        "change_code",
+                        "author",
+                        "qgis_version",
+                        "layer_name",
+                        "feature_id",
+                        "message",
+                        "data",
+                        "qgis_trackchanges_version",
+                    }
+                    if not required_columns.issubset(columns):
+                        QgsMessageLog.logMessage(
+                            "Changelog table structure is invalid",
+                            "Track Changes",
+                            level=Qgis.Critical,
+                        )
+                        return False
+                return True
+            
+            else:
+                return False
+
         except sqlite3.Error as e:
             QgsMessageLog.logMessage(
                 f"Error verifying changelog structure: {str(e)}",
