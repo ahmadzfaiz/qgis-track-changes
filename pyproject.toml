@@ -29,3 +29,14 @@ prerelease = false
 [tool.semantic_release.publish]
 upload_to_vcs_release = true
 remove_dist = true
+
+[tool.ruff]
+exclude = ["track_changes/ui", "track_changes/libs"]
+
+[tool.mypy]
+files = ["track_changes/"]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+strict_optional = true
+follow_imports = "skip"
+exclude = ["track_changes/ui/.*", "track_changes/libs/.*"]
