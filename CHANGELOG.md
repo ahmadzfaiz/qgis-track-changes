@@ -1,6 +1,59 @@
 # CHANGELOG
 
 
+## v1.0.0 (2025-04-16)
+
+### Bug Fixes
+
+- **change_history**: Missing author name on committed remove field
+  ([`42481fb`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/42481fb95764b96361148923e50ff60304a32d07))
+
+### Features
+
+- Breaking CHANGE: major release for QGIS Track Changes 1.0.0
+  ([`7834c60`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/7834c609882138e4f799536815565165756fb49e))
+
+### Refactoring
+
+- Add pre commit hook for ruff formatter
+  ([#78](https://github.com/ahmadzfaiz/qgis-track-changes/pull/78),
+  [`cffcb49`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/cffcb49c0fc2ee2d024575da7811238a54362425))
+
+- Linting default logger and resources
+  ([`2cc3a0d`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/2cc3a0d5b538db9d0ca5f2e0767e11935e5070e4))
+
+- Reapply ruff formatting ([#78](https://github.com/ahmadzfaiz/qgis-track-changes/pull/78),
+  [`dc7a133`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/dc7a1334ba2ebb716e260a1b9b2ee2bc764be4b8))
+
+- **about**: Linting on about page ([#78](https://github.com/ahmadzfaiz/qgis-track-changes/pull/78),
+  [`8f2ecb6`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/8f2ecb6877bcd0a22d1be96d37772b069836fba8))
+
+- **gpkg_logger**: Linting gpkg logger
+  ([#78](https://github.com/ahmadzfaiz/qgis-track-changes/pull/78),
+  [`37d711b`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/37d711b9b6eaf4b52d9e9a59552480e87593ea5b))
+
+- **main_code**: Refactor all the main code with ruff
+  ([#78](https://github.com/ahmadzfaiz/qgis-track-changes/pull/78),
+  [`4f86cfc`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/4f86cfcb78795176d4fd84b53a66877e384ba769))
+
+- **main_plugin**: Linting main_plugin functionality
+  ([#78](https://github.com/ahmadzfaiz/qgis-track-changes/pull/78),
+  [`ee5eaf9`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/ee5eaf9018f1e97493fa4879f00c87e482e75672))
+
+- **ui**: Ruff formating on UI scripts
+  ([#78](https://github.com/ahmadzfaiz/qgis-track-changes/pull/78),
+  [`da7b9e1`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/da7b9e1c6c7f557b3ea131c4595f9404eaabbd6f))
+
+### Testing
+
+- **main_plugin**: Temporary disable test initGui
+  ([`dc4ead4`](https://github.com/ahmadzfaiz/qgis-track-changes/commit/dc4ead4f92e2023ff6e7b80c6460bdb350f5739f))
+
+### Breaking Changes
+
+- Major release for QGIS Track Changes 1.0.0
+
+
 ## v0.13.0 (2025-04-15)
 
 ### Bug Fixes
