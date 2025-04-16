@@ -1,7 +1,7 @@
 import time
 import logging
 from PyQt5.QtWidgets import QDockWidget
-from qgis.core import QgsMessageLog, Qgis, QgsProject
+from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsVectorLayer, QgsGeometry, QgsField
 from qgis.gui import QgsFileWidget
 
 from ..ui.default_logger import Ui_SetupTrackingChanges
@@ -10,7 +10,7 @@ from ..ui.default_logger import Ui_SetupTrackingChanges
 class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
     """Feature to log vector data changes"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         # Setup UI
         self.ui = Ui_SetupTrackingChanges()
@@ -19,15 +19,11 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         # Logger info setup
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
-        self.log_file = None
 
         self.app_version = Qgis.QGIS_VERSION
         project = QgsProject.instance()
         self.author = project.metadata().author()
         self.connected = False
-
-        self.layer = None
-        self.layer_name = None
 
         # Setup log file to be saved
         self.ui.mQgsLogFile.setStorageMode(QgsFileWidget.SaveFile)
@@ -51,7 +47,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.ui.pbDeactivate.clicked.connect(self.deactivate_signals)
         self.ui.pbRefreshLayers.clicked.connect(self.populate_vector_layers)
 
-    def logger_setup(self):
+    def logger_setup(self) -> None:
         if self.logger.hasHandlers():
             for handler in self.logger.handlers:
                 if isinstance(handler, logging.FileHandler):
@@ -65,7 +61,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
 
-    def populate_vector_layers(self):
+    def populate_vector_layers(self) -> None:
         """Populate the dropdown with all vector layers in the QGIS Layers Panel"""
         self.ui.cbVectorLayers.clear()
         self.ui.cbVectorLayers.addItem("Select a layer...")
@@ -76,7 +72,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             if layer.type() == layer.VectorLayer:
                 self.ui.cbVectorLayers.addItem(layer.name(), layer)
 
-    def on_file_selected(self, file_path):
+    def on_file_selected(self, file_path: str) -> None:
         if file_path:
             self.ui.cbVectorLayers.setEnabled(True)
             if not file_path.lower().endswith(".log"):
@@ -90,11 +86,11 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 f"Saved log file: {file_path}", "Track Changes", level=Qgis.Info
             )
 
-    def on_layer_selected(self, index):
+    def on_layer_selected(self, index: int) -> None:
         """Selecting layer to track the change"""
         if index >= 1:
             select_layer = True
-            self.layer = self.ui.cbVectorLayers.itemData(index)
+            self.layer: QgsVectorLayer = self.ui.cbVectorLayers.itemData(index)
             self.layer_name = self.ui.cbVectorLayers.currentText()
 
             QgsMessageLog.logMessage(
@@ -111,7 +107,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             except Exception:
                 pass
 
-    def activate_signals(self):
+    def activate_signals(self) -> None:
         """Safely connect logger signals"""
         self.ui.labelActive.setText(self.layer.name())
         if self.connected:
@@ -152,7 +148,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             self.ui.pbDeactivate.setEnabled(True)
             self.ui.cbVectorLayers.setEnabled(False)
 
-    def deactivate_signals(self):
+    def deactivate_signals(self) -> None:
         """Safely disconnect logger signal"""
         self.ui.labelActive.setText("No active layer")
         # Track logging code 01
@@ -194,17 +190,17 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.ui.pbDeactivate.setEnabled(False)
         self.ui.cbVectorLayers.setEnabled(True)
 
-    def log_editing_started(self):
+    def log_editing_started(self) -> None:
         self.logger.info(
             f'10 | {self.author} started editing of layer "{self.layer.id()}"'
         )
 
-    def log_editing_stopped(self):
+    def log_editing_stopped(self) -> None:
         self.logger.info(
             f'11 | {self.author} stopped editing of layer "{self.layer.id()}"'
         )
 
-    def log_selection_changed(self):
+    def log_selection_changed(self) -> None:
         for feature in self.layer.selectedFeatures():
             fid = feature.id()
             feature = self.layer.getFeature(fid)
@@ -217,7 +213,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 f"20 | {self.author} selecting feature. Layer ID: {self.layer.id()}. Feature ID: {fid}. Properties: {properties}"
             )
 
-    def log_feature_added(self, fid):
+    def log_feature_added(self, fid:int) -> None:
         feature = self.layer.getFeature(fid)
         properties = {}
         attributes = feature.attributes()
@@ -228,18 +224,18 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             f"21 | {self.author} added feature. Layer ID: {self.layer.id()}. Feature ID: {fid}. Properties: {properties}"
         )
 
-    def log_feature_deleted(self, fid):
+    def log_feature_deleted(self, fid: int) -> None:
         self.logger.info(
             f"22 | {self.author} deleted feature. Layer ID: {self.layer.id()}. Feature ID: {fid}"
         )
 
-    def log_geometry_changed(self, fid, geometry):
+    def log_geometry_changed(self, fid: int, geometry: QgsGeometry) -> None:
         new_geometry = geometry.asWkt()
         self.logger.info(
             f"23 | {self.author} changed geometry. Layer ID: {self.layer.id()}. Feature ID: {fid}. New geometry: {new_geometry}"
         )
 
-    def log_commited_geometries_changes(self, lid, geometries):
+    def log_commited_geometries_changes(self, lid: str, geometries: dict) -> None:
         self.logger.info(
             f"26 | Geometries changes by {self.author} is committed. Layer ID: {lid}"
         )
@@ -248,27 +244,27 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 f"26 | Committed changed geometry by {self.author}. Layer ID: {self.layer.id()}. Feature ID: {fid}. New geometry: {geometry.asWkt()}"
             )
 
-    def log_attribute_added(self, fid):
+    def log_attribute_added(self, fid: int) -> None:
         field_name = self.layer.fields()[fid].name()
         self.fields.insert(fid, field_name)
         self.logger.info(
             f"30 | {self.author} added attribute. Layer ID: {self.layer.id()}. Field name: {field_name}"
         )
 
-    def log_attribute_deleted(self, fid):
+    def log_attribute_deleted(self, fid: int) -> None:
         field_name = self.fields[fid]
         self.fields.pop(fid)
         self.logger.info(
             f"31 | {self.author} deleted attribute. Layer ID: {self.layer.id()}. Field name: {field_name}"
         )
 
-    def log_attribute_value_changed(self, fid, index, value):
+    def log_attribute_value_changed(self, fid: int, index: int, value: str) -> None:
         field_name = self.fields[index]
         self.logger.info(
             f"32 | {self.author} changed attribute. Layer ID: {self.layer.id()}. Feature ID: {fid}. Field name: {field_name}. Field content: {value}"
         )
 
-    def log_committed_attributes_added(self, lid, attributes):
+    def log_committed_attributes_added(self, lid: str, attributes: list[QgsField]) -> None:
         self.logger.info(
             f"33 | Attributes added by {self.author} is committed. Layer ID: {lid}"
         )
@@ -281,7 +277,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             )
             self.committed_fields.insert(att_index, att_name)
 
-    def log_committed_attributes_deleted(self, lid, attributes):
+    def log_committed_attributes_deleted(self, lid: str, attributes: list[QgsField]) -> None:
         self.logger.info(
             f"34 | Attributes deleted by {self.author} is committed. Layer ID: {lid}"
         )
@@ -292,7 +288,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             )
             self.committed_fields.pop(attribute)
 
-    def log_committed_attribute_values_changes(self, lid, attributes):
+    def log_committed_attribute_values_changes(self, lid: str, attributes: dict) -> None:
         self.logger.info(
             f"35 | Attributes changes by {self.author} is committed. Layer ID: {lid}"
         )
