@@ -1,7 +1,14 @@
 import time
 import logging
 from PyQt5.QtWidgets import QDockWidget
-from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsVectorLayer, QgsGeometry, QgsField
+from qgis.core import (
+    QgsMessageLog,
+    Qgis,
+    QgsProject,
+    QgsVectorLayer,
+    QgsGeometry,
+    QgsField,
+)
 from qgis.gui import QgsFileWidget
 
 from ..ui.default_logger import Ui_SetupTrackingChanges
@@ -213,7 +220,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 f"20 | {self.author} selecting feature. Layer ID: {self.layer.id()}. Feature ID: {fid}. Properties: {properties}"
             )
 
-    def log_feature_added(self, fid:int) -> None:
+    def log_feature_added(self, fid: int) -> None:
         feature = self.layer.getFeature(fid)
         properties = {}
         attributes = feature.attributes()
@@ -264,7 +271,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             f"32 | {self.author} changed attribute. Layer ID: {self.layer.id()}. Feature ID: {fid}. Field name: {field_name}. Field content: {value}"
         )
 
-    def log_committed_attributes_added(self, lid: str, attributes: list[QgsField]) -> None:
+    def log_committed_attributes_added(
+        self, lid: str, attributes: list[QgsField]
+    ) -> None:
         self.logger.info(
             f"33 | Attributes added by {self.author} is committed. Layer ID: {lid}"
         )
@@ -277,7 +286,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             )
             self.committed_fields.insert(att_index, att_name)
 
-    def log_committed_attributes_deleted(self, lid: str, attributes: list[QgsField]) -> None:
+    def log_committed_attributes_deleted(
+        self, lid: str, attributes: list[QgsField]
+    ) -> None:
         self.logger.info(
             f"34 | Attributes deleted by {self.author} is committed. Layer ID: {lid}"
         )
@@ -288,7 +299,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             )
             self.committed_fields.pop(attribute)
 
-    def log_committed_attribute_values_changes(self, lid: str, attributes: dict) -> None:
+    def log_committed_attribute_values_changes(
+        self, lid: str, attributes: dict
+    ) -> None:
         self.logger.info(
             f"35 | Attributes changes by {self.author} is committed. Layer ID: {lid}"
         )

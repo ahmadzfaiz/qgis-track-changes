@@ -12,7 +12,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsWkbTypes,
     QgsFeature,
-    QgsField
+    QgsField,
 )
 from ..ui.gpkg_logger import Ui_SetupTrackingChanges
 from PyQt5.QtGui import QIcon
@@ -34,7 +34,8 @@ def get_plugin_version() -> str:
 
 class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
     """Feature to log GeoPackage vector data changes"""
-    def __init__(self, iface: 'QgsInterface') -> None:
+
+    def __init__(self, iface: "QgsInterface") -> None:
         super().__init__()
         # Setup UI
         self.iface = iface
@@ -95,7 +96,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
         # Add timer for connection health check
         self.check_timer: QtCore.QTimer = QtCore.QTimer()
-        self.check_timer.timeout.connect(self.check_connection_health) # type: ignore[attr-defined]
+        self.check_timer.timeout.connect(self.check_connection_health)  # type: ignore[attr-defined]
         self.check_timer.setInterval(60000)  # Check every minute
 
     def populate_list_layers(self) -> None:
@@ -180,7 +181,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             self.on_initial_selected_layer
         )
 
-    def show_info(self, message: str, level: Qgis=Qgis.Info, duration: int=5) -> None:
+    def show_info(
+        self, message: str, level: Qgis = Qgis.Info, duration: int = 5
+    ) -> None:
         """Show message in QGIS message bar"""
         self.message_bar.pushMessage(
             "Track Changes", message, level=level, duration=duration
@@ -359,7 +362,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
 
         self.check_timer.stop()
 
-    def on_selected_layer(self, selected: QgsVectorLayer, deselected: QgsVectorLayer) -> None:
+    def on_selected_layer(
+        self, selected: QgsVectorLayer, deselected: QgsVectorLayer
+    ) -> None:
         """Triggered when clicking a layer in the Layers Panel"""
         # Disconnect from previous active layer if it exists
         if hasattr(self, "active_layer") and self.active_layer:
@@ -538,7 +543,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
     def log_commited_feature_deleted(self, lid: str, fids: str) -> None:
         self.logging_data(25, None, "commit delete feature", fids)
 
-    def log_commited_geometries_changes(self, lid: str, geometries: dict[str, QgsVectorLayer]) -> None:
+    def log_commited_geometries_changes(
+        self, lid: str, geometries: dict[str, QgsVectorLayer]
+    ) -> None:
         geoms = [
             {"fid": fid, "geometry": geom.asWkt()} for fid, geom in geometries.items()
         ]
@@ -560,7 +567,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         att_object = {field["name"]: value}
         self.logging_data(32, fid, "change attribute", json.dumps(att_object))
 
-    def log_committed_attributes_added(self, lid: str, attributes: list[QgsField]) -> None:
+    def log_committed_attributes_added(
+        self, lid: str, attributes: list[QgsField]
+    ) -> None:
         table_name = lid[:-37]
         att_objects = [
             {"name": field.name(), "type": field.displayType()} for field in attributes
@@ -568,7 +577,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
         self.commited_layer_table_fields[table_name].extend(att_objects)
         self.logging_data(33, None, "commit add field", json.dumps(att_objects))
 
-    def log_committed_attributes_deleted(self, lid: str, attributes: list[QgsField]) -> None:
+    def log_committed_attributes_deleted(
+        self, lid: str, attributes: list[QgsField]
+    ) -> None:
         table_name = lid[:-37]
         att_objects = []
         for idx in sorted(attributes, reverse=True):
@@ -576,7 +587,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
             del self.commited_layer_table_fields[table_name][idx]
         self.logging_data(34, None, "commit remove field", json.dumps(att_objects))
 
-    def log_committed_attribute_values_changes(self, lid: str, attributes: dict[str, QgsField]) -> None:
+    def log_committed_attribute_values_changes(
+        self, lid: str, attributes: dict[str, QgsField]
+    ) -> None:
         table_name = lid[:-37]
         att_objects = []
         for fid, values in attributes.items():
@@ -644,11 +657,17 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 "new_version": new_version,
                 "change_counts": change_count,
             }
-        
+
         else:
             return {}
 
-    def logging_data(self, change_code: int, feature_id: Optional[int], message: str, data: Optional[str]) -> None:
+    def logging_data(
+        self,
+        change_code: int,
+        feature_id: Optional[int],
+        message: str,
+        data: Optional[str],
+    ) -> None:
         if data and not isinstance(data, str):
             try:
                 data = json.dumps(data)
@@ -689,9 +708,13 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                                     new_object = json.loads(data)
                                     data_version = new_object["new_version"]
                                 except Exception:
-                                    data_version = latest_record[0] if latest_record else "0.0.0"
+                                    data_version = (
+                                        latest_record[0] if latest_record else "0.0.0"
+                                    )
                             else:
-                                data_version = latest_record[0] if latest_record else "0.0.0"
+                                data_version = (
+                                    latest_record[0] if latest_record else "0.0.0"
+                                )
 
                             try:
                                 commit_version_message = new_object["message"]
@@ -757,7 +780,9 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                         return
 
                 except sqlite3.Error as e:
-                    self.show_info(f"Error logging changes: {str(e)}", level=Qgis.Critical)
+                    self.show_info(
+                        f"Error logging changes: {str(e)}", level=Qgis.Critical
+                    )
                     self.gpkg_conn.rollback()
                     return
 
@@ -851,7 +876,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                 self.gpkg_conn = None
                 self.gpkg_cursor = None
 
-    def wait_for_database(self, timeout:int=30) -> bool:
+    def wait_for_database(self, timeout: int = 30) -> bool:
         """Wait for database to become available"""
         start_time = datetime.now()
         while (datetime.now() - start_time).seconds < timeout:
@@ -901,7 +926,7 @@ class FeatureLogger(QDockWidget, Ui_SetupTrackingChanges):
                         )
                         return False
                 return True
-            
+
             else:
                 return False
 
